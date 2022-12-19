@@ -41,7 +41,7 @@ DataValue:
 Variant:
 DiagnosticInfo:
 """
-
+# Kräver 2 bibliotek opcua-client och opcua
 from opcua import Client, ua
 
 
