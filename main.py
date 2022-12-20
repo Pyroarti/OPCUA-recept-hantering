@@ -13,7 +13,7 @@ Göra en API ifall man ska enkelt göra nya recept? (kanske man gör det via en 
 # Se till att Servern är på och att alla var är iklickade att dom kan ändras från OPCUA.
 """
 Alla datatyper man kan läsa och skriva
-
+t
 Null:
 Boolean:
 SByte:
