@@ -13,7 +13,7 @@ Göra en API ifall man ska enkelt göra nya recept? (kanske man gör det via en 
 # Se till att Servern är på och att alla var är iklickade att dom kan ändras från OPCUA.
 """
 Alla datatyper man kan läsa och skriva
-t
+
 Null:
 Boolean:
 SByte:
@@ -44,6 +44,7 @@ DiagnosticInfo:
 # Kräver 2 bibliotek opcua-client och opcua
 from opcua import Client, ua
 
+
 def read_input_value(node_id): # Funktion för att läsa in en variabel och convertera den till en string
     client_node = client.get_node(node_id)  # Får nod id (man ser okså vilken id den har i clienten)
     client_node_value = client_node.get_value()  # Läser in värdet på noden
@@ -53,7 +54,7 @@ def read_input_value(node_id): # Funktion för att läsa in en variabel och conv
 def write_value_int(node_id, value): # Funktion för att ändra en int, tar 2 argument här. Nod id och den nya valuen
     client_node = client.get_node(node_id) 
     client_node_value = value
-    client_node_dv = ua.DataValue(ua.Variant(client_node_value, ua.VariantType.Float)) # Sätter in den nya värdet 
+    client_node_dv = ua.DataValue(ua.Variant(client_node_value, ua.VariantType.Int16)) # Sätter in den nya värdet 
     client_node.set_value(client_node_dv)
     print("Value of : " + str(client_node) + ' : ' + str(client_node_value)) # Printar ut den
 
@@ -69,7 +70,7 @@ def write_value_bool(node_id, value):
 if __name__ == "__main__":
 
 
-    client = Client("opc.tcp://192.168.187.10:4840")  # Adressen till servern
+    client = Client("opc.tcp://192.168.0.1:4840")  # Adressen till servern
     try:
         client.connect()
 
@@ -77,11 +78,11 @@ if __name__ == "__main__":
         print("Objektets root nod är: ", root) # Printar ut nod id
 
         
-        read_input_value('ns=3;s="StepData"."RunningSteps"[0]."PosX"') # Sätt in nod id till vad du vill läsa in (i clienten högerklicka på variabeln och kopiera den)
+        read_input_value("") # Sätt in nod id till vad du vill läsa in (i clienten högerklicka på variabeln och kopiera den)
 
-        write_value_int('ns=3;s="StepData"."RunningSteps"[0]."PosX"',40.0) # Sätt in nod id till en int var och sen den nya värdet
+        write_value_int("",) # Sätt in nod id till en int var och sen den nya värdet
 
-        #write_value_bool("",) # Sätt in nod id till en bool var och sen den nya värdet
+        write_value_bool("",) # Sätt in nod id till en bool var och sen den nya värdet
 
 
     finally: # Bara ett try/finally block för att testa, byt sen mot whatever men bara för att säkerhetsställa att vi alltid lyckas disconnecta
