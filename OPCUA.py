@@ -27,9 +27,11 @@ async def main():
         value = await node.get_child('Active')
         value = await value.get_value()
         if value:
-            value = await node.get_child('PosX')
-            value = await value.get_value()
-            print(f"PosX value: {value}")
+            PosX = await node.get_child('PosX')
+            PosX = await PosX.get_value()
+            PosY = await node.get_child('PosY')
+            PosY = await PosY.get_value()
+            print(f"PosX: {PosX} PosY: {PosY}")
     
     
     
