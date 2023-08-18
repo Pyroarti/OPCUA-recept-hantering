@@ -25,6 +25,7 @@ share/python-wheels/
 MANIFEST
 dist/
 build/
+experimental/
 
 
 # PyInstaller
