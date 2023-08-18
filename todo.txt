@@ -1,0 +1,9 @@
+* Komihåg att lägga till så fort man klickar bort recipie editor att lägga in den nya datan inte bara i opcua även i SQL.
+
+* Kolla in varför programmet inte avslutas korrekt som man subscribar på alarm på opcua servern (verkar frf subba när gui är stängt)
+
+* Kolla in vrf den ibland försöker koppla sig till OPCUA massa gånger och krashar
+
+* Kolla in om man ska ha opcua alarmen i databasen (log fil är svårt att blädra genom)
+
+* Sätt upp en windows task sceduler för logger som tar bort gammla logs

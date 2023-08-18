@@ -1,0 +1,15 @@
+Copyright (c) 2023 LMT innovative engineering All rights reserved.
+
+LMT Recipe manager - Version 1.0
+
+This software is licensed under the Proprietary Software License Agreement License. 
+See the LICENSE file in the project's root directory for the full license text.
+
+A program to handle recipe and communicaton with OPCUA servers
+
+Made by Roberts Balulis/Tobias Hedin
+
+If you encounter any errors, security vulnerabilities, or have concerns related to the security of our application, 
+please do not hesitate to contact us at rbs@lmt.se.
+
+Your feedback is invaluable in helping us maintain the highest standards of quality and security.

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My App</title>
+    <style>
+        body {
+            background-color: rgb(211, 211, 211);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 50px;
+            
+        }
+        .big-text {
+            font-size: 150px;
+            margin: 0;
+        }
+
+        .smal-text {
+            font-size: 100px;
+            margin: 0;
+        }
+
+        .first-word {
+            margin-right: 60px;
+        }
+        #logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 900px;
+            height: auto;
+            padding-left: 10px;
+            padding-bottom: 350px;
+        }
+    </style>
+    <script>
+        function fetchData() {
+    fetch('/get_data')
+        .then(response => response.json())
+        .then(data => {
+            var producedText = data.produced.toString() + " st";
+            var toProduceText = data.to_do.toString() + " st";
+            var nameText = data.name.toString()
+
+            document.getElementById('produced-element').innerText = producedText;
+            document.getElementById('to-do-element').innerText = toProduceText;
+            document.getElementById("name-element").innerText = nameText;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+        setInterval(fetchData, 3000);
+
+    </script>
+    
+</head>
+<body>
+    <img id="logo" src="{{ url_for('static', filename='Assets/lås_logo.png') }}" alt="logo">
+
+    <div class="row">
+        <p class="big-text first-word">Tillverkar:</p>
+        <p class="big-text" id="name-element" ></p>
+    </div>
+
+    <div class="row">
+        <p class="big-text first-word">Producerat:</p>
+        <p class="big-text" id="produced-element"></p>
+    </div>
+    <div class="row">
+        <p class="big-text first-word">Ska producera:</p>
+        <p class="big-text" id="to-do-element"></p>
+    </div>
+</body>
+</html>

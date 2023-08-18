@@ -1,0 +1,82 @@
+Proprietary Software License Agreement
+
+IMPORTANT: BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE, THE CUSTOMER (REFERRED TO AS "LICENSEE") AGREES TO BE BOUND BY THE TERMS OF THIS AGREEMENT. 
+IF LICENSEE DOES NOT AGREE TO THE TERMS OF THIS AGREEMENT, DO NOT INSTALL, COPY, OR USE THE SOFTWARE.
+
+This Proprietary Software License Agreement ("Agreement") is entered into by LMT ("Licensor") and the Licensee.
+
+1. Definitions
+   a. "Software" refers to the proprietary computer program identified as LMT recipe manager, including any associated 
+   documentation, updates, and upgrades provided by Licensor.
+
+2. Grant of License
+   a. Subject to the terms and conditions of this Agreement, Licensor grants Licensee a non-exclusive, non-transferable, limited license to install and 
+   use the Software solely for Licensee's internal business purposes.
+   b. Licensee is expressly prohibited from distributing, sublicensing, selling, or otherwise transferring the Software to any third party 
+   without the prior written consent of Licensor.
+
+3. Ownership
+   All rights, title, and interest in the Software, including all intellectual property rights, are and shall remain the exclusive property of Licensor.
+
+4. Term and Termination
+   This Agreement shall commence upon Licensee's installation or use of the Software and continue until terminated by either party upon written notice 
+   to the other party. Upon termination, Licensee must cease all use of the Software and destroy all copies in its possession or control.
+
+5. Warranties and Disclaimers
+   The Software is provided "as is" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, 
+   fitness for a particular purpose, or non-infringement. Licensor does not warrant that the Software will meet Licensee's requirements or 
+   that its operation will be uninterrupted or error-free.
+
+6. Limitation of Liability
+   In no event shall Licensor be liable for any indirect, incidental, special, or consequential damages, 
+   including but not limited to loss of profits, data, or use, arising out of or in connection with the use or 
+   performance of the Software, whether based on contract, tort, or any other legal theory, even if Licensor has been advised of the possibility of such damages.
+
+7. Support and Maintenance
+   Licensor may, at its sole discretion, provide support and maintenance services for the Software. 
+   Any support and maintenance services provided by Licensor shall be subject to the terms and conditions set forth in a separate agreement between Licensor and Licensee.
+
+8. Confidentiality
+   Each party agrees to keep confidential and not disclose or use, except as required for the performance of this Agreement, 
+   any non-public information received from the other party, including but not limited to trade secrets, know-how, or proprietary information. 
+   This obligation shall survive the termination of this Agreement.
+
+9. Export Compliance
+   Licensee shall comply with all applicable export laws and regulations in its use of the Software and shall not 
+   export or re-export the Software in violation of such laws and regulations.
+
+10. Governing Law and Jurisdiction
+    This Agreement shall be governed by and construed in accordance with the laws of Sweden, without regard to its conflict of laws principles. 
+    Any disputes arising under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the courts of Sweden.
+
+11. Indemnification
+    Licensee agrees to indemnify, defend, and hold harmless Licensor, its affiliates, officers, directors, employees, 
+    and agents from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) 
+    arising out of or related to Licensee's use of the Software, violation of this Agreement, or infringement of any intellectual property or other rights of any third party.
+
+This software includes the following third-party libraries, which are subject to their own respective licenses, 
+and their license agreements can be found in the respective folders of the software installation:
+
+aiofiles
+aiosqlite
+altgraph
+asyncua
+cffi
+cryptography
+customtkinter
+darkdetect
+numpy
+pandas
+pefile
+Pillow
+pycparser
+pyinstaller
+pyinstaller-hooks-contrib
+pyodbc
+pywin32-ctypes
+six
+sortedcontainers
+ping3
+
+Licensor is not responsible for any issues arising from the use of these third-party libraries, 
+and Licensee should refer to the respective licenses for the terms and conditions of use.
