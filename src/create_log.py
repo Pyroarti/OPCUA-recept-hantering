@@ -76,5 +76,6 @@ def delete_old_logs(log_dir, days_old):
 
 if __name__ == "__main__":
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(base_path)
     delete_old_logs(os.path.join(base_path, "logs"), 30)
 
