@@ -1209,7 +1209,6 @@ class App(customtkinter.CTk):
 
     def about_page_command(self):
         """Shows the about page"""
-        self.change_to_wait_cursor()
         self.open_about_window()
 
 

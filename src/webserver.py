@@ -6,6 +6,7 @@ from flask import Flask, request, render_template
 from flask_cors import CORS
 from waitress import serve
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
 
 from .create_log import setup_logger
 from .opcua_client import data_to_webserver
@@ -67,8 +68,8 @@ def get_data():
     headers = None
 
     try:
-        active_recipe_name = db.session.execute(
-        'SELECT * FROM tblActiveRecipeList').fetchall()[0][0]
+        query = text('SELECT * FROM tblActiveRecipeList')
+        active_recipe_name = db.session.execute(query).fetchall()[0][0]
 
     except Exception as exeption:
         db.session.rollback()
