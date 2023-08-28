@@ -269,10 +269,6 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
                                                      font=("Helvetica", 18))
         self.submit_button.pack(pady=10)
 
-        self.select_unit_to_download_header = customtkinter.CTkLabel(self, text=self.texts['select_unit_to_download_header'],
-                                                    font=("Helvetica", 25))
-        self.select_unit_to_download_header.pack(pady=10)
-
         recipe_struct_mapping = {2: "Master & SMC1 & SMC2", 4: "Master & SMC1", 5: "Master & SMC2"}
         id_mapping = {}
 
