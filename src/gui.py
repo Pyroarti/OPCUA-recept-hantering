@@ -631,7 +631,7 @@ class App(customtkinter.CTk):
         self.treeview.heading("RecipeComment", text=self.texts['recipe_datagrid_comment'], anchor="w")
         self.treeview.heading("RecipeCreated", text=self.texts['recipe_datagrid_created'], anchor="w")
         self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_modified'], anchor="w")
-        self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_status'], anchor="w")
+        self.treeview.heading("RecipeStatus", text=self.texts['recipe_datagrid_status'], anchor="w")
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
         right_frame.pack(side='right', fill='y', expand=True)
