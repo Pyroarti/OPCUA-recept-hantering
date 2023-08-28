@@ -932,6 +932,9 @@ class App(customtkinter.CTk):
             recipe_checked = self.async_queue.put(check_recipe_data(selected_id))
 
             if recipe_checked:
+                current_values = list(self.treeview.item(selected_item, 'values'))
+                current_values[5] = "Ja"
+                self.treeview.item(selected_item, values=current_values)
                 logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
 
             else:
