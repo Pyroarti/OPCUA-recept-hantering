@@ -313,7 +313,7 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
         logger.info("Error while trying to connect to opcua servers to clean data")
 
 
-async def check_recipe_data(selected_id):
+def check_recipe_data(selected_id):
     """
     Checks the data of the selected recipe. To se if ther is data in the database.
     """

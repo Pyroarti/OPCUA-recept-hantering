@@ -622,8 +622,8 @@ class App(customtkinter.CTk):
         self.treeview.column("RecipeName", width=700, stretch=False)
         self.treeview.column("RecipeComment", width=700, stretch=False)
         self.treeview.column("RecipeCreated", width=300, stretch=False)
-        self.treeview.column("RecipeUpdated", width=170, stretch=False)
-        self.treeview.column("RecipeStatus", width=50, stretch=False)
+        self.treeview.column("RecipeUpdated", width=200, stretch=False)
+        self.treeview.column("RecipeStatus", width=90, stretch=False)
 
         self.treeview.heading("#0", text="", anchor="w")
         self.treeview.heading("id", text="id", anchor="w")
@@ -713,7 +713,7 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
-            has_recipe_data = self.async_queue.put(check_recipe_data(recipe_id))
+            has_recipe_data = (check_recipe_data(recipe_id))
             status_text = 'Ja' if has_recipe_data else 'Nej'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
