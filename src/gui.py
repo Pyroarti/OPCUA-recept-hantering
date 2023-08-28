@@ -163,6 +163,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         pop_up_height = 450
         position_x = 900
         position_y = 400
+        self.attributes('-topmost', True)
 
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
         self.name_label = customtkinter.CTkLabel(self, text=self.texts['recipe_name'],
@@ -226,7 +227,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             self.app_instance.submit_new_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id)
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
-            self.focus_force()
+            self.destroy()
             return
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
@@ -241,6 +242,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         pop_up_height = 450
         position_x = 900
         position_y = 400
+        self.attributes('-topmost', True)
 
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
         self.name_label = customtkinter.CTkLabel(self, text=self.texts['recipe_name'],
@@ -331,7 +333,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
             logger.warning('No structure selected by user')
-            self.focus_force()
+            self.destroy()
             return
 
 
@@ -929,7 +931,7 @@ class App(customtkinter.CTk):
         if selected_id:
 
             self.units = self.async_queue.put(from_units_to_sql_stepdata(selected_id, self.texts,recipe_structure_id))
-            recipe_checked = self.async_queue.put(check_recipe_data(selected_id))
+            recipe_checked = (check_recipe_data(selected_id))
 
             if recipe_checked:
                 current_values = list(self.treeview.item(selected_item, 'values'))
@@ -1259,8 +1261,6 @@ class App(customtkinter.CTk):
 
         if self.edit_steps_window is None or not self.edit_steps_window.winfo_exists():
             self.edit_steps_window = Edit_steps_window(self, rows, selected_id, self.texts)
-            self.edit_steps_window.focus()
-            self.edit_steps_window.attributes('-topmost', True)
         else:
             self.edit_steps_window.focus()
         self.edit_steps_window.lift()
@@ -1270,8 +1270,6 @@ class App(customtkinter.CTk):
 
         if self.make_recipe_window is None or not self.make_recipe_window.winfo_exists():
             self.make_recipe_window = MakeRecipeWindow(self, self.texts)
-            self.make_recipe_window.focus()
-            #self.make_recipe_window.attributes('-topmost', True)
         else:
             self.make_recipe_window.focus()
         self.make_recipe_window.lift()
