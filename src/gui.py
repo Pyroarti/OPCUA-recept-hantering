@@ -935,6 +935,17 @@ class App(customtkinter.CTk):
                 current_values = list(self.treeview.item(selected_item, 'values'))
                 current_values[5] = "Ja"
                 self.treeview.item(selected_item, values=current_values)
+                for item in self.treeview.get_children():
+                    self.treeview.delete(item)
+
+                for row in rows:
+                    recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
+                    has_recipe_data = (check_recipe_data(recipe_id))
+                    status_text = 'Ja' if has_recipe_data else 'Nej'
+                    self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
+                                                            RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                            RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                            status_text))
                 logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
 
             else:

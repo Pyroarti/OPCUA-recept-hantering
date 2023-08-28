@@ -20,19 +20,5 @@ och så är det en extra check att man kollar att man inte producerat nått (kö
 
 * Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
 
-* Sätt upp en windows task sceduler för logger som tar bort gammla logs
-
-* Gör en popup så att man confirmar att man vill köra in nya steg data till PLCs så man inte får hjärtattack att man råkat trycka på den,
-och så är det en extra check att man kollar att man inte producerat nått (köra data medans den kör it not very good)
-
-* Kolla in monitor api (möte med dom vecka 35)
-
-* Få en exe att funka
-
-* Dela func blocken i mindre delar och lägg dom i rätt .py
-
-* Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
-
-
-
-* Ändra att ist hämta namnet på det dom producerar varje sekund från opcua så gör det bara när man byter recept man kör (dumt att jag inte kom på detta innan så slipper man stressa server i onödan)
+* Ändra att ist hämta namnet på det dom producerar varje sekund från opcua så gör det bara när man byter recept man kör
+(dumt att jag inte kom på detta innan så slipper man stressa server i onödan)
