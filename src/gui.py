@@ -1068,9 +1068,12 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
+            has_recipe_data = (check_recipe_data(recipe_id))
+            status_text = 'Ja' if has_recipe_data else 'Nej'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S")))
+                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                    status_text))
 
         logger.info("Successfully submitted the new recipe and refreshed the view.")
 
@@ -1117,9 +1120,12 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
+            has_recipe_data = (check_recipe_data(recipe_id))
+            status_text = 'Ja' if has_recipe_data else 'Nej'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S")))
+                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                    status_text))
 
 
     def edit_recipe(self):
