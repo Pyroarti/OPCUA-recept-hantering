@@ -265,7 +265,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         id_mapping = {}
 
         self.treeview_select_structure = ttk.Treeview(self,selectmode="browse", style="Treeview")
-        self.treeview_select_structure.pack()
+        self.treeview_select_structure.pack(pady=10)
         self.treeview_select_structure["columns"] = ("id", "Structure name")
 
         self.treeview_select_structure.column("#0", width=0, stretch=False)
