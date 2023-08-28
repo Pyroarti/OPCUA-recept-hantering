@@ -19,6 +19,7 @@
     "recipe_datagrid_comment": "Recipe Comment",
     "recipe_datagrid_created": "Recipe Created",
     "recipe_datagrid_modified": "Recipe Modified",
+    "recipe_datagrid_status": "Has data",
 
     "make_a_recipe": "Make a recipe",
     "recipe_name": "Recipe name",
@@ -48,7 +49,7 @@
     "refresh_the_logs_button": "Refresh the logs",
 
     "about_see_change_log_button": "See changelog",
-    
+
     "data_editor_grid_unit" : "Unit name",
     "data_editor_grid_tag_name" : "Tag name",
     "data_editor_grid_tag_value" : "Tag value",

@@ -20,6 +20,7 @@
     "recipe_datagrid_comment": "Recept kommentar",
     "recipe_datagrid_created": "Recept skapad",
     "recipe_datagrid_modified": "Recept modifierad",
+    "recipe_datagrid_status": "har data",
 
     "make_a_recipe": "Gör ett recept",
     "recipe_name": "Recept namn",

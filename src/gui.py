@@ -19,7 +19,7 @@ from PIL import Image
 import pyodbc
 
 # Own package
-from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata
+from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data
 from .data_encrypt import DataEncrypt
 from .create_log import setup_logger
 from .ip_checker import check_ip
@@ -326,6 +326,8 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
             logger.info(f'Selected structure ID: {selected_structure_id}')
 
             self.app_instance.update_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id)
+
+            self.destroy()
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
             logger.warning('No structure selected by user')
@@ -613,7 +615,7 @@ class App(customtkinter.CTk):
         self.treeview = ttk.Treeview(recipes_page,selectmode="browse", style="Treeview")
         self.treeview.pack(expand=True, fill='both', side="left")
         self.treeview["columns"] = ("id", "RecipeName", "RecipeComment",
-                                    "RecipeCreated", "RecipeUpdated")
+                                    "RecipeCreated", "RecipeUpdated", "RecipeStatus")
 
         self.treeview.column("#0", width=0, stretch=False)
         self.treeview.column("id", width=0, stretch=False)
@@ -621,6 +623,7 @@ class App(customtkinter.CTk):
         self.treeview.column("RecipeComment", width=700, stretch=False)
         self.treeview.column("RecipeCreated", width=300, stretch=False)
         self.treeview.column("RecipeUpdated", width=170, stretch=False)
+        self.treeview.column("RecipeStatus", width=50, stretch=False)
 
         self.treeview.heading("#0", text="", anchor="w")
         self.treeview.heading("id", text="id", anchor="w")
@@ -628,6 +631,7 @@ class App(customtkinter.CTk):
         self.treeview.heading("RecipeComment", text=self.texts['recipe_datagrid_comment'], anchor="w")
         self.treeview.heading("RecipeCreated", text=self.texts['recipe_datagrid_created'], anchor="w")
         self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_modified'], anchor="w")
+        self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_status'], anchor="w")
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
         right_frame.pack(side='right', fill='y', expand=True)
@@ -679,12 +683,12 @@ class App(customtkinter.CTk):
                                                                   font=("Helvetica", 18))
         self.delete_selected_row_button.pack(pady=(15,0))
 
-        self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
-                                                                  command=self.archive_selected_recipe,
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
-        self.edit_selected_recipe_button.pack(pady=(15,0))
+        #self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
+        #                                                          command=self.archive_selected_recipe,
+        #                                                          width=350,
+        #                                                          height=45,
+        #                                                          font=("Helvetica", 18))
+        #self.edit_selected_recipe_button.pack(pady=(15,0))
 
         # Getting the data from SQL and putting it in the datagrid
         cursor, cnxn = get_database_connection()
@@ -709,9 +713,12 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
+            has_recipe_data = self.async_queue.put(check_recipe_data(recipe_id))
+            status_text = 'Ja' if has_recipe_data else 'Nej'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S")))
+                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                    status_text))
 
         # Binds a event where user selects something on the datagrid
         self.treeview.bind('<<TreeviewSelect>>')
@@ -749,8 +756,6 @@ class App(customtkinter.CTk):
                                                           width=200,height=50)
 
         self.refresh_log_screen.place(x=2200, y=100)
-
-
 
 
     def load_language_file(self, language):
@@ -924,7 +929,13 @@ class App(customtkinter.CTk):
         if selected_id:
 
             self.units = self.async_queue.put(from_units_to_sql_stepdata(selected_id, self.texts,recipe_structure_id))
-            logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
+            recipe_checked = self.async_queue.put(check_recipe_data(selected_id))
+
+            if recipe_checked:
+                logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
+
+            else:
+                logger.error(f"Error while loading data for selected recipe ID: {selected_id}")
         else:
             showinfo(title="Information", message=self.texts["no_recipe_to_load_data_into"])
             return

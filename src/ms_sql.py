@@ -311,3 +311,39 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
 
     else:
         logger.info("Error while trying to connect to opcua servers to clean data")
+
+
+async def check_recipe_data(selected_id):
+    """
+    Checks the data of the selected recipe. To se if ther is data in the database.
+    """
+    from .gui import get_database_connection
+
+    cursor, cnxn = get_database_connection()
+
+    try:
+
+        query = """
+        SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+        FROM [RecipeDB].[dbo].[viewValues]
+        WHERE RecipeID = ?
+        """
+
+        params = (selected_id,)
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        if not rows:
+            logger.info("No recipe data found")
+            return False
+
+        for row in rows:
+            if None in row:
+                logger.warning(f"One or more fields are None in row: {row}")
+                return False
+
+        return True
+
+    except Exception as exception:
+        logger.error(exception)
+        return False

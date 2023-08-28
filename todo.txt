@@ -1,9 +1,22 @@
 * Komihåg att lägga till så fort man klickar bort recipie editor att lägga in den nya datan inte bara i opcua även i SQL.
+(dubbel kolla, ska väl bara lägga i sql inte i opcua??)
 
 * Kolla in varför programmet inte avslutas korrekt som man subscribar på alarm på opcua servern (verkar frf subba när gui är stängt)
 
 * Kolla in vrf den ibland försöker koppla sig till OPCUA massa gånger och krashar
 
-* Kolla in om man ska ha opcua alarmen i databasen (log fil är svårt att blädra genom)
+* Kolla in om man ska ha opcua alarmen i databasen (log fil är svårt att blädra genom) (hjälp från tobias med sql)
 
 * Sätt upp en windows task sceduler för logger som tar bort gammla logs
+
+* Gör en popup så att man confirmar att man vill köra in nya steg data till PLCs så man inte får hjärtattack att man råkat trycka på den,
+och så är det en extra check att man kollar att man inte producerat nått (köra data medans den kör it not very good)
+
+* Kolla in monitor api (möte med dom vecka 35)
+
+* Få en exe att funka
+
+* Dela func blocken i mindre delar och lägg dom i rätt .py
+
+* Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
+
