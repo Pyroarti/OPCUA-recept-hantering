@@ -225,9 +225,10 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             selected_structure_id = self.treeview_select_structure.item(selected_structure_item, "values")[0]
 
             self.app_instance.submit_new_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id)
+            self.destroy()
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
-            self.destroy()
+            
             return
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
@@ -945,6 +946,8 @@ class App(customtkinter.CTk):
                                                             RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
                                                             status_text))
                 logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
+                self.recipes_page()
+                self.show_page("recipes_page")
 
             else:
                 logger.error(f"Error while loading data for selected recipe ID: {selected_id}")
