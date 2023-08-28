@@ -261,14 +261,6 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
                                                     placeholder_text=recipeComment)
         self.comment_entry.pack()
 
-        self.submit_button = customtkinter.CTkButton(self,
-                                                     text=self.texts['update_recipe_submit'],
-                                                     command=self.check_struct,
-                                                     width=200,
-                                                     height=40,
-                                                     font=("Helvetica", 18))
-        self.submit_button.pack(pady=10)
-
         recipe_struct_mapping = {2: "Master & SMC1 & SMC2", 4: "Master & SMC1", 5: "Master & SMC2"}
         id_mapping = {}
 
@@ -283,6 +275,14 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("#0", text="", anchor="w")
         self.treeview_select_structure.heading("id", text="Structure", anchor="w")
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
+
+        self.submit_button = customtkinter.CTkButton(self,
+                                                     text=self.texts['update_recipe_submit'],
+                                                     command=self.check_struct,
+                                                     width=200,
+                                                     height=40,
+                                                     font=("Helvetica", 18))
+        self.submit_button.pack(pady=10)
 
         cursor, cnxn = get_database_connection()
         try:
