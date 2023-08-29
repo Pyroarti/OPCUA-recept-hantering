@@ -11,6 +11,7 @@ from .create_log import setup_logger
 from .opcua_client import get_servo_steps, connect_opcua, write_tag
 
 
+
 logger = setup_logger('ms_sql')
 
 async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
@@ -27,12 +28,14 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     ip_address_list = []
     unit_ids_list = []
     data_origin_list = []
+    
+    recipe_lengths_per_unit = {}
 
     struct_data_rows = await get_recipe_structures_map()
 
     # Fetching unit information based on the structure id
     for row in struct_data_rows:
-        unit_id, structure_id ,data_origin, url = row
+        unit_id, unit_name, structure_id ,data_origin, url = row
         if structure_id == recipe_structure_id:
             unit_ids_list.append(unit_id)
             ip_address_list.append(url)
@@ -45,7 +48,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     else:
         logger.error("Failed to establish a database connection")
         showinfo(title="Info", message= texts["error_with_database"])
-        return
+        return None
 
     # Define the stored procedure and parameter names
     stored_procedure_name = 'add_value'
@@ -64,7 +67,23 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
         if data_place == 'ns=3;s="StepData"."RunningSteps"."Steps"':
             steps = await get_servo_steps(adresses, data_place)
+            
             if steps:
+                try:
+                    recipe_length = (len(steps))
+                except TypeError:
+                    recipe_length = (0 + unit_id_to_get)
+                    
+                if unit_id_to_get == 1:
+                    unitname = "SMC1"
+                elif unit_id_to_get == 2:
+                    unitname = "SMC2"
+                elif unit_id_to_get == 3:
+                    unitname = "Master"
+                else:
+                    unitname = f"Unknown unit {unit_id_to_get}"
+                    
+                recipe_lengths_per_unit[unitname] = recipe_length
 
                 for step in steps:
                     logger.info(step)
@@ -127,12 +146,25 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     cnxn.close()
 
     if all_units_processed_successfully:
+        #showinfo(title='Information',
+        #         message=texts["show_info_from_all_units_processed_successfully"] + (recipe_lenght))
+        
+        message_detail = f"SMC1 Steg: {recipe_lengths_per_unit.get('SMC1', 'N/A')}, SMC2 Steg: {recipe_lengths_per_unit.get('SMC2', 'N/A')}"
         showinfo(title='Information',
-                 message=texts["show_info_from_all_units_processed_successfully"])
+             message=texts["show_info_from_all_units_processed_successfully"],
+             detail=message_detail)
+        
+        
+        logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
+        
+        recipe_checked = (check_recipe_data(selected_id))
+        return recipe_checked
+
     else:
         logger.error("Problem with loading data to sql")
         showinfo(title='Information',
                  message=texts["show_info_from_all_units_processed_not_successfully"])
+        return None
 
 
 async def from_sql_to_units_stepdata(step_data, texts, selected_name):
@@ -250,10 +282,11 @@ async def get_units():
     cnxn.close()
 
     if units:
-        logger.info(f"Fetched {units} units from the database")
+        return units
+
     else:
         logger.warning("No units were fetched from the database")
-    return units
+        return None
 
 
 async def get_recipe_structures_map():
@@ -268,7 +301,7 @@ async def get_recipe_structures_map():
 
     cursor, cnxn = get_database_connection()
 
-    cursor.execute('SELECT Unit_Id, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
+    cursor.execute('SELECT Unit_Id,UnitName, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
 
     struct_data = cursor.fetchall()
 
@@ -334,7 +367,6 @@ def check_recipe_data(selected_id):
         rows = cursor.fetchall()
 
         if not rows:
-            logger.info("No recipe data found")
             return False
 
         for row in rows:

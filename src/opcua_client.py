@@ -171,6 +171,7 @@ async def find_node_by_tag_name(node: Node, tag_name):
     # Tag name not found in current node or its children
     return None
 
+
 async def write_tag(client: Client, tag_name, tag_value):
     """
     Write a value to a specific tag within the client.
@@ -316,6 +317,7 @@ async def data_to_webserver():
     encrypted_password = opcua_config["password"]
 
     client:Client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
+
     if client is not None:
 
         try:

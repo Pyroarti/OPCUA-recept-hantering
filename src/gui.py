@@ -3,9 +3,9 @@ from pathlib import Path
 from tkinter import ttk
 from datetime import datetime
 import asyncio
-from threading import Thread
+from threading import Thread, Event
 from queue import Queue
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo, askyesno
 import os
 import webbrowser
 import markdown
@@ -17,6 +17,7 @@ import customtkinter
 from customtkinter import CTkImage
 from PIL import Image
 import pyodbc
+import time
 
 # Own package
 from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data
@@ -25,6 +26,7 @@ from .create_log import setup_logger
 from .ip_checker import check_ip
 from .opcua_alarm import monitor_alarms
 from .webserver import main_webserver
+
 
 # Setup logger for gui.py
 logger = setup_logger('gui')
@@ -101,6 +103,7 @@ def run_asyncio_loop(queue):
                 break
             task = loop.create_task(coro)
             loop.run_until_complete(task)
+            print(task)
 
     finally:
         loop.run_until_complete(asyncio.gather(*asyncio.all_tasks(loop)))
@@ -238,7 +241,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         self.resizable(False, False)
         self.app_instance = app_instance
         self.texts = texts
-        self.title("Recipe editor")
+        self.title("")
         pop_up_width = 400
         pop_up_height = 450
         position_x = 900
@@ -644,12 +647,19 @@ class App(customtkinter.CTk):
         self.make_recipe_button.pack(pady=10)
 
 
-        self.update_submit_button = customtkinter.CTkButton(right_frame, text=self.texts['update_recipe_submit'],
+        self.update_submit_button = customtkinter.CTkButton(right_frame, text=self.texts['update_recipe'],
                                                             command=self.open_update_recipe_window,
                                                             width=350,
                                                             height=60,
                                                             font=("Helvetica", 18))
         self.update_submit_button.pack(pady=10)
+        
+        self.delete_selected_row_button = customtkinter.CTkButton(right_frame, text=self.texts["delete_the_selected_recipe_button"],
+                                                                  command=self.delete_recipe,
+                                                                  width=350,
+                                                                  height=45,
+                                                                  font=("Helvetica", 18))
+        self.delete_selected_row_button.pack(pady=(15,0))
 
 
         self.load_data_in_selected_recipe_button = customtkinter.CTkButton(right_frame,
@@ -666,21 +676,16 @@ class App(customtkinter.CTk):
                                                                    width=350,
                                                                    height=45,
                                                                    font=("Helvetica", 18))
-        self.use_selected_recipe_button.pack(pady=(15,0))
+        self.use_selected_recipe_button.pack(pady=(20,0))
 
         self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["edit_the_selected_recipe_button"],
                                                                   command=self.edit_recipe,
                                                                   width=350,
                                                                   height=45,
                                                                   font=("Helvetica", 18))
-        self.edit_selected_recipe_button.pack(pady=(15,0))
+        self.edit_selected_recipe_button.pack(pady=(20,0))
 
-        self.delete_selected_row_button = customtkinter.CTkButton(right_frame, text=self.texts["delete_the_selected_recipe_button"],
-                                                                  command=self.delete_recipe,
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
-        self.delete_selected_row_button.pack(pady=(15,0))
+
 
         #self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
         #                                                          command=self.archive_selected_recipe,
@@ -713,7 +718,7 @@ class App(customtkinter.CTk):
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
             has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = 'Ja' if has_recipe_data else 'Nej'
+            status_text = '' if has_recipe_data else 'Tomt'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
                                                     RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
@@ -886,6 +891,7 @@ class App(customtkinter.CTk):
 
         return logs_treeview, add_logs_to_datagrid
 
+
     async def achnowledge_alarm(self):
         from .opcua_client import connect_opcua
 
@@ -904,6 +910,9 @@ class App(customtkinter.CTk):
     def load_data_in_selected_recipe(self):
         """Called with a button takes the servo steps from OPCUA server and
         puts them into the selected recipe in the SQL"""
+        
+        if not askyesno(message=self.texts["yes_no_mesg_box_save_data_to_recipe"]):
+            return
 
         try:
 
@@ -927,33 +936,13 @@ class App(customtkinter.CTk):
 
         if selected_id:
 
-            self.units = self.async_queue.put(from_units_to_sql_stepdata(selected_id, self.texts,recipe_structure_id))
-            recipe_checked = (check_recipe_data(selected_id))
+            loading_ok = self.async_queue.put((from_units_to_sql_stepdata(selected_id, self.texts, recipe_structure_id)))
 
-            if recipe_checked:
-                current_values = list(self.treeview.item(selected_item, 'values'))
-                current_values[5] = "Ja"
-                self.treeview.item(selected_item, values=current_values)
-                for item in self.treeview.get_children():
-                    self.treeview.delete(item)
-
-                for row in rows:
-                    recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
-                    has_recipe_data = (check_recipe_data(recipe_id))
-                    status_text = 'Ja' if has_recipe_data else 'Nej'
-                    self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                            RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
-                                                            RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
-                                                            status_text))
-                logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
-                self.recipes_page()
-                self.show_page("recipes_page")
-
-            else:
-                logger.error(f"Error while loading data for selected recipe ID: {selected_id}")
         else:
             showinfo(title="Information", message=self.texts["no_recipe_to_load_data_into"])
+            logger.error(f"Error while loading data for selected recipe ID: {selected_id}")
             return
+
 
     def archive_selected_recipe(self):
         """archive the seleected recipe"""
@@ -995,9 +984,16 @@ class App(customtkinter.CTk):
     def use_selected_recipe(self):
         """Puts the selected recipe in the units stepdata"""
 
-        selected_item = self.treeview.selection()[0]
-        selected_id = self.treeview.item(selected_item, 'values')[0]
-        selected_name = self.treeview.item(selected_item, 'values')[1]
+        if not askyesno(message=self.texts["yes_no_mesg_box_load_data_to_robot_cell"]):
+            return
+        try:
+            selected_item = self.treeview.selection()[0]
+            selected_id = self.treeview.item(selected_item, 'values')[0]
+            selected_name = self.treeview.item(selected_item, 'values')[1]
+
+        except IndexError as e:
+            showinfo(title="Information", message=self.texts["show_info_error_loading_recipe"])
+            logger.info(e)
 
         cursor, cnxn = get_database_connection()
         step_query = "SELECT * FROM ViewValues WHERE RecipeID = ?"
@@ -1022,12 +1018,14 @@ class App(customtkinter.CTk):
 
     def delete_recipe(self):
         """Called with a button delete a recipe from the datagrid and the SQL"""
-
-        selected_item = self.treeview.selection()[0]
-        selected_id = self.treeview.item(selected_item, 'values')[0]
-        cursor, cnxn = get_database_connection()
+        
+        if not askyesno(message=self.texts["yes_no_mesg_box_delete_recipe"]):
+            return
 
         try:
+            selected_item = self.treeview.selection()[0]
+            selected_id = self.treeview.item(selected_item, 'values')[0]
+            cursor, cnxn = get_database_connection()
             cursor.execute("DELETE FROM [RecipeDB].[dbo].[tblRecipe] WHERE id = ?", (selected_id,))
             cnxn.commit()
             self.treeview.delete(selected_item)
@@ -1038,6 +1036,7 @@ class App(customtkinter.CTk):
 
         except IndexError:
             showinfo(title='Information', message=self.texts["show_info_submit_new_recipe_error"])
+
 
     def submit_new_recipe(self, name, comment, selected_structure_id):
         """Called with a button adds a new recipe to the datagrid and SQL"""
@@ -1084,7 +1083,7 @@ class App(customtkinter.CTk):
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
             has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = 'Ja' if has_recipe_data else 'Nej'
+            status_text = '' if has_recipe_data else 'Tomt'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
                                                     RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
@@ -1136,7 +1135,7 @@ class App(customtkinter.CTk):
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
             has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = 'Ja' if has_recipe_data else 'Nej'
+            status_text = '' if has_recipe_data else 'Tomt'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
                                                     RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
@@ -1322,6 +1321,7 @@ def main():
     async_queue.put(None)
     async_thread.join()
 
+
     # Start the alarm monitor
-    monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
-    monitor_alarms_thread.start()
+    #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
+    #monitor_alarms_thread.start()
