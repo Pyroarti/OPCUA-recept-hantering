@@ -56,6 +56,7 @@
 
     "change_value_box_tag_value" : "Tag value",
     "change_value_box_submit" : "Submit",
+    "changin_value_info" : "OBS if a value is a decimal number \\n use a dot (.) as decimal separator",
 
     "show_info_archive_selected_recipe_error" : "Please select a recipe to archive",
     "show_info_use_selected_recipe_error" : "The selected recipe contains no data",
@@ -82,6 +83,7 @@
     "error_deleting_recipe" : "Select a recipe to delete",
     "error_with_database" : "There was a error with the database, check the logs for more information",
     "show_info_opcua_connection_error" : "Could not connect to the OPCUA server, check the logs for more information",
+    "show_info_db_missing_values" : "The database is missing values, check the logs for more information",
 
     "yes_no_mesg_box_save_data_to_recipe" : "Do you want to save data to the recipe?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Do you want to load the data to the robotcell?",

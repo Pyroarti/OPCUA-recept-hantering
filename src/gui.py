@@ -20,7 +20,7 @@ import pyodbc
 import time
 
 # Own package
-from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data
+from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data, db_opcua_data_checker
 from .data_encrypt import DataEncrypt
 from .create_log import setup_logger
 from .ip_checker import check_ip
@@ -164,7 +164,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.title("Recipe maker")
         pop_up_width = 400
         pop_up_height = 450
-        position_x = 900
+        position_x = 600
         position_y = 400
         self.attributes('-topmost', True)
 
@@ -242,9 +242,11 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         self.app_instance = app_instance
         self.texts = texts
         self.title("")
+        self.recipe_name = recipeName
+        self.recipe_comment = recipeComment
         pop_up_width = 400
         pop_up_height = 450
-        position_x = 900
+        position_x = 600
         position_y = 400
         self.attributes('-topmost', True)
 
@@ -253,17 +255,17 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
                                                  font=("Helvetica", 16))
         self.name_label.pack()
         self.name_entry = customtkinter.CTkEntry(self,
-                                                 width=200,
-                                                 placeholder_text=recipeName)
+                                                 width=200)
         self.name_entry.pack()
+        self.name_entry.insert(0, self.recipe_name)
 
         self.comment_label = customtkinter.CTkLabel(self, text=self.texts['recipe_comment'],
                                                     font=("Helvetica", 16))
         self.comment_label.pack()
         self.comment_entry = customtkinter.CTkEntry(self,
-                                                    width=200,
-                                                    placeholder_text=recipeComment)
+                                                    width=200)
         self.comment_entry.pack()
+        self.comment_entry.insert(0, self.recipe_comment)
 
         recipe_struct_mapping = {2: "Master & SMC1 & SMC2", 4: "Master & SMC1", 5: "Master & SMC2"}
         id_mapping = {}
@@ -333,7 +335,6 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
             logger.warning('No structure selected by user')
-            self.destroy()
             return
 
 
@@ -417,13 +418,13 @@ class Edit_steps_window(customtkinter.CTkToplevel):
 
         edit_dialog = customtkinter.CTkToplevel(self)
         edit_dialog.title("Edit TagValue")
-        edit_dialog.geometry("200x100")
+        edit_dialog.geometry("400x150")
+        
+        info_label = customtkinter.CTkLabel(edit_dialog, text=self.texts['changin_value_info'],font=("Helvetica", 18))
+        info_label.pack(pady=5)
 
-        label = customtkinter.CTkLabel(edit_dialog, text="Tag värde:")
-        label.pack()
-
-        entry = customtkinter.CTkEntry(edit_dialog)
-        entry.pack()
+        entry = customtkinter.CTkEntry(edit_dialog, width = 170, height = 32, font=("Helvetica", 15))
+        entry.pack(pady=5)
         entry.insert(0, tag_value)
 
 
@@ -455,7 +456,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
             cursor.close()
             cnxn.close()
 
-        save_button = customtkinter.CTkButton(edit_dialog, text="Spara", command=save_changes)
+        save_button = customtkinter.CTkButton(edit_dialog, text="Spara",width=160,height=35, command=save_changes)
         save_button.pack()
 
 
@@ -509,7 +510,7 @@ class App(customtkinter.CTk):
 
         self.async_queue: Queue = async_queue
 
-        #self.attributes("-fullscreen", True)
+        self.attributes("-fullscreen", True)
 
         self.title("LMT recept hantering")
 
@@ -686,6 +687,14 @@ class App(customtkinter.CTk):
         self.edit_selected_recipe_button.pack(pady=(20,0))
 
 
+        #TA BORT TA BORT
+        self.TEMP_TA_BORT_button = customtkinter.CTkButton(right_frame, text="Cheka db emot opcua recept testerDB",
+                                                                  command=self.dbcheckeropcuaTEMP,
+                                                                  width=350,
+                                                                  height=45,
+                                                                  font=("Helvetica", 18))
+        self.TEMP_TA_BORT_button.pack(pady=(50,0))
+
 
         #self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
         #                                                          command=self.archive_selected_recipe,
@@ -717,7 +726,7 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
-            has_recipe_data = (check_recipe_data(recipe_id))
+            has_recipe_data = (check_recipe_data(recipe_id,self.texts))
             status_text = '' if has_recipe_data else 'Tomt'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
@@ -868,7 +877,7 @@ class App(customtkinter.CTk):
         logs_treeview.pack(padx=10, pady=10, expand=True, fill="y",anchor="w")
 
         vsb = ttk.Scrollbar(parent, orient="vertical", command=logs_treeview.yview)
-        vsb.place(x=30+2110+2, y=95, height=1170+20)
+        vsb.place(x=30+2120+2, y=95, height=1240+20)
 
         logs_treeview.configure(yscrollcommand=vsb.set)
 
@@ -1302,6 +1311,13 @@ class App(customtkinter.CTk):
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
+
+        
+    def dbcheckeropcuaTEMP(self):
+        selected_id_item = self.treeview.selection()[0]
+        selected_id = self.treeview.item(selected_id_item, 'values')[0]
+        self.async_queue.put((db_opcua_data_checker(selected_id)))
+
 
 
 def main():

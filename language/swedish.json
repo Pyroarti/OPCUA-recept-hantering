@@ -57,6 +57,7 @@
 
     "change_value_box_tag_value" : "Taggvärde",
     "change_value_box_submit" : "Skicka",
+    "changin_value_info" : "OBS se till att om värdet innehåller decimaler \n så används punkt som decimaltecken",
 
     "show_info_archive_selected_recipe_error" : "Vänligen välj ett recept att arkivera",
     "show_info_use_selected_recipe_error" : "Det valda receptet innehåller ingen data",
@@ -83,6 +84,7 @@
     "error_deleting_recipe" : "Välj ett recept att radera",
     "error_with_database" : "Det var ett fel med databasen, kolla loggen för mer information",
     "show_info_opcua_connection_error" : "Kunde inte ansluta till OPC UA servern, kolla loggen för mer information",
+    "show_info_db_missing_values" : "Databasen saknar värden, kolla loggen för mer information",
 
     "yes_no_mesg_box_save_data_to_recipe" : "Vill du spara data till receptet?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Vill du ladda ner datat till robotcellen?",

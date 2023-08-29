@@ -157,7 +157,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         
         logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
         
-        recipe_checked = (check_recipe_data(selected_id))
+        recipe_checked = (check_recipe_data(selected_id,texts))
         return recipe_checked
 
     else:
@@ -346,9 +346,9 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
         logger.info("Error while trying to connect to opcua servers to clean data")
 
 
-def check_recipe_data(selected_id):
+def check_recipe_data(selected_id,texts):
     """
-    Checks the data of the selected recipe. To se if ther is data in the database.
+    Checks the data of the selected recipe. To see if there is data in the database.
     """
     from .gui import get_database_connection
 
@@ -379,3 +379,74 @@ def check_recipe_data(selected_id):
     except Exception as exception:
         logger.error(exception)
         return False
+
+
+async def db_opcua_data_checker(recipe_id):
+    """
+    Checks the step data in the database and compares it with the OPCUA data.
+    
+    Parameters:
+        recipe_id: The Recipe ID used for querying the SQL database.
+
+    Returns:
+        True if data is the same in both places, False otherwise.
+    """
+    from .gui import get_database_connection
+
+    cursor, cnxn = get_database_connection()
+
+    servo_steps = await get_servo_steps("opc.tcp://192.168.187.11:4840",'ns=3;s="StepData"."RunningSteps"."Steps"')
+
+    opcua_results = {}
+
+    for key1, inner_dict in servo_steps.items():
+        for key2, info_dict in inner_dict.items():
+            node_obj = info_dict['Node']
+            node_id = node_obj.nodeid
+            identifier = node_id.Identifier 
+            value = str(info_dict['Value'])
+            opcua_results[identifier] = value
+
+    try:
+        query = """
+        SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType]
+        FROM [RecipeDB].[dbo].[viewValues]
+        WHERE RecipeID = ?
+        """
+        params = (recipe_id,)
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        db_results = {}
+        if not rows:
+            return False
+
+        for row in rows:
+            if None in row:
+                logger.warning(f"One or more fields are None in row: {row}")
+                return False
+
+            unit_id, tag_name, tag_value, tag_datatype = row
+            db_results[tag_name] = tag_value
+
+        for tag_name, tag_value in db_results.items():
+            opcua_tag_value = opcua_results.get(tag_name, None)
+            if opcua_tag_value is None:
+                logger.warning(f"{tag_name} exists in database but not in OPCUA")
+            elif tag_value != opcua_tag_value:
+                logger.warning(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+            else:
+                logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
+
+        return True
+
+    except Exception as exception:
+        logger.error(exception)
+        return False
+
+    finally:
+        cnxn.close()
+
+    
+    
+    

@@ -18,3 +18,7 @@
 * Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
 
 * Ta med en recept spardat datum som skickar till databasen
+
+* Skriv bättre docs for nya func
+
+* Ta bort att kolla på active så vi hämtar upp alla steg
