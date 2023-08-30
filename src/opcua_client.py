@@ -124,31 +124,31 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
         logger.info("Successfully connected to OPC UA server.")
 
     except ua.uaerrors.BadUserAccessDenied as exeption:
-        logger.error(f"BadUserAccessDenied: {exeption}")
+        logger.warning(f"BadUserAccessDenied: {exeption}")
         return None
 
     except ua.uaerrors.BadSessionNotActivated as exeption:
-        logger.error(f"Session activation error: {exeption}")
+        logger.warning(f"Session activation error: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenRejected as exeption:
-        logger.error(f"Identity token rejected. Check username and password.: {exeption}")
+        logger.warning(f"Identity token rejected. Check username and password.: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenInvalid as exeption:
-        logger.error(f"Bad Identity token invalid. Check username and password.: {exeption}")
+        logger.warning(f"Bad Identity token invalid. Check username and password.: {exeption}")
         return None
 
     except ConnectionError as exeption:
-        logger.error(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
+        logger.warning(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
         return None
 
     except ua.UaError as exeption:
-        logger.error(f"General OPCUA error {exeption}")
+        logger.warning(f"General OPCUA error {exeption}")
         return None
 
     except Exception as exeption:
-        logger.error(f"Error in connection: {exeption} Type: {type(exeption)}")
+        logger.warning(f"Error in connection: {exeption} Type: {type(exeption)}")
         return None
 
     return client
@@ -190,7 +190,7 @@ async def write_tag(client: Client, tag_name, tag_value):
         logger.info(f"Writing value {tag_value} to tag {tag_name} from {node_id},{node}")
 
     except Exception as exeption:
-        logger.error(exeption)
+        logger.warning(exeption)
         return None
 
     # Write the value to the node
@@ -231,7 +231,7 @@ async def write_tag(client: Client, tag_name, tag_value):
             result = "Tag found but no correct tag value"
         except Exception as exeption:
             fault = True
-            logger.error(f"Error converting data type to ua.Variant",{exeption})
+            logger.warning(f"Error converting data type to ua.Variant",{exeption})
 
         if data_value is not None:
 
@@ -241,7 +241,7 @@ async def write_tag(client: Client, tag_name, tag_value):
                 logger.info(f"Successfully wrote value to tag: {tag_name},{tag_value}.")
             except Exception as exeption:
                 fault = True
-                logger.error(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
+                logger.warning(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
 
     return result, fault
 
@@ -287,16 +287,16 @@ async def get_servo_steps(ip_address, data_origin):
             return None
 
         except AttributeError as exeption:
-            logger.error(f"AttributeError:{exeption}")
+            logger.warning(f"AttributeError:{exeption}")
 
         except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.error(f"BadNoMatch. Ingen matchande variable:{exeption}")
+            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
 
         except TimeoutError as exeption:
-            logger.error(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
+            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
 
         except Exception as exeption:
-            logger.error(f"Error getting values: {str(exeption)},{type(exeption)}")
+            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
 
 
 async def data_to_webserver():
@@ -336,16 +336,16 @@ async def data_to_webserver():
             return produced_value, to_do_value
 
         except AttributeError as exeption:
-            logger.error(f"AttributeError:{exeption}")
+            logger.warning(f"AttributeError:{exeption}")
 
         except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.error(f"BadNoMatch. Ingen matchande variable:{exeption}")
+            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
 
         except TimeoutError as exeption:
-            logger.error(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
+            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
 
         except Exception as exeption:
-            logger.error(f"Error getting values: {str(exeption)},{type(exeption)}")
+            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
             return
 
 
@@ -399,4 +399,4 @@ async def get_opcua_value(adress, data_place):
             return True, value, data_type
 
         except Exception as exeption:
-            logger.info(exeption)
+            logger.warning(exeption)

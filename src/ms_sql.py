@@ -46,7 +46,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     if cursor and cnxn:
         logger.info("Database connection established")
     else:
-        logger.error("Failed to establish a database connection")
+        logger.warning("Failed to establish a database connection")
         showinfo(title="Info", message= texts["error_with_database"])
         return None
 
@@ -102,7 +102,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                                     @{recipe_id_param_name}={recipe_id},\
                                     @{unit_id_param_name}={unit_id_to_get};")
                         except Exception as exception:
-                            logger.error(exception)
+                            logger.warning(exception)
                             all_units_processed_successfully = False
 
             else:
@@ -136,10 +136,10 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                         @{tag_name_param_name}='{data_place}', \
                         @{tag_value_param_name}={opcua_value}, \
                         @{tag_datatype_param_name}={datatype}, \
-                        @{recipe_id_param_name}={recipe_id},\
+                        @{recipe_id_param_name}={selected_id},\
                         @{unit_id_param_name}={unit_id_to_get};")
             except Exception as exception:
-                logger.error(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
+                logger.warning(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
                 all_units_processed_successfully = False
 
     cnxn.commit()
@@ -169,7 +169,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         return recipe_checked
 
     else:
-        logger.error("Problem with loading data to sql")
+        logger.warning("Problem with loading data to sql")
         showinfo(title='Information',
                  message=texts["show_info_from_all_units_processed_not_successfully"])
         return None
@@ -214,7 +214,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
                 logger.info(f"Connected to OPCUA server at {address}")
                 showinfo(title="Info", message=texts["show_info_opcua_connection_error"] + address)
             else:
-                logger.error(f"Failed to connect to OPCUA server at {address}")
+                logger.warning(f"Failed to connect to OPCUA server at {address}")
                 continue
 
             output_path = Path(__file__).parent.parent
@@ -266,7 +266,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
     if all_units_processed_successfully and not fault :
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_successfully"])
     else:
-        logger.error("Problem with loading data to units")
+        logger.warning("Problem with loading data to units")
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_not_successfully"])
 
     return all_units_processed_successfully
@@ -348,10 +348,10 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
 
             return fault
         except Exception as exception:
-            logger.info(exception)
+            logger.warning(exception)
 
     else:
-        logger.info("Error while trying to connect to opcua servers to clean data")
+        logger.warning("Error while trying to connect to opcua servers to clean data")
 
 
 def check_recipe_data(selected_id):
@@ -385,7 +385,7 @@ def check_recipe_data(selected_id):
         return True
 
     except Exception as exception:
-        logger.error(exception)
+        logger.warning(exception)
         return False
 
 
@@ -437,7 +437,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
                 rows = cursor.fetchall()
 
             except Exception as exception:
-                logger.error(exception)
+                logger.warning(exception)
                 return False
 
         elif structure_id == recipe_structure_id and unit_name == "Master":
@@ -507,5 +507,5 @@ async def update_recipe_last_saved(recipe_id):
         return True
     
     except Exception as exception:
-        logger.error(exception)
+        logger.warning(exception)
         return False
