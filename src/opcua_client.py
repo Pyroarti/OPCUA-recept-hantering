@@ -191,6 +191,7 @@ async def write_tag(client: Client, tag_name, tag_value):
 
     except Exception as exeption:
         logger.warning(exeption)
+        await client.disconnect()
         return None
 
     # Write the value to the node
@@ -230,6 +231,7 @@ async def write_tag(client: Client, tag_name, tag_value):
 
             result = "Tag found but no correct tag value"
         except Exception as exeption:
+            await client.disconnect()
             fault = True
             logger.warning(f"Error converting data type to ua.Variant",{exeption})
 
@@ -241,6 +243,7 @@ async def write_tag(client: Client, tag_name, tag_value):
                 logger.info(f"Successfully wrote value to tag: {tag_name},{tag_value}.")
             except Exception as exeption:
                 fault = True
+                await client.disconnect()
                 logger.warning(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
 
     return result, fault
@@ -396,7 +399,10 @@ async def get_opcua_value(adress, data_place):
             if data_type == ua.VariantType.String:
                 data_type = "String"
 
+            await client.disconnect()
+
             return True, value, data_type
 
         except Exception as exeption:
             logger.warning(exeption)
+            await client.disconnect()

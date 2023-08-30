@@ -1,8 +1,8 @@
 import json
 from tkinter.messagebox import showinfo
 from pathlib import Path
-from time import sleep
 import re
+import asyncio
 
 from asyncua import ua, Node, Client
 
@@ -146,10 +146,13 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     cnxn.close()
 
     if all_units_processed_successfully:
-        #showinfo(title='Information',
-        #         message=texts["show_info_from_all_units_processed_successfully"] + (recipe_lenght))
-        
-        message_detail = f"SMC1 Steg: {recipe_lengths_per_unit.get('SMC1', 'N/A')}, SMC2 Steg: {recipe_lengths_per_unit.get('SMC2', 'N/A')}"
+
+        message_detail = (
+            f"SMC1 Steg: {recipe_lengths_per_unit.get('SMC1', 'N/A')}\n"
+            f"SMC2 Steg: {recipe_lengths_per_unit.get('SMC2', 'N/A')}\n"
+            f"Tryck ok för att börja kontrollera alla steg i receptet."
+        ) 
+
         showinfo(title='Information',
              message=texts["show_info_from_all_units_processed_successfully"],
              detail=message_detail)
@@ -258,17 +261,21 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
                 continue
 
             await client.disconnect()
-            sleep(3)
 
         else:
             logger.info("There was a problem while wiping the data or so is the case for unit 3 (Master)")
+            await client.disconnect()
 
     if all_units_processed_successfully and not fault :
+        
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_successfully"])
+        await client.disconnect()
     else:
         logger.warning("Problem with loading data to units")
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_not_successfully"])
+        await client.disconnect()
 
+    await client.disconnect()
     return all_units_processed_successfully
 
 
@@ -336,7 +343,7 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
 
     """
 
-    client = await connect_opcua(address, encrypted_username, encrypted_password)
+    client:Client = await connect_opcua(address, encrypted_username, encrypted_password)
 
     if client:
         try:
@@ -344,7 +351,9 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
             opcua_adress = 'ns=3;s="Recipe_Handler"."External"."ClearRunningSteps"'
             succes_writing_name, fault = await write_tag(client, opcua_adress, True)
 
-            sleep(5)
+            await asyncio.sleep(2)
+
+            await client.disconnect()
 
             return fault
         except Exception as exception:

@@ -65,7 +65,6 @@ def get_database_connection(timeout_duration=10):
                     DATABASE={database};UID={username};PWD={password}',
                     timeout=timeout_duration)
         cursor = cnxn.cursor()
-        logger.info('Succesfully establishing database connection')
 
         return cursor, cnxn
 
@@ -93,7 +92,7 @@ def run_monitor_alarms_loop():
         loop.close()
 
 
-def run_asyncio_loop(queue):
+def run_asyncio_loop(queue,app_instance):
     loop = asyncio.new_event_loop()
 
     asyncio.set_event_loop(loop)
@@ -103,8 +102,10 @@ def run_asyncio_loop(queue):
             if coro is None:
                 break
             task = loop.create_task(coro)
+            app_instance.config(cursor="watch")
             loop.run_until_complete(task)
             print(task)
+            app_instance.config(cursor="arrow")
 
     finally:
         loop.run_until_complete(asyncio.gather(*asyncio.all_tasks(loop)))
@@ -528,6 +529,7 @@ class App(customtkinter.CTk):
 
         self.recipe_page_command()
 
+
     def create_header(self, parent, page_name, opcua_alarms):
         """
         Creates and returns a header frame for a given page.
@@ -711,6 +713,7 @@ class App(customtkinter.CTk):
         #self.edit_selected_recipe_button.pack(pady=(15,0))
 
         # Getting the data from SQL and putting it in the datagrid
+
         cursor, cnxn = get_database_connection()
 
         if cursor and cnxn:
@@ -1338,16 +1341,18 @@ class App(customtkinter.CTk):
 
 def main():
     """Main func to start the program"""
+    app = None
 
-    # Start the webserver
     main_webserver()
 
     # Start the tkinter app
     async_queue = Queue()
-    async_thread = Thread(target=run_asyncio_loop, args=(async_queue,), daemon=True)
+    
+    app = App(async_queue)  # <--- Initialize app here
+
+    async_thread = Thread(target=run_asyncio_loop, args=(async_queue,app,), daemon=True)
     async_thread.start()
 
-    app = App(async_queue)
     app.mainloop()
 
     async_queue.put(None)

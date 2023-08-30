@@ -30,9 +30,9 @@
     "new_recipe_name": "New name",
     "new_recipe_comment": "New comment",
     "update_recipe_submit": "Save",
-    "load_servo_steps_into_selected_recipe_button": "Save data to recipe",
-    "use_the_selected_recipe_button": "Load recipe to robot cell",
-    "delete_the_selected_recipe_button": "Delete recipe",
+    "load_servo_steps_into_selected_recipe_button": "Save data to recipe...",
+    "use_the_selected_recipe_button": "Load recipe to robot cell...",
+    "delete_the_selected_recipe_button": "Delete recipe...",
     "edit_the_selected_recipe_button": "Edit recipe data...",
     "archive_the_selected_recipe_button": "Archive recipe",
 

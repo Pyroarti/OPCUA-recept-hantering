@@ -14,6 +14,7 @@ from .data_encrypt import DataEncrypt
 
 produced_global = 0
 to_do_global = 0
+estimated_time_remaining_global = 0
 
 logger = setup_logger('webserver')
 
@@ -64,7 +65,7 @@ def get_data():
     Fetches data from the database and runs an asynchronous task to retrieve additional data.
     Returns the response as JSON.
     """
-    global produced_global, to_do_global
+    global produced_global, to_do_global, estimated_time_remaining_global 
 
     produced = None
     to_do = None
@@ -92,7 +93,12 @@ def get_data():
             produced, to_do = result
             produced_global = produced
             to_do_global = to_do
-            response = json.dumps({"produced": produced, "to_do": to_do, "name": active_recipe_name})
+            response = json.dumps({
+            "produced": produced,
+            "to_do": to_do,
+            "name": active_recipe_name,
+            "estimated_time": estimated_time_remaining_global
+            })
             headers = {"Content-Type": "application/json"}
         except TypeError as exeption:
             logger.warning("Error occurred", exeption)
@@ -105,7 +111,7 @@ def get_data():
 
 
 def calculate_time_to_produce():
-    global produced_global, to_do_global
+    global produced_global, to_do_global, estimated_time_remaining_global
 
     timestamps = []
     counts = []
@@ -118,24 +124,26 @@ def calculate_time_to_produce():
         timestamps.append(current_time)
         counts.append(produced)
 
-        if len(timestamps) > 10 and max(counts) > 1:
-            time_diff = timestamps[-1] - timestamps[0]
-            count_diff = counts[-1] - counts[0]
+        if len(timestamps) > 2 and max(counts) > 1:
+            try:
+                time_diff = timestamps[-1] - timestamps[0]
+                count_diff = counts[-1] - counts[0]
 
-            avg_time_per_item = time_diff / count_diff
-            remaining_items = to_do - produced
-            estimated_time_remaining = avg_time_per_item * remaining_items
+                avg_time_per_item = time_diff / count_diff
+                remaining_items = to_do - produced
+                estimated_time_remaining = avg_time_per_item * remaining_items
 
-            estimated_time_remaining = int(estimated_time_remaining)
+                estimated_time_remaining_global = round(estimated_time_remaining / 60)
+                print(f"Uppskattad tid kvar: {estimated_time_remaining_global} minuter")
+                print(f"{avg_time_per_item} avrage tid per item")
 
-            estimated_time_remaining = int(estimated_time_remaining / 60)
-
-            print(f"Uppskattad tid kvar: {estimated_time_remaining} minuter")
-
-            timestamps.pop(0)
-            counts.pop(0)
-
-        time.sleep(5) 
+                if len(timestamps) > 10:
+                    timestamps.pop(0)
+                    counts.pop(0)
+            
+            except ZeroDivisionError:
+                pass
+        time.sleep(5)
 
 
 def run_server():

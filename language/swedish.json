@@ -31,9 +31,9 @@
     "new_recipe_name": "Nytt namn",
     "new_recipe_comment": "Ny kommentar",
     "update_recipe_submit": "Spara",
-    "load_servo_steps_into_selected_recipe_button": "Spara data till recept",
-    "use_the_selected_recipe_button": "Ladda recept till robotcell",
-    "delete_the_selected_recipe_button": "Ta bort det valda receptet",
+    "load_servo_steps_into_selected_recipe_button": "Spara data till recept...",
+    "use_the_selected_recipe_button": "Ladda recept till robotcell...",
+    "delete_the_selected_recipe_button": "Ta bort det valda receptet...",
     "edit_the_selected_recipe_button": "Redigera data i recept...",
     "archive_the_selected_recipe_button": "Arkivera recept",
 
