@@ -689,7 +689,7 @@ class App(customtkinter.CTk):
 
         #TA BORT TA BORT
         self.TEMP_TA_BORT_button = customtkinter.CTkButton(right_frame, text="Cheka db emot opcua recept testerDB",
-                                                                  command=self.dbcheckeropcuaTEMP,
+                                                                  command=dbcheckeropcuaTEMP,
                                                                   width=350,
                                                                   height=45,
                                                                   font=("Helvetica", 18))
@@ -726,7 +726,7 @@ class App(customtkinter.CTk):
 
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
-            has_recipe_data = (check_recipe_data(recipe_id,self.texts))
+            has_recipe_data = (check_recipe_data(recipe_id))
             status_text = '' if has_recipe_data else 'Tomt'
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
@@ -1312,12 +1312,11 @@ class App(customtkinter.CTk):
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
 
-        
-    def dbcheckeropcuaTEMP(self):
-        selected_id_item = self.treeview.selection()[0]
-        selected_id = self.treeview.item(selected_id_item, 'values')[0]
-        self.async_queue.put((db_opcua_data_checker(selected_id)))
-
+# Lägger den utanför classen för att hantera async (fixa den en vacker dag)
+def dbcheckeropcuaTEMP(app_instance):
+    selected_id_item = app_instance.treeview.selection()[0]
+    selected_id = app_instance.treeview.item(selected_id_item, 'values')[0]
+    app_instance.async_queue.put(db_opcua_data_checker(selected_id))
 
 
 def main():

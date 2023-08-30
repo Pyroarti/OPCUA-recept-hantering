@@ -1,6 +1,5 @@
 import json
 import threading
-import webbrowser
 import asyncio
 from flask import Flask, request, render_template
 from flask_cors import CORS
@@ -145,8 +144,6 @@ def main_webserver():
     server_thread = threading.Thread(target=run_server)
     server_thread.daemon = True
     server_thread.start()
-
-    webbrowser.open(url)
 
 
 if __name__ == "__main__":
