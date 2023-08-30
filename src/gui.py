@@ -618,14 +618,15 @@ class App(customtkinter.CTk):
         self.treeview = ttk.Treeview(recipes_page,selectmode="browse", style="Treeview")
         self.treeview.pack(expand=True, fill='both', side="left")
         self.treeview["columns"] = ("id", "RecipeName", "RecipeComment",
-                                    "RecipeCreated", "RecipeUpdated", "RecipeStatus")
+                                    "RecipeCreated", "RecipeUpdated","RecipeLastSaved", "RecipeStatus")
 
         self.treeview.column("#0", width=0, stretch=False)
         self.treeview.column("id", width=0, stretch=False)
-        self.treeview.column("RecipeName", width=700, stretch=False)
-        self.treeview.column("RecipeComment", width=700, stretch=False)
-        self.treeview.column("RecipeCreated", width=300, stretch=False)
+        self.treeview.column("RecipeName", width=500, stretch=False)
+        self.treeview.column("RecipeComment", width=600, stretch=False)
+        self.treeview.column("RecipeCreated", width=200, stretch=False)
         self.treeview.column("RecipeUpdated", width=200, stretch=False)
+        self.treeview.column("RecipeLastSaved", width=200, stretch=False)
         self.treeview.column("RecipeStatus", width=90, stretch=False)
 
         self.treeview.heading("#0", text="", anchor="w")
@@ -634,6 +635,7 @@ class App(customtkinter.CTk):
         self.treeview.heading("RecipeComment", text=self.texts['recipe_datagrid_comment'], anchor="w")
         self.treeview.heading("RecipeCreated", text=self.texts['recipe_datagrid_created'], anchor="w")
         self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_modified'], anchor="w")
+        self.treeview.heading("RecipeLastSaved", text=self.texts['recipe_datagrid_last_saved'], anchor="w")
         self.treeview.heading("RecipeStatus", text=self.texts['recipe_datagrid_status'], anchor="w")
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
@@ -686,16 +688,6 @@ class App(customtkinter.CTk):
                                                                   font=("Helvetica", 18))
         self.edit_selected_recipe_button.pack(pady=(20,0))
 
-
-        #TA BORT TA BORT
-        self.TEMP_TA_BORT_button = customtkinter.CTkButton(right_frame, text="Cheka db emot opcua recept testerDB",
-                                                                  command=dbcheckeropcuaTEMP,
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
-        self.TEMP_TA_BORT_button.pack(pady=(50,0))
-
-
         #self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
         #                                                          command=self.archive_selected_recipe,
         #                                                          width=350,
@@ -714,7 +706,7 @@ class App(customtkinter.CTk):
             return
         try:
             cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
-                            [RecipeUpdated] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+                            [RecipeUpdated], [RecipeLastDataSaved] FROM [RecipeDB].[dbo].[viewRecipesActive]')
         except Exception as exeption:
             logger.error(f"Error while executing SELECT TOP: {exeption}")
             return
@@ -725,12 +717,14 @@ class App(customtkinter.CTk):
         cnxn.close()
 
         for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated = row
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved = row
             has_recipe_data = (check_recipe_data(recipe_id))
             status_text = '' if has_recipe_data else 'Tomt'
+            recipe_last_saved = recipe_last_saved if recipe_last_saved else "N/A"
             self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
                                                     RecipeCreated.strftime("%Y-%m-%d %H:%M:%S"),
                                                     RecipeUpdated.strftime("%Y-%m-%d %H:%M:%S"),
+                                                    recipe_last_saved.strftime("%Y-%m-%d %H:%M:%S"),
                                                     status_text))
 
         # Binds a event where user selects something on the datagrid
@@ -1311,12 +1305,6 @@ class App(customtkinter.CTk):
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
-
-# Lägger den utanför classen för att hantera async (fixa den en vacker dag)
-def dbcheckeropcuaTEMP(app_instance):
-    selected_id_item = app_instance.treeview.selection()[0]
-    selected_id = app_instance.treeview.item(selected_id_item, 'values')[0]
-    app_instance.async_queue.put(db_opcua_data_checker(selected_id))
 
 
 def main():

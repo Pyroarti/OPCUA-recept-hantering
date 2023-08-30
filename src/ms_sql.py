@@ -11,8 +11,8 @@ from .create_log import setup_logger
 from .opcua_client import get_servo_steps, connect_opcua, write_tag
 
 
-
 logger = setup_logger('ms_sql')
+
 
 async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     """
@@ -153,13 +153,19 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         showinfo(title='Information',
              message=texts["show_info_from_all_units_processed_successfully"],
              detail=message_detail)
-        
 
         logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
 
         recipe_checked = check_recipe_data(selected_id)
-        db_opcua_same = await db_opcua_data_checker(selected_id,recipe_structure_id)
-        showinfo(title="Info", message= db_opcua_same)
+
+        db_opcua_not_same = await db_opcua_data_checker(selected_id,recipe_structure_id)
+
+        await update_recipe_last_saved(selected_id)
+        
+        if db_opcua_not_same:
+            showinfo(title="Info", message= db_opcua_not_same)
+        else:
+            showinfo(title="Info", message= texts["show_info_data_in_database_and_opcua_is_the_same"])
         return recipe_checked
 
     else:
@@ -394,22 +400,23 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
         True if data is the same in both places, False otherwise.
     """
     from .gui import get_database_connection
+    from .opcua_client import get_opcua_value
 
     cursor, cnxn = get_database_connection()
 
     struct_data_rows = await get_recipe_structures_map()
-    
-    data_difference = []
 
+    data_difference = []
+    
+    opcua_results = {}
 
     # Fetching unit information based on the structure id
     for row in struct_data_rows:
         unit_id, unit_name, structure_id ,data_origin, url = row
-        if structure_id == recipe_structure_id:
-            
+        if structure_id == recipe_structure_id and unit_name != "Master":
+
             servo_steps = await get_servo_steps(url, data_origin)
 
-            opcua_results = {}
 
             for key1, inner_dict in servo_steps.items():
                 for key2, info_dict in inner_dict.items():
@@ -429,39 +436,76 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
                 cursor.execute(query, params)
                 rows = cursor.fetchall()
 
-                db_results = {}
-                if not rows:
-                    return False
-
-                for row in rows:
-
-                    if None in row:
-                        logger.warning(f"One or more fields are None in row: {row}")
-                        return False
-
-                    unit_id, tag_name, tag_value, tag_datatype = row
-                    db_results[tag_name] = tag_value
-
-                for tag_name, tag_value in db_results.items():
-                    opcua_tag_value = opcua_results.get(tag_name, None)
-
-                    if opcua_tag_value is None:
-                        logger.warning(f"{tag_name} exists in database but not in OPCUA")
-                        opcua_missmatch = (f"{tag_name} exists in database but not in OPCUA")
-                        data_difference.append(opcua_missmatch)
-
-                    elif tag_value != opcua_tag_value:
-                        logger.warning(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
-                        db_opcua_missmatch = (f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
-                        data_difference.append(db_opcua_missmatch)
-
-                    else:
-                         logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
-                         
             except Exception as exception:
                 logger.error(exception)
                 return False
 
-        return data_difference
-
+        elif structure_id == recipe_structure_id and unit_name == "Master":
+            master_data = await get_opcua_value(url, data_origin)
             
+            pattern = re.compile(r'ns=\d+;s="(.+)"')
+            match = pattern.match(data_origin)
+            if match:
+                clean_data_origin = match.group(1)
+                clean_data_origin = f'"{clean_data_origin}"'
+                opcua_results[clean_data_origin] = str(master_data[1])
+            else:
+                opcua_results[data_origin] = str(master_data[1])  # Fallback if regex doesn't match
+
+    db_results = {}
+    if not rows:
+        return False
+
+    for row in rows:
+
+        if None in row:
+            logger.warning(f"One or more fields are None in row: {row}")
+            return False
+
+        unit_id, tag_name, tag_value, tag_datatype = row
+        db_results[tag_name] = tag_value
+
+    for tag_name, tag_value in db_results.items():
+        logger.info(f"Checking tag_name: {tag_name}")
+        opcua_tag_value = opcua_results.get(tag_name, None)
+        logger.info(f"DB value for {tag_name}: {tag_value}")
+        logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
+
+        if opcua_tag_value is None:
+            logger.warning(f"{tag_name} exists in database but not in OPCUA")
+            data_difference.append(f"{tag_name} exists in database but not in OPCUA")
+
+        elif tag_value != opcua_tag_value:
+            logger.warning(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+            db_opcua_missmatch = (f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+            data_difference.append(db_opcua_missmatch)
+
+        else:
+            logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
+
+    return data_difference
+
+
+async def update_recipe_last_saved(recipe_id):
+    """
+    Updates the last saved date for a recipe to database.
+    """
+    from .gui import get_database_connection
+
+    cursor, cnxn = get_database_connection()
+
+    try:
+        query = """
+        UPDATE [RecipeDB].[dbo].[tblRecipe]
+        SET [RecipeLastDataSaved] = GETDATE()
+        WHERE [id] = ?
+        """
+
+        params = (recipe_id,)
+        cursor.execute(query, params)
+        cnxn.commit()
+        return True
+    
+    except Exception as exception:
+        logger.error(exception)
+        return False
