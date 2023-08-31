@@ -1604,3 +1604,83 @@
 2023:08:31 15:58:14|INFO|gui|Database connection established
 2023:08:31 15:59:55|INFO|gui|Trying to submit new recipe: Name: 282120-440 v4, Comment: SMC1 8-3638-870-6 SMC2 28100_L, Structure ID: 2
 2023:08:31 15:59:55|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:02:36|INFO|gui|Database connection established
+2023:08:31 16:02:46|INFO|gui|Fetched 1000 rows for editing recipe ID: 223
+2023:08:31 16:03:29|INFO|gui|Trying to submit new recipe: Name: taetdsa, Comment: dasd, Structure ID: 4
+2023:08:31 16:03:29|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:07:27|INFO|gui|Database connection established
+2023:08:31 16:07:39|INFO|gui|Trying to submit new recipe: Name: erer, Comment: rerer, Structure ID: 4
+2023:08:31 16:07:39|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:09:17|INFO|gui|Database connection established
+2023:08:31 16:09:22|INFO|gui|Fetched 951 rows for editing recipe ID: 225
+2023:08:31 16:09:33|INFO|gui|Trying to submit new recipe: Name: thrhh, Comment: htrhrth, Structure ID: 4
+2023:08:31 16:09:33|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:10:59|INFO|gui|Database connection established
+2023:08:31 16:11:09|INFO|gui|Trying to submit new recipe: Name: djhdkjkhd, Comment: khdhkdg, Structure ID: 5
+2023:08:31 16:11:09|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:12:32|INFO|gui|Database connection established
+2023:08:31 16:12:35|INFO|gui|Fetched 951 rows for editing recipe ID: 226
+2023:08:31 16:12:44|INFO|gui|Fetched 951 rows for editing recipe ID: 227
+2023:08:31 16:12:57|INFO|gui|Trying to submit new recipe: Name: jyufgk, Comment: kyftk, Structure ID: 4
+2023:08:31 16:12:57|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:14:25|INFO|gui|Database connection established
+2023:08:31 16:14:28|INFO|gui|Fetched 951 rows for editing recipe ID: 228
+2023:08:31 16:14:43|INFO|gui|Trying to submit new recipe: Name: utesthj, Comment: jgjgxf, Structure ID: 2
+2023:08:31 16:14:43|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:14:46|WARNING|gui|No data found for editing recipe ID: 229
+2023:08:31 16:17:42|INFO|gui|Database connection established
+2023:08:31 16:17:50|INFO|gui|Trying to submit new recipe: Name: thddth, Comment: hrdhdr, Structure ID: 4
+2023:08:31 16:17:50|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:19:14|INFO|gui|Database connection established
+2023:08:31 16:19:50|INFO|gui|Fetched 951 rows for editing recipe ID: 230
+2023:08:31 16:19:56|INFO|gui|Fetched 1000 rows for editing recipe ID: 229
+2023:08:31 16:20:04|INFO|gui|Fetched 951 rows for editing recipe ID: 228
+2023:08:31 16:20:09|INFO|gui|Fetched 951 rows for editing recipe ID: 227
+2023:08:31 16:21:23|INFO|gui|Fetched 1000 rows for editing recipe ID: 229
+2023:08:31 16:23:16|INFO|gui|Database connection established
+2023:08:31 16:23:54|INFO|gui|Fetched 1000 rows for editing recipe ID: 229
+2023:08:31 16:24:29|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 16:25:39|INFO|gui|Fetched 1000 rows for editing recipe ID: 223
+2023:08:31 16:26:29|INFO|gui|Fetched 1000 rows for editing recipe ID: 223
+2023:08:31 16:29:50|INFO|gui|Fetched 1000 rows for editing recipe ID: 223
+2023:08:31 16:33:44|WARNING|gui|Error establishing database connection: [08001] [Microsoft][ODBC SQL Server Driver][Shared Memory]SQL Server does not exist or access denied. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][Shared Memory]ConnectionOpen (Connect()). (2)
+2023:08:31 16:33:44|WARNING|gui|Failed to establish a database connection
+2023:08:31 16:35:11|INFO|gui|Database connection established
+2023:08:31 16:35:17|INFO|gui|Fetched 1000 rows for editing recipe ID: 223
+2023:08:31 16:36:01|INFO|gui|Trying to submit new recipe: Name: hxdhxd, Comment: hxrdhrxd, Structure ID: 2
+2023:08:31 16:36:01|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:38:27|INFO|gui|Fetched 1000 rows for editing recipe ID: 231
+2023:08:31 16:39:24|INFO|gui|Database connection established
+2023:08:31 16:44:30|INFO|gui|Database connection established
+2023:08:31 16:44:33|WARNING|gui|Error while executing SELECT TOP: ('42000', "[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Incorrect syntax near 'UnitID'. (102) (SQLExecDirectW); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Statement(s) could not be prepared. (8180)")
+2023:08:31 16:47:06|INFO|gui|Database connection established
+2023:08:31 16:47:12|INFO|gui|Fetched 1901 rows for editing recipe ID: 223
+2023:08:31 16:49:44|INFO|gui|Database connection established
+2023:08:31 16:50:11|INFO|gui|Trying to submit new recipe: Name: test, Comment: test, Structure ID: 2
+2023:08:31 16:50:11|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:50:21|INFO|gui|Selected structure ID: 4
+2023:08:31 16:50:21|INFO|gui|Updating recipe: ID: 232, Name: test smc1, Comment: test, Structure ID: 4
+2023:08:31 16:50:21|INFO|gui|Successfully updated the recipe ID: 232 and refreshed the view.
+2023:08:31 16:50:31|INFO|gui|Trying to submit new recipe: Name: test smc2, Comment: dsaf, Structure ID: 5
+2023:08:31 16:50:31|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:50:38|INFO|gui|Trying to submit new recipe: Name: test båda , Comment: gsdreg, Structure ID: 2
+2023:08:31 16:50:38|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 16:51:42|INFO|gui|Database connection established
+2023:08:31 16:51:45|INFO|gui|Fetched 951 rows for editing recipe ID: 232
+2023:08:31 16:52:10|INFO|gui|Database connection established
+2023:08:31 16:59:48|INFO|gui|Database connection established
+2023:08:31 16:59:54|INFO|gui|Trying to submit new recipe: Name: fasf, Comment: asfasf, Structure ID: 4
+2023:08:31 16:59:55|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 17:02:01|INFO|gui|Database connection established
+2023:08:31 17:02:24|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 17:05:21|INFO|gui|Database connection established
+2023:08:31 17:05:30|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 17:06:29|INFO|gui|Database connection established
+2023:08:31 17:06:41|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 17:08:09|INFO|gui|Database connection established
+2023:08:31 17:08:18|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 17:09:57|INFO|gui|Database connection established
+2023:08:31 17:10:08|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:08:31 17:16:44|INFO|gui|Database connection established
+2023:08:31 17:17:15|INFO|gui|Database connection established
+2023:08:31 17:17:31|INFO|gui|Successfully updated the active recipe to: 282120-440 v4

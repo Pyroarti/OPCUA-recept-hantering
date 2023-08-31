@@ -526,7 +526,7 @@ class App(customtkinter.CTk):
 
         self.async_queue: Queue = async_queue
 
-        self.attributes("-fullscreen", True)
+        #self.attributes("-fullscreen", True)
 
         self.title("LMT recept hantering")
 
@@ -1281,7 +1281,7 @@ class App(customtkinter.CTk):
 
         try:
             query = """
-            SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+            SELECT TOP (2000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
             FROM [RecipeDB].[dbo].[viewValues]
             WHERE RecipeID = ?
             ORDER BY RecipeID, UnitID,

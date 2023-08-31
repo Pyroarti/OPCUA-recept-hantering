@@ -80,7 +80,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                     unitname = "Master"
                 else:
                     unitname = f"Unknown unit {unit_id_to_get}"
-                    
+
                 recipe_lengths_per_unit[unitname] = recipe_length
 
                 for step in steps:

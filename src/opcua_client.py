@@ -77,6 +77,7 @@ async def get_stepdata(node_steps: Node) -> json:
                 for props in props_of_array_item:
                     if await props.read_node_class() == ua.NodeClass.Variable:
                         tag_value = await props.read_value()
+                        print(f"tag_value: {tag_value} and props {props}")
                         tag_datatype = await props.read_data_type_as_variant_type()
 
                         display_name = await props.read_display_name()
@@ -204,7 +205,7 @@ async def write_tag(client: Client, tag_name, tag_value):
 
             if data_type == ua.VariantType.Boolean:
                 if type(tag_value) is str:
-                    tag_value = bool(tag_value)
+                    tag_value = tag_value.lower() == "true"
                 if type(tag_value) is bool:
                     data_value = ua.DataValue(ua.Variant(tag_value, data_type))
 
