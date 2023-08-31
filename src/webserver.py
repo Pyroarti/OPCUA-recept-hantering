@@ -131,16 +131,18 @@ def calculate_time_to_produce():
 
                 avg_time_per_item = time_diff / count_diff
                 remaining_items = to_do - produced
-                estimated_time_remaining = avg_time_per_item * remaining_items
+                estimated_time_remaining_seconds = avg_time_per_item * remaining_items
+                hours, remainder = divmod(estimated_time_remaining_seconds, 3600)
+                minutes = remainder // 60
+                estimated_time_remaining_global = f"{str(int(hours)).zfill(2)}:{str(int(minutes)).zfill(2)}"
 
-                estimated_time_remaining_global = round(estimated_time_remaining / 60)
-                print(f"Uppskattad tid kvar: {estimated_time_remaining_global} minuter")
-                print(f"{avg_time_per_item} avrage tid per item")
+                print(f"Uppskattad tid kvar: {estimated_time_remaining_global}")
+                print(f"{avg_time_per_item} average time per item")
 
                 if len(timestamps) > 10:
                     timestamps.pop(0)
                     counts.pop(0)
-            
+
             except ZeroDivisionError:
                 pass
         time.sleep(5)
