@@ -1590,3 +1590,17 @@
 2023:08:31 15:36:51|INFO|gui|Fetched 951 rows for editing recipe ID: 220
 2023:08:31 15:37:00|INFO|gui|Fetched 400 rows for editing recipe ID: 169
 2023:08:31 15:38:10|INFO|gui|Fetched 780 rows for editing recipe ID: 161
+2023:08:31 15:41:57|INFO|gui|Database connection established
+2023:08:31 15:42:09|INFO|gui|Fetched 951 rows for editing recipe ID: 220
+2023:08:31 15:43:53|INFO|gui|Database connection established
+2023:08:31 15:44:49|INFO|gui|Trying to submit new recipe: Name: test1, Comment: dasd, Structure ID: 2
+2023:08:31 15:44:49|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 15:45:18|INFO|gui|Selected structure ID: 2
+2023:08:31 15:45:18|INFO|gui|Updating recipe: ID: 222, Name: test12, Comment: dasd, Structure ID: 2
+2023:08:31 15:45:18|INFO|gui|Successfully updated the recipe ID: 222 and refreshed the view.
+2023:08:31 15:45:41|WARNING|gui|No data found for editing recipe ID: 222
+2023:08:31 15:54:54|INFO|gui|Database connection established
+2023:08:31 15:55:05|INFO|gui|Database connection established
+2023:08:31 15:58:14|INFO|gui|Database connection established
+2023:08:31 15:59:55|INFO|gui|Trying to submit new recipe: Name: 282120-440 v4, Comment: SMC1 8-3638-870-6 SMC2 28100_L, Structure ID: 2
+2023:08:31 15:59:55|INFO|gui|Successfully submitted the new recipe and refreshed the view.

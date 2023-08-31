@@ -22687,3 +22687,686 @@
 2023:08:31 15:39:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
 2023:08:31 15:39:02|INFO|opcua_client|Successfully connected to OPC UA server.
 2023:08:31 15:39:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:41:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:41:58|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:41:58|INFO|opcua_client|Client disconnected
+2023:08:31 15:42:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:42:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:42:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:42:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:42:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:42:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:43:53|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:43:54|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:43:54|INFO|opcua_client|Client disconnected
+2023:08:31 15:43:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:43:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:43:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:44:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:44:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:44:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:44|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 15:45:44|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 15:45:45|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:45|INFO|opcua_client|Connected and session activated
+2023:08:31 15:45:45|INFO|opcua_client|Getting step data...
+2023:08:31 15:45:45|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:45:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:45:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:45:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:45:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:18|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:46:18|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:46:18|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:21|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.13:4840...
+2023:08:31 15:46:21|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.13:4840
+2023:08:31 15:46:21|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:21|INFO|opcua_client|Connected and session activated
+2023:08:31 15:46:21|INFO|opcua_client|Getting step data...
+2023:08:31 15:46:22|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:46:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:56|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:46:56|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:46:56|INFO|opcua_client|Client disconnected
+2023:08:31 15:46:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:46:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:46:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:01|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:01|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:06|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 15:47:06|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 15:47:06|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:06|INFO|opcua_client|Connected and session activated
+2023:08:31 15:47:06|INFO|opcua_client|Getting step data...
+2023:08:31 15:47:06|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:47:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:39|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:47:39|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:47:39|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:39|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.13:4840...
+2023:08:31 15:47:39|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.13:4840
+2023:08:31 15:47:40|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:40|INFO|opcua_client|Connected and session activated
+2023:08:31 15:47:40|INFO|opcua_client|Getting step data...
+2023:08:31 15:47:40|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:47:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:47:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:47:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:47:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:13|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:48:13|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:48:13|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:13|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:14|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:48:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:48:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:48:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:49:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:49:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:49:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:50:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:50:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:50:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:51:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:51:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:51:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:52:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:52:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:52:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:53:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:53:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:53:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:54:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:54:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:54:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:08|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:12|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 15:55:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 15:55:13|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:13|INFO|opcua_client|Connected and session activated
+2023:08:31 15:55:13|INFO|opcua_client|Getting step data...
+2023:08:31 15:55:13|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:55:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:46|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:55:46|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:55:46|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:55:56|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.13:4840...
+2023:08:31 15:55:56|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.13:4840
+2023:08:31 15:55:56|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:56|INFO|opcua_client|Connected and session activated
+2023:08:31 15:55:56|INFO|opcua_client|Getting step data...
+2023:08:31 15:55:57|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:55:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:55:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:55:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:31|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:56:31|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:56:31|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:41|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:43|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:43|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:56:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:56:58|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 15:56:58|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 15:56:59|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:56:59|INFO|opcua_client|Connected and session activated
+2023:08:31 15:56:59|INFO|opcua_client|Getting step data...
+2023:08:31 15:56:59|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:57:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:32|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:57:32|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:57:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:32|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.13:4840...
+2023:08:31 15:57:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.13:4840
+2023:08:31 15:57:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:33|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:33|INFO|opcua_client|Connected and session activated
+2023:08:31 15:57:33|INFO|opcua_client|Getting step data...
+2023:08:31 15:57:33|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 15:57:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:57:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:57:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:57:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:07|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 15:58:07|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 15:58:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:08|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:58:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:58:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:58:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:02|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:07|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:12|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:17|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:22|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:22|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:27|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:27|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:27|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:32|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:37|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:37|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:42|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:42|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:42|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:47|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:47|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:47|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:52|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 15:59:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 15:59:57|INFO|opcua_client|Client disconnected
+2023:08:31 15:59:59|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 15:59:59|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 16:00:00|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 16:00:00|INFO|opcua_client|Connected and session activated
+2023:08:31 16:00:00|INFO|opcua_client|Getting step data...
+2023:08:31 16:00:00|INFO|opcua_client|Skipping [Node(NodeId(Identifier='"StepData"."RunningSteps"."Steps"[0]', NamespaceIndex=3, NodeIdType=<NodeIdType.String: 3>))] as it contains '[0]'
+2023:08:31 16:00:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 16:00:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 16:00:02|INFO|opcua_client|Client disconnected
+2023:08:31 16:00:07|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 16:00:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 16:00:07|INFO|opcua_client|Client disconnected
+2023:08:31 16:00:12|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 16:00:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 16:00:12|INFO|opcua_client|Client disconnected
+2023:08:31 16:00:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 16:00:17|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 16:00:17|INFO|opcua_client|Client disconnected

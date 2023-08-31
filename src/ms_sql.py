@@ -445,10 +445,10 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
                 query = """
                 SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType]
                 FROM [RecipeDB].[dbo].[viewValues]
-                WHERE RecipeID = ?
+                WHERE RecipeID = ? AND UnitID = ?
                 """
-                params = (recipe_id,)
-                cursor.execute(query, params)
+                params = (recipe_id,unit_id)
+                cursor.execute(query, params,)
                 rows = cursor.fetchall()
 
             except Exception as exception:
@@ -480,10 +480,10 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
         db_results[tag_name] = tag_value
 
     for tag_name, tag_value in db_results.items():
-        #logger.info(f"Checking tag_name: {tag_name}")
+        logger.info(f"Checking tag_name: {tag_name}")
         opcua_tag_value = opcua_results.get(tag_name, None)
-        #logger.info(f"DB value for {tag_name}: {tag_value}")
-        #logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
+        logger.info(f"DB value for {tag_name}: {tag_value}")
+        logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
 
         if opcua_tag_value is None:
             logger.warning(f"{tag_name} exists in database but not in OPCUA")
