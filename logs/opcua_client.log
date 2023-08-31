@@ -2817,3 +2817,175 @@
 2023:08:31 07:49:38|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
 2023:08:31 07:49:39|INFO|opcua_client|Successfully connected to OPC UA server.
 2023:08:31 07:49:39|INFO|opcua_client|Client disconnected
+2023:08:31 07:54:02|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 07:54:02|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 07:54:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 07:54:02|INFO|opcua_client|Connected and session activated
+2023:08:31 07:54:02|INFO|opcua_client|Getting step data...
+2023:08:31 07:56:26|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 07:56:26|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 07:56:26|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 07:56:26|INFO|opcua_client|Connected and session activated
+2023:08:31 07:56:26|INFO|opcua_client|Getting step data...
+2023:08:31 07:57:09|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 07:57:09|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 07:57:09|INFO|opcua_client|Client disconnected
+2023:08:31 07:57:11|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 07:57:12|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 07:57:18|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 07:57:18|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 07:57:19|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 07:57:19|INFO|opcua_client|Connected and session activated
+2023:08:31 07:57:19|INFO|opcua_client|Getting step data...
+2023:08:31 07:58:01|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 07:58:01|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 07:58:01|INFO|opcua_client|Client disconnected
+2023:08:31 07:58:01|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 07:58:02|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:24:00|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:24:00|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:24:01|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:24:01|INFO|opcua_client|Connected and session activated
+2023:08:31 08:24:01|INFO|opcua_client|Getting step data...
+2023:08:31 08:24:41|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:24:41|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:24:41|INFO|opcua_client|Client disconnected
+2023:08:31 08:24:49|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:24:50|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:24:53|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:24:53|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:24:53|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:24:53|INFO|opcua_client|Connected and session activated
+2023:08:31 08:24:53|INFO|opcua_client|Getting step data...
+2023:08:31 08:25:33|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:25:33|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:25:33|INFO|opcua_client|Client disconnected
+2023:08:31 08:25:33|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:25:34|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:28:00|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:28:00|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:28:01|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:28:01|INFO|opcua_client|Connected and session activated
+2023:08:31 08:28:01|INFO|opcua_client|Getting step data...
+2023:08:31 08:28:32|WARNING|opcua_client|Error getting values: "The session cannot be used because ActivateSession has not been called."(BadSessionNotActivated),<class 'asyncua.ua.uaerrors._auto.BadSessionNotActivated'>
+2023:08:31 08:28:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:28:32|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:28:36|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:28:36|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:28:37|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:28:37|INFO|opcua_client|Connected and session activated
+2023:08:31 08:28:37|INFO|opcua_client|Getting step data...
+2023:08:31 08:29:32|WARNING|opcua_client|Error getting values: "The session id is not valid."(BadSessionIdInvalid),<class 'asyncua.ua.uaerrors._auto.BadSessionIdInvalid'>
+2023:08:31 08:29:54|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:29:54|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:29:55|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:29:55|INFO|opcua_client|Connected and session activated
+2023:08:31 08:29:55|INFO|opcua_client|Getting step data...
+2023:08:31 08:30:37|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:30:37|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:30:37|INFO|opcua_client|Client disconnected
+2023:08:31 08:30:45|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:30:46|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:30:49|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:30:49|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:30:50|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:30:50|INFO|opcua_client|Connected and session activated
+2023:08:31 08:30:50|INFO|opcua_client|Getting step data...
+2023:08:31 08:31:32|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:31:32|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:31:32|INFO|opcua_client|Client disconnected
+2023:08:31 08:31:32|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:31:33|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:40:23|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:40:23|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:40:23|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:40:23|INFO|opcua_client|Connected and session activated
+2023:08:31 08:40:23|INFO|opcua_client|Getting step data...
+2023:08:31 08:41:03|WARNING|opcua_client|Error getting values: "The session id is not valid."(BadSessionIdInvalid),<class 'asyncua.ua.uaerrors._auto.BadSessionIdInvalid'>
+2023:08:31 08:41:03|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:41:04|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:41:06|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:41:06|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:41:07|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:41:07|INFO|opcua_client|Connected and session activated
+2023:08:31 08:41:07|INFO|opcua_client|Getting step data...
+2023:08:31 08:42:40|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:42:40|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:42:41|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:42:41|INFO|opcua_client|Connected and session activated
+2023:08:31 08:42:41|INFO|opcua_client|Getting step data...
+2023:08:31 08:43:15|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:43:15|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:43:15|INFO|opcua_client|Client disconnected
+2023:08:31 08:43:17|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:43:18|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:43:22|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:43:22|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:43:23|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:43:23|INFO|opcua_client|Connected and session activated
+2023:08:31 08:43:23|INFO|opcua_client|Getting step data...
+2023:08:31 08:43:57|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:43:57|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:43:57|INFO|opcua_client|Client disconnected
+2023:08:31 08:43:57|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:43:57|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:44:05|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:44:05|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:44:06|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:44:06|INFO|opcua_client|Connected and session activated
+2023:08:31 08:44:06|INFO|opcua_client|Getting step data...
+2023:08:31 08:44:40|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:44:40|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:44:40|INFO|opcua_client|Client disconnected
+2023:08:31 08:44:48|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:44:49|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:44:51|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:44:51|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:44:51|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:44:51|INFO|opcua_client|Connected and session activated
+2023:08:31 08:44:51|INFO|opcua_client|Getting step data...
+2023:08:31 08:45:25|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:45:25|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:45:25|INFO|opcua_client|Client disconnected
+2023:08:31 08:45:25|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:45:26|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:46:08|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:46:08|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:46:08|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:46:08|INFO|opcua_client|Connected and session activated
+2023:08:31 08:46:08|INFO|opcua_client|Getting step data...
+2023:08:31 08:46:42|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:46:42|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:46:42|INFO|opcua_client|Client disconnected
+2023:08:31 08:46:51|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:46:52|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:46:54|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:46:54|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:46:54|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:46:54|INFO|opcua_client|Connected and session activated
+2023:08:31 08:46:54|INFO|opcua_client|Getting step data...
+2023:08:31 08:47:28|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:47:28|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:47:28|INFO|opcua_client|Client disconnected
+2023:08:31 08:47:28|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:47:29|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:49:10|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:49:10|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:49:10|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:49:10|INFO|opcua_client|Connected and session activated
+2023:08:31 08:49:10|INFO|opcua_client|Getting step data...
+2023:08:31 08:49:44|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:49:44|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:49:44|INFO|opcua_client|Client disconnected
+2023:08:31 08:49:52|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:49:53|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:49:55|INFO|opcua_client|Getting servo steps from opc.tcp://192.168.187.11:4840...
+2023:08:31 08:49:55|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.11:4840
+2023:08:31 08:49:56|INFO|opcua_client|Successfully connected to OPC UA server.
+2023:08:31 08:49:56|INFO|opcua_client|Connected and session activated
+2023:08:31 08:49:56|INFO|opcua_client|Getting step data...
+2023:08:31 08:50:29|INFO|opcua_client|Successfully retrieved step data.
+2023:08:31 08:50:29|INFO|opcua_client|Successfully retrieved servo steps.
+2023:08:31 08:50:30|INFO|opcua_client|Client disconnected
+2023:08:31 08:50:30|INFO|opcua_client|Connecting to OPC UA server at opc.tcp://192.168.187.10:4840
+2023:08:31 08:50:30|INFO|opcua_client|Successfully connected to OPC UA server.

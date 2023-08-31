@@ -42,6 +42,7 @@ async def get_children_values(node: Node, result: dict = None) -> dict:
 
     return result
 
+
 async def get_stepdata(node_steps: Node) -> json:
 
     """
@@ -60,37 +61,32 @@ async def get_stepdata(node_steps: Node) -> json:
     if node_step:
         array_item: Node = None
         for array_item in node_step:
-            active = await array_item.get_child('Active')
-            active = await active.get_value()
-            if active:
-                ind += 1
+            ind += 1
+            props_of_array_item = await array_item.get_children()
+            path_array_item = await array_item.get_path()
+            #if path_array_item:
+            #    path_array_item_str = str(path_array_item[0])
 
-                props_of_array_item = await array_item.get_children()
-                path_array_item = await array_item.get_path()
-                if path_array_item:
-                    path_array_item_str = str(path_array_item[0])
+            if props_of_array_item:
+                props: Node = None
+                for props in props_of_array_item:
+                    if await props.read_node_class() == ua.NodeClass.Variable:
+                        tag_value = await props.read_value()
+                        tag_datatype = await props.read_data_type_as_variant_type()
 
-                if props_of_array_item:
-                    props: Node = None
-                    for props in props_of_array_item:
-                        if await props.read_node_class() == ua.NodeClass.Variable:
-                            tag_value = await props.read_value()
-                            tag_datatype = await props.read_data_type_as_variant_type()
+                        display_name = await props.read_display_name()
 
-                            display_name = await props.read_display_name()
-                            browse_name = await props.read_browse_name()
+                        if ind not in result:
+                            result[ind] = {}
 
-                            if ind not in result:
-                                result[ind] = {}
-
-                            if display_name.Text not in result[ind]:
-                                result[ind][display_name.Text] = {}
-                                result[ind][display_name.Text]["Node"] = {}
-                                result[ind][display_name.Text]["Value"] = {}
-                                result[ind][display_name.Text]["Datatype"] = {}
-                            result[ind][display_name.Text]["Node"] = props
-                            result[ind][display_name.Text]["Value"] = tag_value
-                            result[ind][display_name.Text]["Datatype"] = tag_datatype
+                        if display_name.Text not in result[ind]:
+                            result[ind][display_name.Text] = {}
+                            result[ind][display_name.Text]["Node"] = {}
+                            result[ind][display_name.Text]["Value"] = {}
+                            result[ind][display_name.Text]["Datatype"] = {}
+                        result[ind][display_name.Text]["Node"] = props
+                        result[ind][display_name.Text]["Value"] = tag_value
+                        result[ind][display_name.Text]["Datatype"] = tag_datatype
 
     if result:
         logger.info("Successfully retrieved step data.")

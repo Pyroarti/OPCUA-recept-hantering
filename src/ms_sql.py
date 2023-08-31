@@ -86,9 +86,9 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                 recipe_lengths_per_unit[unitname] = recipe_length
 
                 for step in steps:
-                    logger.info(step)
+                    #logger.info(step)
                     for prop in steps[step]:
-                        logger.info(prop)
+                        #logger.info(prop)
                         tag_name: str = steps[step][prop]["Node"].nodeid.Identifier
                         tag_value = steps[step][prop]["Value"]
                         tag_datatype = steps[step][prop]["Datatype"].name

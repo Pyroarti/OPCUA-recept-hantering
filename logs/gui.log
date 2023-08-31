@@ -1468,3 +1468,17 @@
 2023:08:31 07:41:46|INFO|gui|Database connection established
 2023:08:31 07:44:23|INFO|gui|Database connection established
 2023:08:31 07:46:35|INFO|gui|Database connection established
+2023:08:31 07:53:56|INFO|gui|Database connection established
+2023:08:31 07:56:10|INFO|gui|Database connection established
+2023:08:31 07:56:22|INFO|gui|Submitting new recipe: Name: test50, Comment: alla 50, Structure ID: 4
+2023:08:31 07:56:22|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 08:04:34|INFO|gui|Database connection established
+2023:08:31 08:23:55|INFO|gui|Database connection established
+2023:08:31 08:27:56|INFO|gui|Database connection established
+2023:08:31 08:29:50|INFO|gui|Database connection established
+2023:08:31 08:40:19|INFO|gui|Database connection established
+2023:08:31 08:42:32|INFO|gui|Database connection established
+2023:08:31 08:42:37|INFO|gui|Submitting new recipe: Name: fsafas, Comment: asfasfafs, Structure ID: 4
+2023:08:31 08:42:37|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:08:31 08:45:59|INFO|gui|Database connection established
+2023:08:31 08:49:05|INFO|gui|Database connection established
