@@ -58,7 +58,7 @@ def setup_logger(logger_name, suppress_list=None):
     handler = RotatingFileHandler(log_file, maxBytes=100*1024*1024, backupCount=3) # 100 MB max size per file, 3 files max
     handler.setFormatter(formatter)
     handler.setLevel(logging.DEBUG)
-    
+
     if suppress_list:
         handler.addFilter(SuppressSpecificLogs(suppress_list))
 

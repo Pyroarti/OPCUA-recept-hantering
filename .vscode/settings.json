@@ -1,4 +1,4 @@
 {
     "materialkv.pythonFile": "main.py",
-    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.typeCheckingMode": "off"
 }

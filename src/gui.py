@@ -1,26 +1,25 @@
 # Python package
 from pathlib import Path
 from tkinter import ttk
+from tkinter.messagebox import showinfo, askyesno
 from datetime import datetime
 import asyncio
 from threading import Thread
 from queue import Queue
-from tkinter.messagebox import showinfo, askyesno
 import os
 import webbrowser
-import markdown
-from asyncua import ua, Client
 import json
-from datetime import datetime
+import markdown
 
 # Third party package
 import customtkinter
 from customtkinter import CTkImage
 from PIL import Image
 import pyodbc
+from asyncua import ua, Client
 
 # Own package
-from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data, db_opcua_data_checker
+from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data
 from .data_encrypt import DataEncrypt
 from .create_log import setup_logger
 from .ip_checker import check_ip
@@ -778,7 +777,8 @@ class App(customtkinter.CTk):
                                                           width=200,height=50)
 
         self.achnowledge_alarm_button.place(x=1850, y=100)
-        self.opcua_error_treeview = self.create_opcua_error_treeview(alarms_page)
+
+        self.create_opcua_error_treeview(alarms_page)
 
 
     def create_opcua_error_treeview(self,parent):
@@ -807,52 +807,51 @@ class App(customtkinter.CTk):
         vsb.place(x=30+1750+2, y=95, height=1240+20)
 
         self.opcua_treeview.configure(yscrollcommand=vsb.set)
+        
+        self.add_opcua_alarm_to_datagrid()
 
 
-        def add_opcua_alarm_to_datagrid(log_folder="alarms"):
-            """Adds alarms to the opcua datagrid"""
-            if self.opcua_treeview is None:
-                logger.warning("Error: No opcua_treeview object")
-                return
+    def add_opcua_alarm_to_datagrid(self,log_folder="alarms"):
+        """Adds alarms to the opcua datagrid"""
+        if self.opcua_treeview is None:
+            logger.warning("Error: No opcua_treeview object")
+            return
 
-            for item in self.opcua_treeview.get_children():
-                self.opcua_treeview.delete(item)
+        for item in self.opcua_treeview.get_children():
+            self.opcua_treeview.delete(item)
 
-            log_files = [file for file in os.listdir(log_folder) if file.endswith(".log")]
+        log_files = [file for file in os.listdir(log_folder) if file.endswith(".log")]
 
-            for log_file in log_files:
-                with open(os.path.join(log_folder, log_file), "r") as file:
-                    state = None
-                    message = None
-                    time_str = None
-                    for line in file:
-                        line = line.strip()
-                        if line:
-                            if "Message:" in line:
-                                message_start = line.find("Message:")
-                                message_full = line[message_start:].split("Message:", 1)[1].strip()
-                                # Extract the content after 'Text='
-                                message = message_full.split("Text=", 1)[1].strip()
-                            elif "Time:" in line:
-                                time_start = line.find("Time:")
-                                time_str_full = line[time_start:].split("Time:", 1)[1].strip()
-                                # Convert time string to datetime object and remove microseconds
-                                time_obj = datetime.fromisoformat(time_str_full)
-                                time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S")
-                            elif "State:" in line:
-                                state_start = line.find("State:")
-                                state = line[state_start:].split("State:", 1)[1].strip()
+        for log_file in log_files:
+            with open(os.path.join(log_folder, log_file), "r") as file:
+                state = None
+                message = None
+                time_str = None
+                for line in file:
+                    line = line.strip()
+                    if line:
+                        if "Message:" in line:
+                            message_start = line.find("Message:")
+                            message_full = line[message_start:].split("Message:", 1)[1].strip()
+                            # Extract the content after 'Text='
+                            message = message_full.split("Text=", 1)[1].strip()
+                        elif "Time:" in line:
+                            time_start = line.find("Time:")
+                            time_str_full = line[time_start:].split("Time:", 1)[1].strip()
+                            # Convert time string to datetime object and remove microseconds
+                            time_obj = datetime.fromisoformat(time_str_full)
+                            time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S")
+                        elif "State:" in line:
+                            state_start = line.find("State:")
+                            state = line[state_start:].split("State:", 1)[1].strip()
 
-                        if message and time_str and state:
-                            if state.lower() == "true":
-                                self.opcua_treeview.insert("", "end", values=(time_str, message))
-                            # Reset values for the next set of message, time, and state
-                            state = None
-                            message = None
-                            time_str = None
-
-
-        return self.opcua_treeview, add_opcua_alarm_to_datagrid
+                    if message and time_str and state:
+                        if state.lower() == "true":
+                            self.opcua_treeview.insert("", "end", values=(time_str, message))
+                        # Reset values for the next set of message, time, and state
+                        state = None
+                        message = None
+                        time_str = None
 
 
     async def achnowledge_alarm(self):
@@ -882,15 +881,15 @@ class App(customtkinter.CTk):
         logs_page.grid(row=0, column=0, sticky="nsew")
         self.create_meny_buttons(logs_page)
         self.create_header(logs_page, self.texts['header_logs'], self.opcua_alarms)
-        self.logs_treeview = self.create_logs_treeview(logs_page)
+        self.create_logs_treeview(logs_page)
         self.refresh_log_screen = customtkinter.CTkButton(logs_page,
                                                           text=self.texts["refresh_the_logs_button"],
                                                           command=self.add_logs_to_datagrid,
                                                           width=200,height=50)
 
         self.refresh_log_screen.place(x=2200, y=100)
-        
-    
+
+
     def create_logs_treeview(self, parent):
         """Makes a datagrid to see the errors from example
         OPCUA, SQL or programming errors"""
@@ -921,7 +920,9 @@ class App(customtkinter.CTk):
 
 
     def add_logs_to_datagrid(self):
-        """Adds the info/errors from the logs to the log datagrid"""
+        """Adds the info/errors from the logs to the datagrid
+        from the logs folder"""
+
         if self.logs_treeview is None:
             logger.warning("Error: No logs_treeview object")
             return
@@ -1001,7 +1002,7 @@ class App(customtkinter.CTk):
 
 
     def archive_selected_recipe(self):
-        """archive the seleected recipe"""
+        """Archive the selected recipe"""
         
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")

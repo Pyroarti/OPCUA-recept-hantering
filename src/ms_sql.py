@@ -43,9 +43,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
     cursor, cnxn = get_database_connection()
 
-    if cursor and cnxn:
-        logger.info("Database connection established")
-    else:
+    if cursor is None or cnxn is None:
         logger.warning("Failed to establish a database connection")
         showinfo(title="Info", message= texts["error_with_database"])
         return None
@@ -163,12 +161,18 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
         db_opcua_not_same = await db_opcua_data_checker(selected_id,recipe_structure_id)
 
-        await update_recipe_last_saved(selected_id)
+        successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
+        
+        if successfully_updated_recipe_last_saved:
 
-        if db_opcua_not_same:
-            showinfo(title="Info", message= db_opcua_not_same)
+            if db_opcua_not_same:
+                showinfo(title="Info", message= db_opcua_not_same)
+            else:
+                showinfo(title="Info", message= texts["show_info_data_in_database_and_opcua_is_the_same"])
+        
         else:
-            showinfo(title="Info", message= texts["show_info_data_in_database_and_opcua_is_the_same"])
+            showinfo(title="Info", message= texts["general_error"])
+
         return recipe_checked
 
     else:
@@ -504,6 +508,10 @@ async def update_recipe_last_saved(recipe_id):
     from .gui import get_database_connection
 
     cursor, cnxn = get_database_connection()
+    
+    if cursor is None or cnxn is None:
+        logger.warning("Failed to establish a database connection")
+        return False
 
     try:
         query = """
