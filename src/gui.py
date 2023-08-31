@@ -3,13 +3,13 @@ from pathlib import Path
 from tkinter import ttk
 from datetime import datetime
 import asyncio
-from threading import Thread, Event
+from threading import Thread
 from queue import Queue
 from tkinter.messagebox import showinfo, askyesno
 import os
 import webbrowser
 import markdown
-from asyncua import ua
+from asyncua import ua, Client
 import json
 from datetime import datetime
 
@@ -18,7 +18,6 @@ import customtkinter
 from customtkinter import CTkImage
 from PIL import Image
 import pyodbc
-import time
 
 # Own package
 from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data, db_opcua_data_checker
@@ -51,16 +50,20 @@ def get_database_connection(timeout_duration=10):
     Exception: For any other unexpected issues that may arise during the connection process.
 
     """
-
-    try:
-        data_encrypt = DataEncrypt()
-        sql_config = data_encrypt.encrypt_credentials("sql_config.json", "SQL_KEY")
+    
+    data_encrypt = DataEncrypt()
+    sql_config = data_encrypt.encrypt_credentials("sql_config.json", "SQL_KEY")
+    if sql_config:
         database_config = sql_config["database"]
         server = database_config["server"]
         database = database_config["database_name"]
         username = database_config["username"]
         password = database_config["password"]
+    else:
+        logger.warning("Error: No sql_config object")
+        return None, None
 
+    try:
         cnxn = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER={server};\
                     DATABASE={database};UID={username};PWD={password}',
                     timeout=timeout_duration)
@@ -92,7 +95,7 @@ def run_monitor_alarms_loop():
         loop.close()
 
 
-def run_asyncio_loop(queue,app_instance):
+def run_asyncio_loop(queue:Queue, app_instance:"App"):
     loop = asyncio.new_event_loop()
 
     asyncio.set_event_loop(loop)
@@ -104,8 +107,10 @@ def run_asyncio_loop(queue,app_instance):
             task = loop.create_task(coro)
             app_instance.config(cursor="watch")
             loop.run_until_complete(task)
-            print(task)
             app_instance.config(cursor="arrow")
+            # Update the recipe page to refrtesh the data
+            if "from_units_to_sql_stepdata" in str(task.get_coro()):
+                app_instance.recipe_page_command()
 
     finally:
         loop.run_until_complete(asyncio.gather(*asyncio.all_tasks(loop)))
@@ -158,7 +163,7 @@ class AboutWindow(customtkinter.CTkToplevel):
 
 class MakeRecipeWindow(customtkinter.CTkToplevel):
     """Class for a pop up window."""
-    def __init__(self, app_instance,  texts, *args, **kwargs):
+    def __init__(self, app_instance:"App",  texts, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.resizable(False, False)
         self.app_instance = app_instance
@@ -206,23 +211,28 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
 
         cursor, cnxn = get_database_connection()
-        try:
-            cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
-        except Exception as exeption:
-            logger.warning(f"Error while executing SELECT TOP: {exeption}")
+        
+        if cursor and cnxn:
+            try:
+                cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
+            except Exception as exeption:
+                logger.warning(f"Error while executing SELECT TOP: {exeption}")
+                return
+
+            rows = cursor.fetchall()
+
+            cursor.close()
+            cnxn.close()
+
+            for row in rows:
+                recipe_id, RecipeStructureName = row
+                self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
+
+            # Binds a event where user selects something on the datagrid
+            self.treeview_select_structure.bind('<<TreeviewSelect>>')
+        else:
+            logger.warning("Error: No cursor or cnxn object")
             return
-
-        rows = cursor.fetchall()
-
-        cursor.close()
-        cnxn.close()
-
-        for row in rows:
-            recipe_id, RecipeStructureName = row
-            self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
-
-        # Binds a event where user selects something on the datagrid
-        self.treeview_select_structure.bind('<<TreeviewSelect>>')
 
     def check_struct(self):
         try:
@@ -293,33 +303,37 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         self.submit_button.pack(pady=10)
 
         cursor, cnxn = get_database_connection()
-        try:
-            cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
-        except Exception as exeption:
-            logger.warning(f"Error while executing SELECT TOP: {exeption}")
+        if cursor and cnxn:
+            try:
+                cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
+            except Exception as exeption:
+                logger.warning(f"Error while executing SELECT TOP: {exeption}")
+                return
+
+            rows = cursor.fetchall()
+
+            cursor.close()
+            cnxn.close()
+
+            for row in rows:
+                recipe_id, RecipeStructureName = row
+                item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
+                if RecipeStructureName in recipe_struct_mapping.values():
+                    # If the name of this items structure is in the mapping, store the recipe_struct -> item id pair
+                    recipe_struct_for_this_item = next(key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName)
+                    id_mapping[recipe_struct_for_this_item] = item_id
+
+            try:
+                mapped_id = id_mapping[recipe_struct]
+                self.treeview_select_structure.selection_set(mapped_id)
+            except KeyError:
+                logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
+
+            # Binds a event where user selects something on the datagrid
+            self.treeview_select_structure.bind('<<TreeviewSelect>>')
+        else:
+            logger.warning("Error: No cursor or cnxn object")
             return
-
-        rows = cursor.fetchall()
-
-        cursor.close()
-        cnxn.close()
-
-        for row in rows:
-            recipe_id, RecipeStructureName = row
-            item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
-            if RecipeStructureName in recipe_struct_mapping.values():
-                # If the name of this items structure is in the mapping, store the recipe_struct -> item id pair
-                recipe_struct_for_this_item = next(key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName)
-                id_mapping[recipe_struct_for_this_item] = item_id
-
-        try:
-            mapped_id = id_mapping[recipe_struct]
-            self.treeview_select_structure.selection_set(mapped_id)
-        except KeyError:
-            logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
-
-        # Binds a event where user selects something on the datagrid
-        self.treeview_select_structure.bind('<<TreeviewSelect>>')
 
 
     def check_struct(self):
@@ -367,7 +381,6 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.edit_recipe_treeview = ttk.Treeview(self, columns=("Unit name", "Tag name", "Tag value", "Unit id"),
                               show="headings", height=10, style="Treeview", selectmode='browse')
 
-
         self.edit_recipe_treeview.heading("#0", text="", anchor="w")
         self.edit_recipe_treeview.heading("Unit name", text=self.texts['data_editor_grid_unit'],anchor="w")
         self.edit_recipe_treeview.heading("Tag name", text=self.texts['data_editor_grid_tag_name'],anchor="w")
@@ -408,7 +421,6 @@ class Edit_steps_window(customtkinter.CTkToplevel):
                 self.edit_recipe_treeview.insert("", "end", values=(unit_name, tag_name, tag_value, unit_id))
 
 
-
     def on_double_click(self, event):
 
         selected_item = self.edit_recipe_treeview.selection()[0]
@@ -418,48 +430,50 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         tag_value = selected_values[2]
         unit_id = selected_values[3]
 
-        edit_dialog = customtkinter.CTkToplevel(self)
-        edit_dialog.title("Edit TagValue")
-        edit_dialog.geometry("400x150")
-        
-        info_label = customtkinter.CTkLabel(edit_dialog, text=self.texts['changin_value_info'],font=("Helvetica", 18))
+        self.edit_step_dialog = customtkinter.CTkToplevel(self)
+        self.edit_step_dialog.title("Edit TagValue")
+        self.edit_step_dialog.geometry("400x150")
+    
+        info_label = customtkinter.CTkLabel(self.edit_step_dialog, text=self.texts['changin_value_info'],font=("Helvetica", 18))
         info_label.pack(pady=5)
 
-        entry = customtkinter.CTkEntry(edit_dialog, width = 170, height = 32, font=("Helvetica", 15))
-        entry.pack(pady=5)
-        entry.insert(0, tag_value)
+        self.new_value_entry = customtkinter.CTkEntry(self.edit_step_dialog, width = 170, height = 32, font=("Helvetica", 15))
+        self.new_value_entry.pack(pady=5)
+        self.new_value_entry.insert(0, tag_value)
+        
+        save_button = customtkinter.CTkButton(self.edit_step_dialog, text="Spara",width=160,height=35, 
+                                              command=lambda: self.save_changes(selected_item,tag_name,unit_id))
+        save_button.pack()
 
 
-        def save_changes():
-            edited_tag_value = entry.get()
-            self.edit_recipe_treeview.item(selected_item, values=(self.edit_recipe_treeview.item(selected_item)['values'][0],
+    def save_changes(self,selected_item,tag_name,unit_id):
+        edited_tag_value = self.new_value_entry.get()
+        self.edit_recipe_treeview.item(selected_item, values=(self.edit_recipe_treeview.item(selected_item)['values'][0],
                                                                   tag_name, edited_tag_value,unit_id))
-            edit_dialog.destroy()
+        self.edit_step_dialog.destroy()
 
-            stored_procedure_name = 'update_value'
-            recipe_id_param_name = "RecipeID"
-            unit_id_param_name = "UnitID"
-            tag_name_param_name = 'TagName'
-            tag_value_param_name = 'TagValue'
+        stored_procedure_name = 'update_value'
+        recipe_id_param_name = "RecipeID"
+        unit_id_param_name = "UnitID"
+        tag_name_param_name = 'TagName'
+        tag_value_param_name = 'TagValue'
 
-            cursor, cnxn = get_database_connection()
-
-            try:
-                cursor.execute(f"EXEC {stored_procedure_name} \
-                        @{tag_name_param_name}='{tag_name}', \
-                        @{tag_value_param_name}={edited_tag_value}, \
-                        @{recipe_id_param_name}={self.selected_id},\
-                        @{unit_id_param_name}={unit_id};")
-            except Exception as exeption:
-                logger.warning(exeption)
-
+        cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
+        try:
+            cursor.execute(f"EXEC {stored_procedure_name} \
+                    @{tag_name_param_name}='{tag_name}', \
+                    @{tag_value_param_name}={edited_tag_value}, \
+                    @{recipe_id_param_name}={self.selected_id},\
+                    @{unit_id_param_name}={unit_id};")
+            
             cnxn.commit()
-
             cursor.close()
             cnxn.close()
-
-        save_button = customtkinter.CTkButton(edit_dialog, text="Spara",width=160,height=35, command=save_changes)
-        save_button.pack()
+        except Exception as exeption:
+            logger.warning(exeption)
 
 
 class App(customtkinter.CTk):
@@ -569,11 +583,16 @@ class App(customtkinter.CTk):
 
 
     def change_language(self):
+        if self.language_button is None:
+            print("Warning: self.language_button is not initialized yet.")
+            return
+
         self.language = 'swedish' if self.language == 'english' else 'english'
         self.texts = self.load_language_file(self.language)
         self.language_button.configure(text=f"Change language ({self.language})")
         self.main_page()
         self.show_page("main_page")
+
 
 
     def main_page(self):
@@ -610,13 +629,15 @@ class App(customtkinter.CTk):
         """
         Pings the nearby units and updates the Treeview widget with the status.
         """
+        if self.ip_adresses_treeview:
+            for item in self.ip_adresses_treeview.get_children():
+                self.ip_adresses_treeview.delete(item)
 
-        for item in self.ip_adresses_treeview.get_children():
-            self.ip_adresses_treeview.delete(item)
-
-        ip_status_list = check_ip()
-        for name, ip_address, status in ip_status_list:
-            self.ip_adresses_treeview.insert('', 'end', values=(name, ip_address, status))
+            ip_status_list = check_ip()
+            for name, ip_address, status in ip_status_list:
+                self.ip_adresses_treeview.insert('', 'end', values=(name, ip_address, status))
+        else:
+            logger.warning("Error: No ip_adresses_treeview object")
 
 
     def recipes_page(self):
@@ -705,15 +726,6 @@ class App(customtkinter.CTk):
                                                                   font=("Helvetica", 18))
         self.edit_selected_recipe_button.pack(pady=(20,0))
 
-        #self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["archive_the_selected_recipe_button"],
-        #                                                          command=self.archive_selected_recipe,
-        #                                                          width=350,
-        #                                                          height=45,
-        #                                                          font=("Helvetica", 18))
-        #self.edit_selected_recipe_button.pack(pady=(15,0))
-
-        # Getting the data from SQL and putting it in the datagrid
-
         cursor, cnxn = get_database_connection()
 
         if cursor and cnxn:
@@ -762,11 +774,104 @@ class App(customtkinter.CTk):
         self.create_header(alarms_page, self.texts['header_alarms'], self.opcua_alarms)
         self.achnowledge_alarm_button = customtkinter.CTkButton(alarms_page,
                                                           text=self.texts["acknowledge_the_selected_alarm_button"],
-                                                          command=self.achnowledge_alarm,
+                                                          command=lambda: self.achnowledge_alarm(), # type: ignore
                                                           width=200,height=50)
 
         self.achnowledge_alarm_button.place(x=1850, y=100)
         self.opcua_error_treeview = self.create_opcua_error_treeview(alarms_page)
+
+
+    def create_opcua_error_treeview(self,parent):
+        """Makes a datagid to see the errors from the units"""
+
+        self.opcua_treeview = ttk.Treeview(parent, columns=("date", "severity", "message", "acknowledged state", "identifier"),
+                                      show="headings", height=10, style="Treeview")
+
+        self.opcua_treeview.heading("#0", text="", anchor="w")
+        self.opcua_treeview.heading("date", text=self.texts["alarm_datagrid_date"],anchor="w")
+        self.opcua_treeview.heading("severity", text=self.texts["alarm_datagrid_Severity"],anchor="w")
+        self.opcua_treeview.heading("message", text=self.texts["alarm_datagrid_message"],anchor="w")
+        self.opcua_treeview.heading("acknowledged state", text=self.texts["alarm_datagrid_ack_state"],anchor="w")
+        self.opcua_treeview.heading("identifier", text=self.texts["alarm_datagrid_identifier"],anchor="w")
+
+        self.opcua_treeview.column("#0", width=0, stretch=False)
+        self.opcua_treeview.column("date", width=200, stretch=False)
+        self.opcua_treeview.column("severity", width=150, stretch=False)
+        self.opcua_treeview.column("message", width=1100, stretch=False)
+        self.opcua_treeview.column("acknowledged state", width=150, stretch=False)
+        self.opcua_treeview.column("identifier", width=150, stretch=False)
+
+        self.opcua_treeview.pack(padx=10, pady=10, expand=True, fill="y",anchor="w")
+
+        vsb = ttk.Scrollbar(parent, orient="vertical", command=self.opcua_treeview.yview)
+        vsb.place(x=30+1750+2, y=95, height=1240+20)
+
+        self.opcua_treeview.configure(yscrollcommand=vsb.set)
+
+
+        def add_opcua_alarm_to_datagrid(log_folder="alarms"):
+            """Adds alarms to the opcua datagrid"""
+            if self.opcua_treeview is None:
+                logger.warning("Error: No opcua_treeview object")
+                return
+
+            for item in self.opcua_treeview.get_children():
+                self.opcua_treeview.delete(item)
+
+            log_files = [file for file in os.listdir(log_folder) if file.endswith(".log")]
+
+            for log_file in log_files:
+                with open(os.path.join(log_folder, log_file), "r") as file:
+                    state = None
+                    message = None
+                    time_str = None
+                    for line in file:
+                        line = line.strip()
+                        if line:
+                            if "Message:" in line:
+                                message_start = line.find("Message:")
+                                message_full = line[message_start:].split("Message:", 1)[1].strip()
+                                # Extract the content after 'Text='
+                                message = message_full.split("Text=", 1)[1].strip()
+                            elif "Time:" in line:
+                                time_start = line.find("Time:")
+                                time_str_full = line[time_start:].split("Time:", 1)[1].strip()
+                                # Convert time string to datetime object and remove microseconds
+                                time_obj = datetime.fromisoformat(time_str_full)
+                                time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S")
+                            elif "State:" in line:
+                                state_start = line.find("State:")
+                                state = line[state_start:].split("State:", 1)[1].strip()
+
+                        if message and time_str and state:
+                            if state.lower() == "true":
+                                self.opcua_treeview.insert("", "end", values=(time_str, message))
+                            # Reset values for the next set of message, time, and state
+                            state = None
+                            message = None
+                            time_str = None
+
+
+        return self.opcua_treeview, add_opcua_alarm_to_datagrid
+
+
+    async def achnowledge_alarm(self):
+        from .opcua_client import connect_opcua
+
+        if self.opcua_treeview is None:
+            logger.warning("Error: No opcua_treeview object")
+            return
+
+        selected_item = self.opcua_treeview.selection()[0]
+        selected_id = self.opcua_treeview.item(selected_item, 'values')[0]
+
+        client:Client = await connect_opcua(url=url)  # type: ignore ta bort kommentar för se error
+
+        event_obj = client.get_node(selected_id)
+
+        ack_result = await event_obj.call_method(ua.NodeId.from_string('i=9111'), ua.Variant(selected_id), ua.Variant("Acknowledged by operator"))
+
+        print(f"Acknowledge result: {ack_result}")
 
 
     def logs_page(self):
@@ -817,6 +922,10 @@ class App(customtkinter.CTk):
 
     def add_logs_to_datagrid(self):
         """Adds the info/errors from the logs to the log datagrid"""
+        if self.logs_treeview is None:
+            logger.warning("Error: No logs_treeview object")
+            return
+
         log_folder="logs"
         todays_date = datetime.now().date()
         todays_date_str = todays_date.strftime("%Y:%m:%d")
@@ -842,98 +951,18 @@ class App(customtkinter.CTk):
             self.logs_treeview.insert("", "end", values=entry)
 
 
-    def create_opcua_error_treeview(self,parent):
-        """Makes a datagid to see the errors from the units"""
-
-        self.opcua_treeview = ttk.Treeview(parent, columns=("date", "severity", "message", "acknowledged state", "identifier"),
-                                      show="headings", height=10, style="Treeview")
-
-        self.opcua_treeview.heading("#0", text="", anchor="w")
-        self.opcua_treeview.heading("date", text=self.texts["alarm_datagrid_date"],anchor="w")
-        self.opcua_treeview.heading("severity", text=self.texts["alarm_datagrid_Severity"],anchor="w")
-        self.opcua_treeview.heading("message", text=self.texts["alarm_datagrid_message"],anchor="w")
-        self.opcua_treeview.heading("acknowledged state", text=self.texts["alarm_datagrid_ack_state"],anchor="w")
-        self.opcua_treeview.heading("identifier", text=self.texts["alarm_datagrid_identifier"],anchor="w")
-
-        self.opcua_treeview.column("#0", width=0, stretch=False)
-        self.opcua_treeview.column("date", width=200, stretch=False)
-        self.opcua_treeview.column("severity", width=150, stretch=False)
-        self.opcua_treeview.column("message", width=1100, stretch=False)
-        self.opcua_treeview.column("acknowledged state", width=150, stretch=False)
-        self.opcua_treeview.column("identifier", width=150, stretch=False)
-
-        self.opcua_treeview.pack(padx=10, pady=10, expand=True, fill="y",anchor="w")
-
-        vsb = ttk.Scrollbar(parent, orient="vertical", command=self.opcua_treeview.yview)
-        vsb.place(x=30+1750+2, y=95, height=1240+20)
-
-        self.opcua_treeview.configure(yscrollcommand=vsb.set)
-
-
-        def add_opcua_alarm_to_datagrid(log_folder="alarms"):
-            """Adds alarms to the opcua datagrid"""
-
-            for item in self.opcua_treeview.get_children():
-                self.opcua_treeview.delete(item)
-
-            log_files = [file for file in os.listdir(log_folder) if file.endswith(".log")]
-
-            for log_file in log_files:
-                with open(os.path.join(log_folder, log_file), "r") as file:
-                    state = None
-                    message = None
-                    time_str = None
-                    for line in file:
-                        line = line.strip()
-                        if line:
-                            if "Message:" in line:
-                                message_start = line.find("Message:")
-                                message_full = line[message_start:].split("Message:", 1)[1].strip()
-                                # Extract the content after 'Text='
-                                message = message_full.split("Text=", 1)[1].strip()
-                            elif "Time:" in line:
-                                time_start = line.find("Time:")
-                                time_str_full = line[time_start:].split("Time:", 1)[1].strip()
-                                # Convert time string to datetime object and remove microseconds
-                                time_obj = datetime.fromisoformat(time_str_full)
-                                time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S")
-                            elif "State:" in line:
-                                state_start = line.find("State:")
-                                state = line[state_start:].split("State:", 1)[1].strip()
-
-                        if message and time_str and state:
-                            if state.lower() == "true":
-                                self.opcua_treeview.insert("", "end", values=(time_str, message))
-                            # Reset values for the next set of message, time, and state
-                            state = None
-                            message = None
-                            time_str = None
-
-
-        return self.opcua_treeview, add_opcua_alarm_to_datagrid
-
-
-    async def achnowledge_alarm(self):
-        from .opcua_client import connect_opcua
-
-        selected_item = self.opcua_treeview.selection()[0]
-        selected_id = self.treeview.item(selected_item, 'values')[0]
-
-        client = await connect_opcua(url=url)
-
-        event_obj = client.get_node(selected_id)
-
-        ack_result = await event_obj.call_method(ua.NodeId.from_string('i=9111'), ua.Variant(selected_id), ua.Variant("Acknowledged by operator"))
-
-        print(f"Acknowledge result: {ack_result}")
-
-
     def load_data_in_selected_recipe(self):
         """Called with a button takes the servo steps from OPCUA server and
         puts them into the selected recipe in the SQL"""
-        
+
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+
         if not askyesno(message=self.texts["yes_no_mesg_box_save_data_to_recipe"]):
             return
+
+        selected_id = None
 
         try:
 
@@ -944,6 +973,12 @@ class App(customtkinter.CTk):
             showinfo(title="Information", message=self.texts["no_recipe_to_load_data_into"])
 
         cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
+        
+        recipe_structure_id = None
+
         try:
             query = "SELECT RecipeStructID FROM tblRecipe WHERE id = ?"
             cursor.execute(query, (selected_id,))
@@ -967,6 +1002,11 @@ class App(customtkinter.CTk):
 
     def archive_selected_recipe(self):
         """archive the seleected recipe"""
+        
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+
         try:
             selected_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_item, 'values')[0]
@@ -975,6 +1015,10 @@ class App(customtkinter.CTk):
             return
 
         cursor, cnxn = get_database_connection()
+        
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
 
         try:
             cursor.execute("EXEC [RecipeDB].[dbo].[archive_recipe] @RecipeID=?", selected_id)
@@ -1011,9 +1055,17 @@ class App(customtkinter.CTk):
 
     def use_selected_recipe(self):
         """Puts the selected recipe in the units stepdata"""
+        
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
 
         if not askyesno(message=self.texts["yes_no_mesg_box_load_data_to_robot_cell"]):
             return
+        
+        selected_id = None
+        selected_name = None
+
         try:
             selected_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_item, 'values')[0]
@@ -1024,6 +1076,10 @@ class App(customtkinter.CTk):
             logger.warning(e)
 
         cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
+
         step_query = "SELECT * FROM ViewValues WHERE RecipeID = ?"
         cursor.execute(step_query, (selected_id,))
         step_data = cursor.fetchall()
@@ -1049,11 +1105,20 @@ class App(customtkinter.CTk):
         
         if not askyesno(message=self.texts["yes_no_mesg_box_delete_recipe"]):
             return
+        
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+        
+        cursor, cnxn = get_database_connection()
+        
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
 
         try:
             selected_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_item, 'values')[0]
-            cursor, cnxn = get_database_connection()
             cursor.execute("DELETE FROM [RecipeDB].[dbo].[tblRecipe] WHERE id = ?", (selected_id,))
             cnxn.commit()
             self.treeview.delete(selected_item)
@@ -1069,12 +1134,20 @@ class App(customtkinter.CTk):
     def submit_new_recipe(self, name, comment, selected_structure_id):
         """Called with a button adds a new recipe to the datagrid and SQL"""
 
-        logger.info(f"Submitting new recipe: Name: {name}, Comment: {comment}, Structure ID: {selected_structure_id}")
+        logger.info(f"Trying to submit new recipe: Name: {name}, Comment: {comment}, Structure ID: {selected_structure_id}")
 
         if not name or not selected_structure_id:
             showinfo(title='Information', message=self.texts["show_info_submit_new_recipe_error"])
             return
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+
         cursor, cnxn = get_database_connection()
+        
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
 
         try:
             cursor.execute("""
@@ -1126,6 +1199,9 @@ class App(customtkinter.CTk):
     def update_recipe(self, name, comment, selected_structure_id):
         """Called with a button to update servo steps or name of a recipe"""
 
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
 
         try:
             selected_item = self.treeview.selection()[0]
@@ -1139,7 +1215,12 @@ class App(customtkinter.CTk):
         if not name:
             showinfo(title='Information', message=self.texts["show_info_update_recipe_name_empty"])
             return
+        
         cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
+
         try:
             cursor.execute("EXEC [RecipeDB].[dbo].[update_recipe] @RecipeID=?, @RecipeName=?, @RecipeComment=?, @RecipeStructID=?",
                            selected_id, name, comment, selected_structure_id)
@@ -1178,15 +1259,26 @@ class App(customtkinter.CTk):
 
 
     def edit_recipe(self):
+        
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+
+        selected_id = None
+
         try:
             selected_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_item, 'values')[0]
-            cursor, cnxn = get_database_connection()
         except IndexError:
             showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_selected"])
+            
+        cursor, cnxn = get_database_connection()
+
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
 
         try:
-
             query = """
             SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
             FROM [RecipeDB].[dbo].[viewValues]
@@ -1197,6 +1289,7 @@ class App(customtkinter.CTk):
                 END,
                 TagName
             """
+
             params = (selected_id,)
             cursor.execute(query, params)
 
@@ -1264,7 +1357,6 @@ class App(customtkinter.CTk):
         """Shows the alarm page"""
         self.alarm_page()
         self.show_page("alarms_page")
-        #async_queue.put(monitor_alarms(self.add_opcua_alarm_to_datagrid_function))
 
 
     def logs_page_command(self):
@@ -1311,7 +1403,14 @@ class App(customtkinter.CTk):
     def open_update_recipe_window(self):
         "Shows the make a recipe window"
 
+        if self.treeview is None:
+            logger.warning("Error: No recipe treeview object")
+            return
+
         cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return
 
         try:
             selected_id_item = self.treeview.selection()[0]
@@ -1322,6 +1421,10 @@ class App(customtkinter.CTk):
                            WHERE [id] = ?', (selected_id,))
 
             row = cursor.fetchall()
+            
+            recipeName = None
+            recipeComment = None
+            recipe_struct = None
 
             for insert_good_var_name in row:
                 recipeName, recipeComment, recipe_struct = insert_good_var_name
@@ -1345,10 +1448,9 @@ def main():
 
     main_webserver()
 
-    # Start the tkinter app
     async_queue = Queue()
     
-    app = App(async_queue)  # <--- Initialize app here
+    app = App(async_queue)
 
     async_thread = Thread(target=run_asyncio_loop, args=(async_queue,app,), daemon=True)
     async_thread.start()
@@ -1357,7 +1459,6 @@ def main():
 
     async_queue.put(None)
     async_thread.join()
-
 
     # Start the alarm monitor
     #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)

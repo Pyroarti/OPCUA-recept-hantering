@@ -64,9 +64,14 @@ async def get_stepdata(node_steps: Node) -> json:
             ind += 1
             props_of_array_item = await array_item.get_children()
             path_array_item = await array_item.get_path()
+
             #if path_array_item:
             #    path_array_item_str = str(path_array_item[0])
 
+            if any('[0]' in str(path) for path in path_array_item):
+                logger.info(f"Skipping {path_array_item} as it contains '[0]'")
+                continue  # Skip the rest of the loop for this item
+            
             if props_of_array_item:
                 props: Node = None
                 for props in props_of_array_item:
@@ -107,7 +112,7 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
     :return: Client object if connected, None otherwise
     """
 
-    client = Client(url=url, timeout=4)
+    client = Client(url=url, timeout=10)
 
     try:
         logger.info(f"Connecting to OPC UA server at {url}")
@@ -229,7 +234,7 @@ async def write_tag(client: Client, tag_name, tag_value):
         except Exception as exeption:
             await client.disconnect()
             fault = True
-            logger.warning(f"Error converting data type to ua.Variant",{exeption})
+            logger.warning(f"Error converting data type to ua.Variant: {exeption}")
 
         if data_value is not None:
 

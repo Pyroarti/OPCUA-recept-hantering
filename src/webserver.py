@@ -136,15 +136,15 @@ def calculate_time_to_produce():
                 minutes = remainder // 60
                 estimated_time_remaining_global = f"{str(int(hours)).zfill(2)}:{str(int(minutes)).zfill(2)}"
 
-                print(f"Uppskattad tid kvar: {estimated_time_remaining_global}")
-                print(f"{avg_time_per_item} average time per item")
-
                 if len(timestamps) > 10:
                     timestamps.pop(0)
                     counts.pop(0)
-
+            
             except ZeroDivisionError:
                 pass
+            except Exception as exeption:
+                logger.warning("Error occurred", exeption)
+
         time.sleep(5)
 
 

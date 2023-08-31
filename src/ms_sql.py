@@ -28,7 +28,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     ip_address_list = []
     unit_ids_list = []
     data_origin_list = []
-    
+
     recipe_lengths_per_unit = {}
 
     struct_data_rows = await get_recipe_structures_map()
@@ -164,7 +164,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         db_opcua_not_same = await db_opcua_data_checker(selected_id,recipe_structure_id)
 
         await update_recipe_last_saved(selected_id)
-        
+
         if db_opcua_not_same:
             showinfo(title="Info", message= db_opcua_not_same)
         else:
@@ -202,7 +202,8 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
         unit_id, address = unit
 
         # Clearning runnin steps before putting new in
-        fault = await wipe_running_steps(address,encrypted_username,encrypted_password)
+        if unit_id != 3:
+            fault = await wipe_running_steps(address,encrypted_username,encrypted_password)
 
         if not fault or unit_id == 3:
 
@@ -215,7 +216,6 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
 
             if client:
                 logger.info(f"Connected to OPCUA server at {address}")
-                showinfo(title="Info", message=texts["show_info_opcua_connection_error"] + address)
             else:
                 logger.warning(f"Failed to connect to OPCUA server at {address}")
                 continue
@@ -244,6 +244,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
 
             # Writing step data to plc
             for row in filtered_data:
+                print(row)
 
                 _, _, _, tag_name, tag_value, tag_datatype, _  = row
                 tag_name = f"ns={namespace_index};s={tag_name}"
@@ -251,14 +252,14 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
                 node: Node = client.get_node(node_id)
                 result, fault = await write_tag(client, tag_name, tag_value)
 
-                logger.info(result,row)
+                logger.info(f"{result} {row}")
 
             # Writing the recipe name to PLC
-            try:
-                recipe_name_adress = 'ns=3;s="StepData"."RunningSteps"."Name"'
-                succes_writing_name = await write_tag(client, recipe_name_adress, selected_name)
-            except Exception:
-                continue
+            #try:
+            #    recipe_name_adress = 'ns=3;s="StepData"."RunningSteps"."Name"'
+            #    succes_writing_name = await write_tag(client, recipe_name_adress, selected_name)
+            #except Exception:
+            #    continue
 
             await client.disconnect()
 
@@ -390,7 +391,6 @@ def check_recipe_data(selected_id):
             if None in row:
                 logger.warning(f"One or more fields are None in row: {row}")
                 return False
-
         return True
 
     except Exception as exception:
@@ -418,6 +418,8 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
     data_difference = []
     
     opcua_results = {}
+    
+    pattern = re.compile(r'ns=\d+;s="(.+)"')
 
     # Fetching unit information based on the structure id
     for row in struct_data_rows:
@@ -451,8 +453,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
 
         elif structure_id == recipe_structure_id and unit_name == "Master":
             master_data = await get_opcua_value(url, data_origin)
-            
-            pattern = re.compile(r'ns=\d+;s="(.+)"')
+
             match = pattern.match(data_origin)
             if match:
                 clean_data_origin = match.group(1)
@@ -475,10 +476,10 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
         db_results[tag_name] = tag_value
 
     for tag_name, tag_value in db_results.items():
-        logger.info(f"Checking tag_name: {tag_name}")
+        #logger.info(f"Checking tag_name: {tag_name}")
         opcua_tag_value = opcua_results.get(tag_name, None)
-        logger.info(f"DB value for {tag_name}: {tag_value}")
-        logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
+        #logger.info(f"DB value for {tag_name}: {tag_value}")
+        #logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
 
         if opcua_tag_value is None:
             logger.warning(f"{tag_name} exists in database but not in OPCUA")
@@ -490,7 +491,8 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id):
             data_difference.append(db_opcua_missmatch)
 
         else:
-            logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
+            pass
+            #logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
 
     return data_difference
 

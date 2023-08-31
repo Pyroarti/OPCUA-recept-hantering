@@ -1,13 +1,8 @@
-* Komihåg att lägga till så fort man klickar bort recipie editor att lägga in den nya datan inte bara i opcua även i SQL.
-(dubbel kolla, ska väl bara lägga i sql inte i opcua??)
-
 * Kolla in varför programmet inte avslutas korrekt som man subscribar på alarm på opcua servern (verkar frf subba när gui är stängt)
-
-* Kolla in vrf den ibland försöker koppla sig till OPCUA massa gånger och krashar (händer inte längre)
 
 * Kolla in om man ska ha opcua alarmen i databasen (log fil är svårt att blädra genom) (hjälp från tobias med sql)
 
-* Sätt upp en windows task sceduler för logger som tar bort gammla logs
+* Sätt upp en windows task sceduler för logger som tar bort gammla logs (windows 11 logs är inte ens i närheten av storleken av win 10)
 
 * Kolla in monitor api (möte med dom vecka 35)
 
@@ -17,10 +12,12 @@
 
 * Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
 
-* Ta med en recept spardat datum som skickar till databasen
-
 * Skriv bättre docs for nya func
 
-* Ta bort att kolla på active så vi hämtar upp alla steg
+* En väldigt väldigt vacker dag gör om hela programmet till async (inte tkinter dvs)
 
-* En väldigt väldigt vacker dag gör om hela programmet till async
+* Namnändra self.treeview till recipe treeview
+
+* Gör att man kan dubbelklicka på ett recept så  ser man där alla version nummer som tillhör den
+
+* skriv bara ut i recept sparat i db stegen som är active
