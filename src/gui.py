@@ -49,7 +49,7 @@ def get_database_connection(timeout_duration=10):
     Exception: For any other unexpected issues that may arise during the connection process.
 
     """
-
+    
     data_encrypt = DataEncrypt()
     sql_config = data_encrypt.encrypt_credentials("sql_config.json", "SQL_KEY")
     if sql_config:
@@ -210,7 +210,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
 
         cursor, cnxn = get_database_connection()
-
+        
         if cursor and cnxn:
             try:
                 cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
@@ -242,7 +242,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             self.destroy()
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
-
+            
             return
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
@@ -432,15 +432,15 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.edit_step_dialog = customtkinter.CTkToplevel(self)
         self.edit_step_dialog.title("Edit TagValue")
         self.edit_step_dialog.geometry("400x150")
-
+    
         info_label = customtkinter.CTkLabel(self.edit_step_dialog, text=self.texts['changin_value_info'],font=("Helvetica", 18))
         info_label.pack(pady=5)
 
         self.new_value_entry = customtkinter.CTkEntry(self.edit_step_dialog, width = 170, height = 32, font=("Helvetica", 15))
         self.new_value_entry.pack(pady=5)
         self.new_value_entry.insert(0, tag_value)
-
-        save_button = customtkinter.CTkButton(self.edit_step_dialog, text="Spara",width=160,height=35,
+        
+        save_button = customtkinter.CTkButton(self.edit_step_dialog, text="Spara",width=160,height=35, 
                                               command=lambda: self.save_changes(selected_item,tag_name,unit_id))
         save_button.pack()
 
@@ -467,7 +467,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
                     @{tag_value_param_name}={edited_tag_value}, \
                     @{recipe_id_param_name}={self.selected_id},\
                     @{unit_id_param_name}={unit_id};")
-
+            
             cnxn.commit()
             cursor.close()
             cnxn.close()
@@ -622,7 +622,7 @@ class App(customtkinter.CTk):
 
         self.create_header(main_page, self.texts['header_main_menu'], self.opcua_alarms)
         self.create_meny_buttons(main_page)
-
+        
 
     def check_alive_units(self):
         """
@@ -693,7 +693,7 @@ class App(customtkinter.CTk):
                                                             height=60,
                                                             font=("Helvetica", 18))
         self.update_submit_button.pack(pady=10)
-
+        
         self.delete_selected_row_button = customtkinter.CTkButton(right_frame, text=self.texts["delete_the_selected_recipe_button"],
                                                                   command=self.delete_recipe,
                                                                   width=350,
@@ -807,7 +807,7 @@ class App(customtkinter.CTk):
         vsb.place(x=30+1750+2, y=95, height=1240+20)
 
         self.opcua_treeview.configure(yscrollcommand=vsb.set)
-
+        
         self.add_opcua_alarm_to_datagrid()
 
 
@@ -915,7 +915,7 @@ class App(customtkinter.CTk):
         vsb.place(x=30+2120+2, y=95, height=1240+20)
 
         self.logs_treeview.configure(yscrollcommand=vsb.set)
-
+        
         self.add_logs_to_datagrid()
 
 
@@ -945,9 +945,9 @@ class App(customtkinter.CTk):
                     if todays_date_str and "WARNING" in line:
                         error = line.split("|", 3)
                         log_entries.append(error)
-
+        
         log_entries.sort(key=lambda x: datetime.strptime(x[0], "%Y:%m:%d %H:%M:%S"))
-
+        
         for entry in log_entries:
             self.logs_treeview.insert("", "end", values=entry)
 
@@ -977,7 +977,7 @@ class App(customtkinter.CTk):
         if cursor is None or cnxn is None:
             logger.warning("Error: No cursor or cnxn object")
             return
-
+        
         recipe_structure_id = None
 
         try:
@@ -1003,7 +1003,7 @@ class App(customtkinter.CTk):
 
     def archive_selected_recipe(self):
         """Archive the selected recipe"""
-
+        
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
             return
@@ -1016,7 +1016,7 @@ class App(customtkinter.CTk):
             return
 
         cursor, cnxn = get_database_connection()
-
+        
         if cursor is None or cnxn is None:
             logger.warning("Error: No cursor or cnxn object")
             return
@@ -1056,14 +1056,14 @@ class App(customtkinter.CTk):
 
     def use_selected_recipe(self):
         """Puts the selected recipe in the units stepdata"""
-
+        
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
             return
 
         if not askyesno(message=self.texts["yes_no_mesg_box_load_data_to_robot_cell"]):
             return
-
+        
         selected_id = None
         selected_name = None
 
@@ -1103,16 +1103,16 @@ class App(customtkinter.CTk):
 
     def delete_recipe(self):
         """Called with a button delete a recipe from the datagrid and the SQL"""
-
+        
         if not askyesno(message=self.texts["yes_no_mesg_box_delete_recipe"]):
             return
-
+        
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
             return
-
+        
         cursor, cnxn = get_database_connection()
-
+        
         if cursor is None or cnxn is None:
             logger.warning("Error: No cursor or cnxn object")
             return
@@ -1145,7 +1145,7 @@ class App(customtkinter.CTk):
             return
 
         cursor, cnxn = get_database_connection()
-
+        
         if cursor is None or cnxn is None:
             logger.warning("Error: No cursor or cnxn object")
             return
@@ -1216,7 +1216,7 @@ class App(customtkinter.CTk):
         if not name:
             showinfo(title='Information', message=self.texts["show_info_update_recipe_name_empty"])
             return
-
+        
         cursor, cnxn = get_database_connection()
         if cursor is None or cnxn is None:
             logger.warning("Error: No cursor or cnxn object")
@@ -1260,7 +1260,7 @@ class App(customtkinter.CTk):
 
 
     def edit_recipe(self):
-
+        
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
             return
@@ -1272,7 +1272,7 @@ class App(customtkinter.CTk):
             selected_id = self.treeview.item(selected_item, 'values')[0]
         except IndexError:
             showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_selected"])
-
+            
         cursor, cnxn = get_database_connection()
 
         if cursor is None or cnxn is None:
@@ -1422,7 +1422,7 @@ class App(customtkinter.CTk):
                            WHERE [id] = ?', (selected_id,))
 
             row = cursor.fetchall()
-
+            
             recipeName = None
             recipeComment = None
             recipe_struct = None
@@ -1450,7 +1450,7 @@ def main():
     main_webserver()
 
     async_queue = Queue()
-
+    
     app = App(async_queue)
 
     async_thread = Thread(target=run_asyncio_loop, args=(async_queue,app,), daemon=True)
