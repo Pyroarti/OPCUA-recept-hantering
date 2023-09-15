@@ -11,6 +11,7 @@ import webbrowser
 import markdown
 from asyncua import ua
 import json
+import tkinter as tk
 
 # Third party package
 import customtkinter
@@ -200,6 +201,29 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("id", text="Structure", anchor="w")
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
 
+
+        self.base_recipe_label = customtkinter.CTkLabel(self, text="Base Recipe", font=("Helvetica", 16))
+        self.base_recipe_label.pack()
+
+        cursor, cnxn = get_database_connection()
+        if cursor is None or cnxn is None:
+            return
+        else:
+            cursor.execute('SELECT TOP (1000) [RecipeName] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+            rows = cursor.fetchall()
+
+        available_base_recipes = []
+        for row in rows:
+            available_base_recipes.append(row[0])
+
+        self.base_recipe_var = tk.StringVar(self)
+        self.base_recipe_var.set(available_base_recipes[0])
+
+        self.base_recipe_dropdown = customtkinter.CTkOptionMenu(self, self.base_recipe_var, *available_base_recipes)
+        self.base_recipe_dropdown.pack()
+
+        selected_base_recipe = self.base_recipe_var.get()
+
         cursor, cnxn = get_database_connection()
         try:
             cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
@@ -229,6 +253,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
             self.destroy()
             return
+
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
     """Class for a pop up window."""
@@ -720,6 +745,22 @@ class App(customtkinter.CTk):
 
         # Binds a event where user selects something on the datagrid
         self.treeview.bind('<<TreeviewSelect>>')
+
+        self.treeview.bind("<Double-1>", self.on_item_double_click)
+
+
+
+    def on_item_double_click(self, event):
+        item = self.treeview.selection()[0]  # Get selected item
+        if self.treeview.item(item, "open"):  # If item is open
+            self.treeview.item(item, open=False)  # Close it
+        else:
+            self.treeview.item(item, open=True)  # Otherwise, open it
+
+
+
+
+
 
 
     def alarm_page(self):
@@ -1308,11 +1349,12 @@ def main():
     # Start the webserver
     main_webserver()
 
-    # Start the tkinter app
+
     async_queue = Queue()
     async_thread = Thread(target=run_asyncio_loop, args=(async_queue,), daemon=True)
     async_thread.start()
 
+    # Start the tkinter app
     app = App(async_queue)
     app.mainloop()
 
