@@ -45,7 +45,7 @@ class DataEncrypt():
         config_path = self.output_path / "configs" / config_filename
         key = os.environ.get(env_key_name)
         if key is None:
-            logger.error(f"{env_key_name} is not set in the environment")
+            logger.warning(f"{env_key_name} is not set in the environment")
             return None
         key = key.encode()
         if not self.is_encrypted(config_path):

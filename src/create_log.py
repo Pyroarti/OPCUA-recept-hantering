@@ -4,7 +4,17 @@ import sys
 import time
 from logging.handlers import RotatingFileHandler
 
-def setup_logger(logger_name):
+class SuppressSpecificLogs(logging.Filter):
+    def __init__(self, suppress_list):
+        self.suppress_list = suppress_list
+
+    def filter(self, record):
+        for msg in self.suppress_list:
+            if msg in record.getMessage():
+                return 0
+        return 1
+
+def setup_logger(logger_name, suppress_list=None):
 
     """
     Creates and configures a logging instance for the specified module.
@@ -48,6 +58,10 @@ def setup_logger(logger_name):
     handler = RotatingFileHandler(log_file, maxBytes=100*1024*1024, backupCount=3) # 100 MB max size per file, 3 files max
     handler.setFormatter(formatter)
     handler.setLevel(logging.DEBUG)
+
+    if suppress_list:
+        handler.addFilter(SuppressSpecificLogs(suppress_list))
+
     logger.addHandler(handler)
 
     return logger

@@ -1,8 +1,8 @@
 import json
 from tkinter.messagebox import showinfo
 from pathlib import Path
-from time import sleep
 import re
+import asyncio
 
 from asyncua import ua, Node, Client
 
@@ -12,6 +12,7 @@ from .opcua_client import get_servo_steps, connect_opcua, write_tag
 
 
 logger = setup_logger('ms_sql')
+
 
 async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     """
@@ -28,11 +29,13 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
     unit_ids_list = []
     data_origin_list = []
 
+    recipe_lengths_per_unit = {}
+
     struct_data_rows = await get_recipe_structures_map()
 
     # Fetching unit information based on the structure id
     for row in struct_data_rows:
-        unit_id, structure_id ,data_origin, url = row
+        unit_id, unit_name, structure_id ,data_origin, url = row
         if structure_id == recipe_structure_id:
             unit_ids_list.append(unit_id)
             ip_address_list.append(url)
@@ -40,12 +43,10 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
     cursor, cnxn = get_database_connection()
 
-    if cursor and cnxn:
-        logger.info("Database connection established")
-    else:
-        logger.error("Failed to establish a database connection")
+    if cursor is None or cnxn is None:
+        logger.warning("Failed to establish a database connection")
         showinfo(title="Info", message= texts["error_with_database"])
-        return
+        return None
 
     # Define the stored procedure and parameter names
     stored_procedure_name = 'add_value'
@@ -64,12 +65,28 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
         if data_place == 'ns=3;s="StepData"."RunningSteps"."Steps"':
             steps = await get_servo_steps(adresses, data_place)
+            
             if steps:
+                try:
+                    recipe_length = (len(steps))
+                except TypeError:
+                    recipe_length = (0 + unit_id_to_get)
+                    
+                if unit_id_to_get == 1:
+                    unitname = "SMC1"
+                elif unit_id_to_get == 2:
+                    unitname = "SMC2"
+                elif unit_id_to_get == 3:
+                    unitname = "Master"
+                else:
+                    unitname = f"Unknown unit {unit_id_to_get}"
+
+                recipe_lengths_per_unit[unitname] = recipe_length
 
                 for step in steps:
-                    logger.info(step)
+                    #logger.info(step)
                     for prop in steps[step]:
-                        logger.info(prop)
+                        #logger.info(prop)
                         tag_name: str = steps[step][prop]["Node"].nodeid.Identifier
                         tag_value = steps[step][prop]["Value"]
                         tag_datatype = steps[step][prop]["Datatype"].name
@@ -83,7 +100,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                                     @{recipe_id_param_name}={recipe_id},\
                                     @{unit_id_param_name}={unit_id_to_get};")
                         except Exception as exception:
-                            logger.error(exception)
+                            logger.warning(exception)
                             all_units_processed_successfully = False
 
             else:
@@ -117,22 +134,52 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                         @{tag_name_param_name}='{data_place}', \
                         @{tag_value_param_name}={opcua_value}, \
                         @{tag_datatype_param_name}={datatype}, \
-                        @{recipe_id_param_name}={recipe_id},\
+                        @{recipe_id_param_name}={selected_id},\
                         @{unit_id_param_name}={unit_id_to_get};")
             except Exception as exception:
-                logger.error(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
+                logger.warning(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
                 all_units_processed_successfully = False
 
     cnxn.commit()
     cnxn.close()
 
     if all_units_processed_successfully:
+
+        message_detail = (
+            f"SMC1 Steg: {recipe_lengths_per_unit.get('SMC1', 'N/A')}\n"
+            f"SMC2 Steg: {recipe_lengths_per_unit.get('SMC2', 'N/A')}\n"
+            f"Tryck ok för att börja kontrollera alla steg i receptet."
+        ) 
+
         showinfo(title='Information',
-                 message=texts["show_info_from_all_units_processed_successfully"])
+             message=texts["show_info_from_all_units_processed_successfully"],
+             detail=message_detail)
+
+        logger.info(f"Data loaded successfully for selected recipe ID: {selected_id}")
+
+        recipe_checked = check_recipe_data(selected_id)
+
+        db_opcua_not_same = await db_opcua_data_checker(selected_id,recipe_structure_id)
+
+        successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
+        
+        if successfully_updated_recipe_last_saved:
+
+            if db_opcua_not_same:
+                showinfo(title="Info", message= db_opcua_not_same)
+            else:
+                showinfo(title="Info", message= texts["show_info_data_in_database_and_opcua_is_the_same"])
+        
+        else:
+            showinfo(title="Info", message= texts["general_error"])
+
+        return recipe_checked
+
     else:
-        logger.error("Problem with loading data to sql")
+        logger.warning("Problem with loading data to sql")
         showinfo(title='Information',
                  message=texts["show_info_from_all_units_processed_not_successfully"])
+        return None
 
 
 async def from_sql_to_units_stepdata(step_data, texts, selected_name):
@@ -159,7 +206,8 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
         unit_id, address = unit
 
         # Clearning runnin steps before putting new in
-        fault = await wipe_running_steps(address,encrypted_username,encrypted_password)
+        if unit_id != 3:
+            fault = await wipe_running_steps(address,encrypted_username,encrypted_password)
 
         if not fault or unit_id == 3:
 
@@ -172,9 +220,8 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
 
             if client:
                 logger.info(f"Connected to OPCUA server at {address}")
-                showinfo(title="Info", message=texts["show_info_opcua_connection_error"] + address)
             else:
-                logger.error(f"Failed to connect to OPCUA server at {address}")
+                logger.warning(f"Failed to connect to OPCUA server at {address}")
                 continue
 
             output_path = Path(__file__).parent.parent
@@ -201,6 +248,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
 
             # Writing step data to plc
             for row in filtered_data:
+                print(row)
 
                 _, _, _, tag_name, tag_value, tag_datatype, _  = row
                 tag_name = f"ns={namespace_index};s={tag_name}"
@@ -208,27 +256,31 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
                 node: Node = client.get_node(node_id)
                 result, fault = await write_tag(client, tag_name, tag_value)
 
-                logger.info(result,row)
+                logger.info(f"{result} {row}")
 
             # Writing the recipe name to PLC
-            try:
-                recipe_name_adress = 'ns=3;s="StepData"."RunningSteps"."Name"'
-                succes_writing_name = await write_tag(client, recipe_name_adress, selected_name)
-            except Exception:
-                continue
+            #try:
+            #    recipe_name_adress = 'ns=3;s="StepData"."RunningSteps"."Name"'
+            #    succes_writing_name = await write_tag(client, recipe_name_adress, selected_name)
+            #except Exception:
+            #    continue
 
             await client.disconnect()
-            sleep(3)
 
         else:
             logger.info("There was a problem while wiping the data or so is the case for unit 3 (Master)")
+            await client.disconnect()
 
     if all_units_processed_successfully and not fault :
+        
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_successfully"])
+        await client.disconnect()
     else:
-        logger.error("Problem with loading data to units")
+        logger.warning("Problem with loading data to units")
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_not_successfully"])
+        await client.disconnect()
 
+    await client.disconnect()
     return all_units_processed_successfully
 
 
@@ -250,10 +302,11 @@ async def get_units():
     cnxn.close()
 
     if units:
-        logger.info(f"Fetched {units} units from the database")
+        return units
+
     else:
         logger.warning("No units were fetched from the database")
-    return units
+        return None
 
 
 async def get_recipe_structures_map():
@@ -268,7 +321,7 @@ async def get_recipe_structures_map():
 
     cursor, cnxn = get_database_connection()
 
-    cursor.execute('SELECT Unit_Id, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
+    cursor.execute('SELECT Unit_Id,UnitName, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
 
     struct_data = cursor.fetchall()
 
@@ -295,7 +348,7 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
 
     """
 
-    client = await connect_opcua(address, encrypted_username, encrypted_password)
+    client:Client = await connect_opcua(address, encrypted_username, encrypted_password)
 
     if client:
         try:
@@ -303,19 +356,21 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
             opcua_adress = 'ns=3;s="Recipe_Handler"."External"."ClearRunningSteps"'
             succes_writing_name, fault = await write_tag(client, opcua_adress, True)
 
-            sleep(5)
+            await asyncio.sleep(2)
+
+            await client.disconnect()
 
             return fault
         except Exception as exception:
-            logger.info(exception)
+            logger.warning(exception)
 
     else:
-        logger.info("Error while trying to connect to opcua servers to clean data")
+        logger.warning("Error while trying to connect to opcua servers to clean data")
 
 
 def check_recipe_data(selected_id):
     """
-    Checks the data of the selected recipe. To se if ther is data in the database.
+    Checks the data of the selected recipe. To see if there is data in the database.
     """
     from .gui import get_database_connection
 
@@ -334,16 +389,142 @@ def check_recipe_data(selected_id):
         rows = cursor.fetchall()
 
         if not rows:
-            logger.info("No recipe data found")
             return False
 
         for row in rows:
             if None in row:
                 logger.warning(f"One or more fields are None in row: {row}")
                 return False
-
         return True
 
     except Exception as exception:
-        logger.error(exception)
+        logger.warning(exception)
+        return False
+
+
+async def db_opcua_data_checker(recipe_id, recipe_structure_id):
+    """
+    Checks the step data in the database and compares it with the OPCUA data.
+    
+    Parameters:
+        recipe_id: The Recipe ID used for querying the SQL database.
+
+    Returns:
+        True if data is the same in both places, False otherwise.
+    """
+    from .gui import get_database_connection
+    from .opcua_client import get_opcua_value
+
+    cursor, cnxn = get_database_connection()
+
+    struct_data_rows = await get_recipe_structures_map()
+
+    data_difference = []
+    
+    opcua_results = {}
+    
+    pattern = re.compile(r'ns=\d+;s="(.+)"')
+
+    # Fetching unit information based on the structure id
+    for row in struct_data_rows:
+        unit_id, unit_name, structure_id ,data_origin, url = row
+        if structure_id == recipe_structure_id and unit_name != "Master":
+
+            servo_steps = await get_servo_steps(url, data_origin)
+
+
+            for key1, inner_dict in servo_steps.items():
+                for key2, info_dict in inner_dict.items():
+                    node_obj = info_dict['Node']
+                    node_id = node_obj.nodeid
+                    identifier = node_id.Identifier 
+                    value = str(info_dict['Value'])
+                    opcua_results[identifier] = value
+
+            try:
+                query = """
+                SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType]
+                FROM [RecipeDB].[dbo].[viewValues]
+                WHERE RecipeID = ? AND UnitID = ?
+                """
+                params = (recipe_id,unit_id)
+                cursor.execute(query, params,)
+                rows = cursor.fetchall()
+
+            except Exception as exception:
+                logger.warning(exception)
+                return False
+
+        elif structure_id == recipe_structure_id and unit_name == "Master":
+            master_data = await get_opcua_value(url, data_origin)
+
+            match = pattern.match(data_origin)
+            if match:
+                clean_data_origin = match.group(1)
+                clean_data_origin = f'"{clean_data_origin}"'
+                opcua_results[clean_data_origin] = str(master_data[1])
+            else:
+                opcua_results[data_origin] = str(master_data[1])  # Fallback if regex doesn't match
+
+    db_results = {}
+    if not rows:
+        return False
+
+    for row in rows:
+
+        if None in row:
+            logger.warning(f"One or more fields are None in row: {row}")
+            return False
+
+        unit_id, tag_name, tag_value, tag_datatype = row
+        db_results[tag_name] = tag_value
+
+    for tag_name, tag_value in db_results.items():
+        logger.info(f"Checking tag_name: {tag_name}")
+        opcua_tag_value = opcua_results.get(tag_name, None)
+        logger.info(f"DB value for {tag_name}: {tag_value}")
+        logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
+
+        if opcua_tag_value is None:
+            logger.warning(f"{tag_name} exists in database but not in OPCUA")
+            data_difference.append(f"{tag_name} exists in database but not in OPCUA")
+
+        elif tag_value != opcua_tag_value:
+            logger.warning(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+            db_opcua_missmatch = (f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+            data_difference.append(db_opcua_missmatch)
+
+        else:
+            pass
+            #logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
+
+    return data_difference
+
+
+async def update_recipe_last_saved(recipe_id):
+    """
+    Updates the last saved date for a recipe to database.
+    """
+    from .gui import get_database_connection
+
+    cursor, cnxn = get_database_connection()
+    
+    if cursor is None or cnxn is None:
+        logger.warning("Failed to establish a database connection")
+        return False
+
+    try:
+        query = """
+        UPDATE [RecipeDB].[dbo].[tblRecipe]
+        SET [RecipeLastDataSaved] = GETDATE()
+        WHERE [id] = ?
+        """
+
+        params = (recipe_id,)
+        cursor.execute(query, params)
+        cnxn.commit()
+        return True
+    
+    except Exception as exception:
+        logger.warning(exception)
         return False

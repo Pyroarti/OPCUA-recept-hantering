@@ -1,17 +1,20 @@
 import json
 import threading
-import webbrowser
 import asyncio
 from flask import Flask, request, render_template
 from flask_cors import CORS
 from waitress import serve
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
+import time
 
 from .create_log import setup_logger
 from .opcua_client import data_to_webserver
 from .data_encrypt import DataEncrypt
 
+produced_global = 0
+to_do_global = 0
+estimated_time_remaining_global = 0
 
 logger = setup_logger('webserver')
 
@@ -53,6 +56,7 @@ def main_page():
 
     return render_template('index.html')
 
+
 @app.route('/get_data', methods=['GET'])
 def get_data():
 
@@ -61,6 +65,7 @@ def get_data():
     Fetches data from the database and runs an asynchronous task to retrieve additional data.
     Returns the response as JSON.
     """
+    global produced_global, to_do_global, estimated_time_remaining_global 
 
     produced = None
     to_do = None
@@ -73,7 +78,7 @@ def get_data():
 
     except Exception as exeption:
         db.session.rollback()
-        logger.error("Database error occurred", exeption)
+        logger.warning("Database error occurred", exeption)
         return "Server error", 500
     finally:
         db.session.close()
@@ -86,53 +91,61 @@ def get_data():
     if result is not None:
         try:
             produced, to_do = result
-            response = json.dumps({"produced": produced, "to_do": to_do, "name": active_recipe_name})
+            produced_global = produced
+            to_do_global = to_do
+            response = json.dumps({
+            "produced": produced,
+            "to_do": to_do,
+            "name": active_recipe_name,
+            "estimated_time": estimated_time_remaining_global
+            })
             headers = {"Content-Type": "application/json"}
         except TypeError as exeption:
-            logger.error("Error occurred", exeption)
+            logger.warning("Error occurred", exeption)
             return "Server error", 500
     else:
-        logger.error("No data received from the opcua server")
+        logger.warning("No data received from the opcua server")
         return "Server error", 500
 
     return response or "", 200, headers or {}
 
 
-# Gammla sättet
-#@app.route('/get_data', methods=['GET'])
-#def get_data():
-#    from .gui import get_database_connection
-#    produced = None
-#    to_do = None
-#    response = None
-#    headers = None
-#
-#    cursor, cnxn = get_database_connection()
-#
-#    cursor.execute('SELECT * FROM tblActiveRecipeList')
-#
-#    active_recipe_name = cursor.fetchall()[0][0]
-#
-#    cursor.close()
-#    cnxn.close()
-#
-#    loop = asyncio.new_event_loop()
-#    asyncio.set_event_loop(loop)
-#    result = loop.run_until_complete(data_to_webserver())
-#
-#    if result is not None:
-#        try:
-#            produced, to_do = result
-#            response = json.dumps({"produced": produced, "to_do": to_do, "name": active_recipe_name})
-#            headers = {"Content-Type": "application/json"}
-#        except TypeError as e:
-#            logger.error("Error occurred", e)
-#            return "Server error", 500
-#    else:
-#        logger.error("No data received from the opcua server")
-#        return "Server error", 500
-#
-#    return response or "", 200, headers or {}
+def calculate_time_to_produce():
+    global produced_global, to_do_global, estimated_time_remaining_global
+
+    timestamps = []
+    counts = []
+
+    while True: 
+        produced = produced_global
+        to_do = to_do_global
+
+        current_time = time.time()
+        timestamps.append(current_time)
+        counts.append(produced)
+
+        if len(timestamps) > 2 and max(counts) > 1:
+            try:
+                time_diff = timestamps[-1] - timestamps[0]
+                count_diff = counts[-1] - counts[0]
+
+                avg_time_per_item = time_diff / count_diff
+                remaining_items = to_do - produced
+                estimated_time_remaining_seconds = avg_time_per_item * remaining_items
+                hours, remainder = divmod(estimated_time_remaining_seconds, 3600)
+                minutes = remainder // 60
+                estimated_time_remaining_global = f"{str(int(hours)).zfill(2)}:{str(int(minutes)).zfill(2)}"
+
+                if len(timestamps) > 10:
+                    timestamps.pop(0)
+                    counts.pop(0)
+            
+            except ZeroDivisionError:
+                pass
+            except Exception as exeption:
+                logger.warning("Error occurred", exeption)
+
+        time.sleep(5)
 
 
 def run_server():
@@ -146,7 +159,9 @@ def main_webserver():
     server_thread.daemon = True
     server_thread.start()
 
-    webbrowser.open(url)
+    time_calc_thread = threading.Thread(target=calculate_time_to_produce)
+    time_calc_thread.daemon = True
+    time_calc_thread.start()
 
 
 if __name__ == "__main__":
