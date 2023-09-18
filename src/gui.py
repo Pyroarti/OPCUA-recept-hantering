@@ -221,28 +221,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             cursor.execute('SELECT TOP (1000) [RecipeName] FROM [RecipeDB].[dbo].[viewRecipesActive]')
             rows = cursor.fetchall()
 
-        available_base_recipes = ["Ingen basrecept"]
-        for row in rows:
-            available_base_recipes.append(row[0])
 
-        self.base_recipe_var = tk.StringVar(self)
-        self.base_recipe_var.set(available_base_recipes[0])
-
-        self.scrollable_frame = customtkinter.CTkScrollableFrame(master=self, height=200)
-
-        self.scrollable_frame.pack()
-
-        selected_base_recipe = self.base_recipe_var.get()
-        
-        scroll_window_label = customtkinter.CTkLabel(master=self.scrollable_frame,
-                                                     justify=customtkinter.LEFT,
-                                                     text="Finns basrecept?",
-                                                     font=customtkinter.CTkFont(size=14,
-                                                                                weight="bold"))
-        scroll_window_label.pack(pady=10, padx=10)
-        
-        if selected_base_recipe == "Ingen basrecept":
-            pass
 
         cursor, cnxn = get_database_connection()
 
@@ -833,7 +812,7 @@ class App(customtkinter.CTk):
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
             if parent_id is not None:
-                
+                RecipeName = "              " + RecipeName 
                 has_recipe_data = (check_recipe_data(recipe_id))
                 status_text = '' if has_recipe_data else 'Tomt'
                 if recipe_last_saved == None:
@@ -1324,7 +1303,7 @@ class App(customtkinter.CTk):
         for row in rows:
             recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
             if parent_id is not None:
-                
+                RecipeName = "              " + RecipeName
                 has_recipe_data = (check_recipe_data(recipe_id))
                 status_text = '' if has_recipe_data else 'Tomt'
                 if recipe_last_saved == None:
