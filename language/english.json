@@ -23,6 +23,7 @@
     "recipe_datagrid_status": "Recipe data",
 
     "make_a_recipe": "Create recipe...",
+    "make_a_child_recipe": "Create new recipe version...",
     "recipe_name": "Name",
     "recipe_comment": "Comment",
     "recipe_submit": "Create",

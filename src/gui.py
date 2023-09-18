@@ -163,14 +163,17 @@ class AboutWindow(customtkinter.CTkToplevel):
 
 class MakeRecipeWindow(customtkinter.CTkToplevel):
     """Class for a pop up window."""
-    def __init__(self, app_instance:"App",  texts, *args, **kwargs):
+    def __init__(self, app_instance:"App",  texts, parent_id=None, is_child=None, *args, **kwargs):
         super().__init__( *args, **kwargs)
         self.resizable(False, False)
         self.app_instance = app_instance
         self.texts = texts
+        self.parent_id = parent_id
+        self.is_child = is_child
+        print(self.is_child)
         self.title("Recipe maker")
         pop_up_width = 400
-        pop_up_height = 450
+        pop_up_height = 700
         position_x = 600
         position_y = 400
         self.attributes('-topmost', True)
@@ -211,9 +214,6 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
 
 
-        self.base_recipe_label = customtkinter.CTkLabel(self, text="Base Recipe", font=("Helvetica", 16))
-        self.base_recipe_label.pack()
-
         cursor, cnxn = get_database_connection()
         if cursor is None or cnxn is None:
             return
@@ -221,17 +221,28 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             cursor.execute('SELECT TOP (1000) [RecipeName] FROM [RecipeDB].[dbo].[viewRecipesActive]')
             rows = cursor.fetchall()
 
-        available_base_recipes = []
+        available_base_recipes = ["Ingen basrecept"]
         for row in rows:
             available_base_recipes.append(row[0])
 
         self.base_recipe_var = tk.StringVar(self)
         self.base_recipe_var.set(available_base_recipes[0])
 
-        self.base_recipe_dropdown = customtkinter.CTkOptionMenu(self, self.base_recipe_var, *available_base_recipes)
-        self.base_recipe_dropdown.pack()
+        self.scrollable_frame = customtkinter.CTkScrollableFrame(master=self, height=200)
+
+        self.scrollable_frame.pack()
 
         selected_base_recipe = self.base_recipe_var.get()
+        
+        scroll_window_label = customtkinter.CTkLabel(master=self.scrollable_frame,
+                                                     justify=customtkinter.LEFT,
+                                                     text="Finns basrecept?",
+                                                     font=customtkinter.CTkFont(size=14,
+                                                                                weight="bold"))
+        scroll_window_label.pack(pady=10, padx=10)
+        
+        if selected_base_recipe == "Ingen basrecept":
+            pass
 
         cursor, cnxn = get_database_connection()
 
@@ -262,7 +273,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             selected_structure_item = self.treeview_select_structure.selection()[0]
             selected_structure_id = self.treeview_select_structure.item(selected_structure_item, "values")[0]
 
-            self.app_instance.submit_new_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id)
+            self.app_instance.submit_new_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id, self.parent_id)
             self.destroy()
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
@@ -497,6 +508,72 @@ class Edit_steps_window(customtkinter.CTkToplevel):
             cnxn.close()
         except Exception as exeption:
             logger.warning(exeption)
+            
+class Selected_recipe_menu(customtkinter.CTkToplevel):
+    """Class for a pop up window to settings for a recipe"""
+    def __init__(self, app_instance:"App", texts,  parent_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.resizable(False, False)
+        self.parent_id = parent_id
+        self.texts = texts
+        self.title("")
+        pop_up_width = 800
+        pop_up_height = 900
+        position_x = 900
+        position_y = 400
+        self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
+        self.app_instance = app_instance
+        place_buttons = None
+
+        self.place_buttons()
+
+    def place_buttons(self):
+        
+        self.make_recipe_button = customtkinter.CTkButton(self,
+                                                    text=self.texts['make_a_child_recipe'],
+                                                    command=lambda: self.app_instance.open_make_recipe_window(is_child=True, parent_id=self.parent_id),
+                                                    width=350,
+                                                    height=60,
+                                                    font=("Helvetica", 18))
+        self.make_recipe_button.pack(pady=10)
+        
+        self.update_submit_button = customtkinter.CTkButton(self, text=self.texts['update_recipe'],
+                                                            command= self.app_instance.open_update_recipe_window,
+                                                            width=350,
+                                                            height=60,
+                                                            font=("Helvetica", 18))
+        self.update_submit_button.pack(pady=10)
+
+        self.delete_selected_row_button = customtkinter.CTkButton(self, text=self.texts["delete_the_selected_recipe_button"],
+                                                                  command= self.app_instance.delete_recipe,
+                                                                  width=350,
+                                                                  height=45,
+                                                                  font=("Helvetica", 18))
+        self.delete_selected_row_button.pack(pady=(15,0))
+
+
+        self.load_data_in_selected_recipe_button = customtkinter.CTkButton(self,
+                                                                           text=self.texts['load_servo_steps_into_selected_recipe_button'],
+                                                                           command= self.app_instance.load_data_in_selected_recipe,
+                                                                           width=350,
+                                                                           height=45,
+                                                                           font=("Helvetica", 18))
+
+        self.load_data_in_selected_recipe_button.pack(pady=(60,0))
+
+        self.use_selected_recipe_button = customtkinter.CTkButton(self, text=self.texts["use_the_selected_recipe_button"],
+                                                                   command= self.app_instance.use_selected_recipe,
+                                                                   width=350,
+                                                                   height=45,
+                                                                   font=("Helvetica", 18))
+        self.use_selected_recipe_button.pack(pady=(20,0))
+
+        self.edit_selected_recipe_button = customtkinter.CTkButton(self, text=self.texts["edit_the_selected_recipe_button"],
+                                                                  command= self.app_instance.edit_recipe,
+                                                                  width=350,
+                                                                  height=45,
+                                                                  font=("Helvetica", 18))
+        self.edit_selected_recipe_button.pack(pady=(20,0))
 
 
 class App(customtkinter.CTk):
@@ -519,6 +596,7 @@ class App(customtkinter.CTk):
         self.edit_steps_window = None
         self.make_recipe_window = None
         self.edit_recipe_window = None
+        self.selected_recipe_menu = None
         self.language_button = None
         self.check_if_units_alive = None
         self.ip_adresses_treeview = None
@@ -711,44 +789,6 @@ class App(customtkinter.CTk):
         self.make_recipe_button.pack(pady=10)
 
 
-        self.update_submit_button = customtkinter.CTkButton(right_frame, text=self.texts['update_recipe'],
-                                                            command=self.open_update_recipe_window,
-                                                            width=350,
-                                                            height=60,
-                                                            font=("Helvetica", 18))
-        self.update_submit_button.pack(pady=10)
-
-        self.delete_selected_row_button = customtkinter.CTkButton(right_frame, text=self.texts["delete_the_selected_recipe_button"],
-                                                                  command=self.delete_recipe,
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
-        self.delete_selected_row_button.pack(pady=(15,0))
-
-
-        self.load_data_in_selected_recipe_button = customtkinter.CTkButton(right_frame,
-                                                                           text=self.texts['load_servo_steps_into_selected_recipe_button'],
-                                                                           command=self.load_data_in_selected_recipe,
-                                                                           width=350,
-                                                                           height=45,
-                                                                           font=("Helvetica", 18))
-
-        self.load_data_in_selected_recipe_button.pack(pady=(60,0))
-
-        self.use_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["use_the_selected_recipe_button"],
-                                                                   command=self.use_selected_recipe,
-                                                                   width=350,
-                                                                   height=45,
-                                                                   font=("Helvetica", 18))
-        self.use_selected_recipe_button.pack(pady=(20,0))
-
-        self.edit_selected_recipe_button = customtkinter.CTkButton(right_frame, text=self.texts["edit_the_selected_recipe_button"],
-                                                                  command=self.edit_recipe,
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
-        self.edit_selected_recipe_button.pack(pady=(20,0))
-
         cursor, cnxn = get_database_connection()
 
         if cursor and cnxn:
@@ -759,7 +799,7 @@ class App(customtkinter.CTk):
             return
         try:
             cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
-                            [RecipeUpdated], [RecipeLastDataSaved] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+                            [RecipeUpdated], [RecipeLastDataSaved],[ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
         except Exception as exeption:
             logger.warning(f"Error while executing SELECT TOP: {exeption}")
             return
@@ -768,33 +808,78 @@ class App(customtkinter.CTk):
 
         cursor.close()
         cnxn.close()
+        
+        parent_items = {}
 
         for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved = row
-            has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = '' if has_recipe_data else 'Tomt'
-            if recipe_last_saved == None:
-                recipe_last_saved = ""
-            else:
-                recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-            self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                    RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                    recipe_last_saved,
-                                                    status_text))
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+            if parent_id == None:
+                has_children = self.check_has_children(recipe_id)
+                if has_children:
+                    RecipeName += " --(Har flera versioner...)--"
+                has_recipe_data = (check_recipe_data(recipe_id))
+                status_text = '' if has_recipe_data else 'Tomt'
+                if recipe_last_saved == None:
+                    recipe_last_saved = ""
+                else:
+                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+                item = self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
+                                                        RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                        RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                        recipe_last_saved,
+                                                        status_text))
+                parent_items[recipe_id] = item
+        
+        for row in rows:
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+            if parent_id is not None:
+                
+                has_recipe_data = (check_recipe_data(recipe_id))
+                status_text = '' if has_recipe_data else 'Tomt'
+                if recipe_last_saved == None:
+                    recipe_last_saved = ""
+                else:
+                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+                # Insert under the parent item
+                self.treeview.insert(parent_items[parent_id], "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
+                                                                                   RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                                                   RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                                                   recipe_last_saved,
+                                                                                   status_text))
 
         # Binds a event where user selects something on the datagrid
-        self.treeview.bind('<<TreeviewSelect>>')
+        self.treeview.bind('<ButtonRelease-1>', self.item_selected)
 
-        self.treeview.bind("<Double-1>", self.on_item_double_click)
+        self.treeview.bind("<Double-1>", self.open_selected_recipe_menu)
+        
+    def check_has_children(self, recipe_id):
+        cursor, cnxn = get_database_connection()
+
+        if cursor is None or cnxn is None:
+            logger.warning("Error: No cursor or cnxn object")
+            return False
+
+        try:
+            cursor.execute('SELECT COUNT(*) FROM tblRecipe WHERE ParentID = ?', (recipe_id,))
+            result = cursor.fetchone()
+            if result and result[0] > 0:
+                return True
+            else:
+                return False
+        except Exception as exception:
+            logger.warning(f"Error while checking for children: {exception}")
+            return False
+        finally:
+            cursor.close()
+            cnxn.close()
 
 
-    def on_item_double_click(self, event):
-        item = self.treeview.selection()[0]  # Get selected item
-        if self.treeview.item(item, "open"):  # If item is open
-            self.treeview.item(item, open=False)  # Close it
+    def item_selected(self,event):
+        selected_item = self.treeview.selection()[0]
+        if self.treeview.item(selected_item, "open"):
+            self.treeview.item(selected_item, open=False)
         else:
-            self.treeview.item(item, open=True)  # Otherwise, open it
+            self.treeview.item(selected_item, open=True)
 
 
     def alarm_page(self):
@@ -1166,7 +1251,7 @@ class App(customtkinter.CTk):
             showinfo(title='Information', message=self.texts["show_info_submit_new_recipe_error"])
 
 
-    def submit_new_recipe(self, name, comment, selected_structure_id):
+    def submit_new_recipe(self, name, comment, selected_structure_id, parent_id=None):
         """Called with a button adds a new recipe to the datagrid and SQL"""
 
         logger.info(f"Trying to submit new recipe: Name: {name}, Comment: {comment}, Structure ID: {selected_structure_id}")
@@ -1199,36 +1284,64 @@ class App(customtkinter.CTk):
                 EXEC [RecipeDB].[dbo].[new_recipe]
                 @RecipeName=?,
                 @RecipeComment=?,
-                @RecipeStructID=?
-            """, name, comment, selected_structure_id)
+                @RecipeStructID=?,
+                @ParentID=?
+            """, name, comment, selected_structure_id, parent_id)
             cnxn.commit()
             cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
-                            [RecipeUpdated], [RecipeLastDataSaved] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+                            [RecipeUpdated], [RecipeLastDataSaved], [ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
         except Exception as exeption:
             logger.warning(f"Error while executing update_recipe: {exeption}")
             return
-
+        
+        parent_items = {}
+        
         rows = cursor.fetchall()
-
-        for row in self.treeview.get_children():
-            self.treeview.delete(row)
+        
+        for child in self.treeview.get_children():
+            self.treeview.delete(child)
 
         for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved = row
-            has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = '' if has_recipe_data else 'Tomt'
-            if recipe_last_saved == None:
-                recipe_last_saved = ""
-            else:
-                recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-            self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                    RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                    recipe_last_saved,
-                                                    status_text))
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+            if parent_id == None:
+                has_children = self.check_has_children(recipe_id)
+                if has_children:
+                    RecipeName += " --(Har flera versioner...)--"
+                has_recipe_data = (check_recipe_data(recipe_id))
+                status_text = '' if has_recipe_data else 'Tomt'
+                if recipe_last_saved == None:
+                    recipe_last_saved = ""
+                else:
+                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+                item = self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
+                                                        RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                        RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                        recipe_last_saved,
+                                                        status_text))
+                parent_items[recipe_id] = item
+        
+        for row in rows:
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+            if parent_id is not None:
+                
+                has_recipe_data = (check_recipe_data(recipe_id))
+                status_text = '' if has_recipe_data else 'Tomt'
+                if recipe_last_saved == None:
+                    recipe_last_saved = ""
+                else:
+                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+                # Insert under the parent item
+                self.treeview.insert(parent_items[parent_id], "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
+                                                                                   RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                                                   RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                                                   recipe_last_saved,
+                                                                                   status_text))
+
+
 
         logger.info("Successfully submitted the new recipe and refreshed the view.")
+        self.show_page("recipes_page")
 
 
     def update_recipe(self, name, comment, selected_structure_id):
@@ -1425,11 +1538,13 @@ class App(customtkinter.CTk):
             self.edit_steps_window.focus()
         self.edit_steps_window.lift()
 
-    def open_make_recipe_window(self):
+    def open_make_recipe_window(self, is_child=False, parent_id=None):
         "Shows the make a recipe window"
+        print(f"is_child: {is_child}")
 
         if self.make_recipe_window is None or not self.make_recipe_window.winfo_exists():
-            self.make_recipe_window = MakeRecipeWindow(self, self.texts)
+            self.make_recipe_window = MakeRecipeWindow(self, self.texts, is_child=is_child, parent_id=parent_id)
+
         else:
             self.make_recipe_window.focus()
         self.make_recipe_window.lift()
@@ -1475,6 +1590,16 @@ class App(customtkinter.CTk):
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
+        
+    def open_selected_recipe_menu(self, selected_id):
+        selected_item = self.treeview.selection()[0]
+        selected_id = self.treeview.item(selected_item, 'values')[0]
+        print(selected_id)
+        if self.selected_recipe_menu is None or not self.selected_recipe_menu.winfo_exists():
+            self.selected_recipe_menu = Selected_recipe_menu(self, self.texts, parent_id=selected_id)
+        else:
+            self.selected_recipe_menu.focus()
+        self.selected_recipe_menu.lift()
 
 
 def main():

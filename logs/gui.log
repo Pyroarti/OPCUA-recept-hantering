@@ -1687,3 +1687,71 @@
 2023:09:18 07:40:50|WARNING|gui|Error establishing database connection: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
 2023:09:18 07:40:50|WARNING|gui|Failed to establish a database connection
 2023:09:18 07:41:20|WARNING|gui|Error establishing database connection: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
+2023:09:18 08:12:04|INFO|gui|Database connection established
+2023:09:18 08:15:13|INFO|gui|Database connection established
+2023:09:18 08:24:39|INFO|gui|Database connection established
+2023:09:18 08:36:28|INFO|gui|Database connection established
+2023:09:18 08:44:41|INFO|gui|Database connection established
+2023:09:18 08:48:56|INFO|gui|Database connection established
+2023:09:18 08:49:21|INFO|gui|Database connection established
+2023:09:18 08:50:33|INFO|gui|Database connection established
+2023:09:18 10:35:47|INFO|gui|Database connection established
+2023:09:18 11:35:10|INFO|gui|Database connection established
+2023:09:18 11:38:09|INFO|gui|Database connection established
+2023:09:18 11:40:27|INFO|gui|Database connection established
+2023:09:18 11:40:38|INFO|gui|Fetched 951 rows for editing recipe ID: 238
+2023:09:18 12:04:34|INFO|gui|Database connection established
+2023:09:18 12:35:40|INFO|gui|Database connection established
+2023:09:18 12:35:40|WARNING|gui|Error while executing SELECT TOP: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'ParentID'. (207) (SQLExecDirectW)")
+2023:09:18 12:37:04|INFO|gui|Database connection established
+2023:09:18 12:37:37|INFO|gui|Database connection established
+2023:09:18 12:38:00|INFO|gui|Trying to submit new recipe: Name: Test_parent, Comment: test, Structure ID: 2
+2023:09:18 12:38:00|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 12:38:22|INFO|gui|Trying to submit new recipe: Name: test_children, Comment: test, Structure ID: 2
+2023:09:18 12:38:23|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 13:13:30|INFO|gui|Trying to submit new recipe: Name: test, Comment: sdad, Structure ID: 2
+2023:09:18 13:13:30|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 13:32:02|INFO|gui|Database connection established
+2023:09:18 13:46:32|INFO|gui|Database connection established
+2023:09:18 13:50:25|INFO|gui|Database connection established
+2023:09:18 13:51:10|INFO|gui|Database connection established
+2023:09:18 13:51:21|INFO|gui|Database connection established
+2023:09:18 13:52:26|INFO|gui|Database connection established
+2023:09:18 14:17:44|INFO|gui|Database connection established
+2023:09:18 14:18:00|INFO|gui|Trying to submit new recipe: Name: testet, Comment: etetet, Structure ID: 2
+2023:09:18 14:18:00|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 14:18:39|INFO|gui|Trying to submit new recipe: Name: child1, Comment: raewr, Structure ID: 2
+2023:09:18 14:18:39|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 14:26:07|INFO|gui|Database connection established
+2023:09:18 14:28:18|INFO|gui|Database connection established
+2023:09:18 14:29:15|INFO|gui|Database connection established
+2023:09:18 14:34:06|INFO|gui|Database connection established
+2023:09:18 14:37:49|INFO|gui|Database connection established
+2023:09:18 14:37:49|WARNING|gui|Error while checking for children: ('42S02', "[42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid object name 'RecipeTable'. (208) (SQLExecDirectW); [42S02] [Microsoft][ODBC SQL Server Driver][SQL Server]Statement(s) could not be prepared. (8180)")
+2023:09:18 14:38:38|INFO|gui|Database connection established
+2023:09:18 14:38:38|WARNING|gui|Error while checking for children: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Invalid column name 'parent_id'. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Statement(s) could not be prepared. (8180)")
+2023:09:18 14:39:19|INFO|gui|Database connection established
+2023:09:18 14:40:31|INFO|gui|Database connection established
+2023:09:18 14:41:56|INFO|gui|Database connection established
+2023:09:18 14:42:14|INFO|gui|Database connection established
+2023:09:18 14:42:28|INFO|gui|Database connection established
+2023:09:18 15:04:00|INFO|gui|Database connection established
+2023:09:18 15:04:17|INFO|gui|Trying to submit new recipe: Name: child2, Comment: sads, Structure ID: 2
+2023:09:18 15:04:17|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 15:05:09|INFO|gui|Database connection established
+2023:09:18 15:05:25|INFO|gui|Trying to submit new recipe: Name: child3, Comment: dasdas, Structure ID: 2
+2023:09:18 15:05:25|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 15:05:34|INFO|gui|Database connection established
+2023:09:18 15:06:38|INFO|gui|Database connection established
+2023:09:18 15:06:47|INFO|gui|Trying to submit new recipe: Name: dasdasd, Comment: dsads, Structure ID: 2
+2023:09:18 15:06:47|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 15:06:55|INFO|gui|Database connection established
+2023:09:18 15:06:59|INFO|gui|Database connection established
+2023:09:18 15:08:24|INFO|gui|Database connection established
+2023:09:18 15:08:32|INFO|gui|Trying to submit new recipe: Name: dasdasddd, Comment: dadad, Structure ID: 2
+2023:09:18 15:08:44|INFO|gui|Database connection established
+2023:09:18 15:09:19|INFO|gui|Database connection established
+2023:09:18 15:10:48|INFO|gui|Database connection established
+2023:09:18 15:10:57|INFO|gui|Trying to submit new recipe: Name: rrrrr, Comment: rrrr, Structure ID: 2
+2023:09:18 15:10:57|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:18 15:30:25|INFO|gui|Database connection established

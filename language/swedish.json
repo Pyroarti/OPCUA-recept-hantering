@@ -24,6 +24,7 @@
     "recipe_datagrid_status": "Receptdata",
 
     "make_a_recipe": "Skapa recept...",
+    "make_a_child_recipe": "Skapa ett nytt recept version...",
     "recipe_name": "Namn",
     "recipe_comment": "Kommentar",
     "recipe_submit": "Skapa",
