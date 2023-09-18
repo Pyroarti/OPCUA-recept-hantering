@@ -1684,3 +1684,6 @@
 2023:08:31 17:16:44|INFO|gui|Database connection established
 2023:08:31 17:17:15|INFO|gui|Database connection established
 2023:08:31 17:17:31|INFO|gui|Successfully updated the active recipe to: 282120-440 v4
+2023:09:18 07:40:50|WARNING|gui|Error establishing database connection: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
+2023:09:18 07:40:50|WARNING|gui|Failed to establish a database connection
+2023:09:18 07:41:20|WARNING|gui|Error establishing database connection: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)

@@ -10,6 +10,7 @@ import os
 import webbrowser
 import json
 import markdown
+import tkinter as tk
 
 # Third party package
 import customtkinter
