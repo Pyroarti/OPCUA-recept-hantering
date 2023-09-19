@@ -487,7 +487,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
             cnxn.close()
         except Exception as exeption:
             logger.warning(exeption)
-            
+
 class Selected_recipe_menu(customtkinter.CTkToplevel):
     """Class for a pop up window to settings for a recipe"""
     def __init__(self, app_instance:"App", texts,  parent_id, *args, **kwargs):
@@ -507,7 +507,7 @@ class Selected_recipe_menu(customtkinter.CTkToplevel):
         self.place_buttons()
 
     def place_buttons(self):
-        
+
         self.make_recipe_button = customtkinter.CTkButton(self,
                                                     text=self.texts['make_a_child_recipe'],
                                                     command=lambda: self.app_instance.open_make_recipe_window(is_child=True, parent_id=self.parent_id),
@@ -515,7 +515,7 @@ class Selected_recipe_menu(customtkinter.CTkToplevel):
                                                     height=60,
                                                     font=("Helvetica", 18))
         self.make_recipe_button.pack(pady=10)
-        
+
         self.update_submit_button = customtkinter.CTkButton(self, text=self.texts['update_recipe'],
                                                             command= self.app_instance.open_update_recipe_window,
                                                             width=350,
@@ -787,7 +787,7 @@ class App(customtkinter.CTk):
 
         cursor.close()
         cnxn.close()
-        
+
         parent_items = {}
 
         for row in rows:
@@ -808,29 +808,44 @@ class App(customtkinter.CTk):
                                                         recipe_last_saved,
                                                         status_text))
                 parent_items[recipe_id] = item
-        
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-            if parent_id is not None:
-                RecipeName = "              " + RecipeName 
-                has_recipe_data = (check_recipe_data(recipe_id))
-                status_text = '' if has_recipe_data else 'Tomt'
-                if recipe_last_saved == None:
-                    recipe_last_saved = ""
-                else:
-                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-                # Insert under the parent item
-                self.treeview.insert(parent_items[parent_id], "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
-                                                                                   RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                                                   RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                                                   recipe_last_saved,
-                                                                                   status_text))
 
-        # Binds a event where user selects something on the datagrid
+        MAX_DEPTH = 5  # You can set this to any integer to limit the depth
+
+        def insert_into_treeview(parent_item, rows, parent_items, depth=0):
+            if depth >= MAX_DEPTH:
+                return
+
+            for row in rows:
+                recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+                if parent_id == parent_item:
+                    RecipeName = "  " * depth + RecipeName  # Indentation to reflect nesting
+                    has_children = self.check_has_children(recipe_id)
+                    has_recipe_data = check_recipe_data(recipe_id)
+                    status_text = '' if has_recipe_data else 'Tomt'
+
+                    if recipe_last_saved is None:
+                        recipe_last_saved = ""
+                    else:
+                        recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+
+                    item = self.treeview.insert(parent_items.get(parent_id, ""), "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
+                                                      RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                      RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                      recipe_last_saved,
+                                                      status_text))
+
+                    parent_items[recipe_id] = item
+
+                    insert_into_treeview(recipe_id, rows, parent_items, depth + 1)
+
+        parent_items = {}
+
+        # Start inserting into Treeview from root (None)
+        insert_into_treeview(None, rows, parent_items)
+
         self.treeview.bind('<ButtonRelease-1>', self.item_selected)
-
         self.treeview.bind("<Double-1>", self.open_selected_recipe_menu)
-        
+
     def check_has_children(self, recipe_id):
         cursor, cnxn = get_database_connection()
 
@@ -1273,49 +1288,17 @@ class App(customtkinter.CTk):
         except Exception as exeption:
             logger.warning(f"Error while executing update_recipe: {exeption}")
             return
-        
+
         parent_items = {}
-        
+
         rows = cursor.fetchall()
-        
+
         for child in self.treeview.get_children():
             self.treeview.delete(child)
 
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-            if parent_id == None:
-                has_children = self.check_has_children(recipe_id)
-                if has_children:
-                    RecipeName += " --(Har flera versioner...)--"
-                has_recipe_data = (check_recipe_data(recipe_id))
-                status_text = '' if has_recipe_data else 'Tomt'
-                if recipe_last_saved == None:
-                    recipe_last_saved = ""
-                else:
-                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-                item = self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                        RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                        RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                        recipe_last_saved,
-                                                        status_text))
-                parent_items[recipe_id] = item
-        
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-            if parent_id is not None:
-                RecipeName = "              " + RecipeName
-                has_recipe_data = (check_recipe_data(recipe_id))
-                status_text = '' if has_recipe_data else 'Tomt'
-                if recipe_last_saved == None:
-                    recipe_last_saved = ""
-                else:
-                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-                # Insert under the parent item
-                self.treeview.insert(parent_items[parent_id], "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
-                                                                                   RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                                                   RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                                                   recipe_last_saved,
-                                                                                   status_text))
+        self.recipe_page_command()
+
+
 
 
 
@@ -1569,7 +1552,7 @@ class App(customtkinter.CTk):
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
-        
+
     def open_selected_recipe_menu(self, selected_id):
         selected_item = self.treeview.selection()[0]
         selected_id = self.treeview.item(selected_item, 'values')[0]
