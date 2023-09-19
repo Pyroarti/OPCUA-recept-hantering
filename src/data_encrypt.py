@@ -1,3 +1,9 @@
+"""
+This file contains the DataEncrypt class, which is used to encrypt and decrypt sensitive data files.
+The encryption key is retrieved from the operating system's environment variables.
+version: 1.0.0 Inital commit by Roberts balulis
+"""
+
 from pathlib import Path
 import json
 import os

@@ -26,6 +26,7 @@ from .create_log import setup_logger
 from .ip_checker import check_ip
 from .opcua_alarm import monitor_alarms
 from .webserver import main_webserver
+from .config_handler import ConfigHandler, ConfigNotFound, InvalidConfigFormat
 
 
 # Setup logger for gui.py
@@ -788,37 +789,27 @@ class App(customtkinter.CTk):
         cursor.close()
         cnxn.close()
 
-        parent_items = {}
-
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-            if parent_id == None:
-                has_children = self.check_has_children(recipe_id)
-                if has_children:
-                    RecipeName += " --(Har flera versioner...)--"
-                has_recipe_data = (check_recipe_data(recipe_id))
-                status_text = '' if has_recipe_data else 'Tomt'
-                if recipe_last_saved == None:
-                    recipe_last_saved = ""
-                else:
-                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-                item = self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                        RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                        RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                        recipe_last_saved,
-                                                        status_text))
-                parent_items[recipe_id] = item
-
-        MAX_DEPTH = 5  # You can set this to any integer to limit the depth
+        try:
+            recipes_page_config = ConfigHandler()
+            recipe_config_data = recipes_page_config.get_config_data("gui_config.json")
+            max_child_depth = int(recipe_config_data["max_child_struct_recipe_grid"])
+        except ConfigNotFound:
+            logger.error("Config file not found.")
+        except InvalidConfigFormat:
+            logger.error("Invalid config format.")
+        except KeyError:
+            logger.error("Key not found in config.")
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
 
         def insert_into_treeview(parent_item, rows, parent_items, depth=0):
-            if depth >= MAX_DEPTH:
+            if depth >= max_child_depth:
                 return
 
             for row in rows:
                 recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
                 if parent_id == parent_item:
-                    RecipeName = "  " * depth + RecipeName  # Indentation to reflect nesting
+                    RecipeName = "     " * depth + RecipeName  # Indentation to reflect nesting
                     has_children = self.check_has_children(recipe_id)
                     has_recipe_data = check_recipe_data(recipe_id)
                     status_text = '' if has_recipe_data else 'Tomt'

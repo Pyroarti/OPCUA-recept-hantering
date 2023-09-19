@@ -1,3 +1,9 @@
+"""
+This file contains the setup_logger function, which is used to create and configure a logging instance for the specified module
+to make it easier to log messages to a file and seperate logs and alarms for example from a opcua server.
+version: 1.0.0 Inital commit by Roberts balulis
+"""
+
 import logging
 import os
 import sys

@@ -1774,3 +1774,36 @@
 2023:09:18 16:11:24|INFO|gui|Trying to submit new recipe: Name: gfadagfgrsa, Comment: gargarag, Structure ID: 2
 2023:09:18 16:11:24|INFO|gui|Successfully submitted the new recipe and refreshed the view.
 2023:09:18 16:11:59|INFO|gui|Database connection established
+2023:09:19 10:18:31|INFO|gui|Database connection established
+2023:09:19 10:24:29|INFO|gui|Database connection established
+2023:09:19 10:27:08|INFO|gui|Database connection established
+2023:09:19 10:27:36|INFO|gui|Trying to submit new recipe: Name: child of child, Comment: 321312, Structure ID: 2
+2023:09:19 10:27:36|INFO|gui|Database connection established
+2023:09:19 10:27:36|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 10:27:54|INFO|gui|Trying to submit new recipe: Name: grand grand child, Comment: dasda, Structure ID: 2
+2023:09:19 10:27:54|INFO|gui|Database connection established
+2023:09:19 10:27:54|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 10:29:06|INFO|gui|Trying to submit new recipe: Name: grand child, Comment: 3123, Structure ID: 2
+2023:09:19 10:29:06|INFO|gui|Database connection established
+2023:09:19 10:29:06|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 10:37:17|INFO|gui|Database connection established
+2023:09:19 13:08:47|INFO|gui|Database connection established
+2023:09:19 13:40:57|INFO|gui|Database connection established
+2023:09:19 13:41:31|INFO|gui|Trying to submit new recipe: Name: lås1, Comment: 12312, Structure ID: 2
+2023:09:19 13:41:31|INFO|gui|Database connection established
+2023:09:19 13:41:31|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 13:41:57|INFO|gui|Trying to submit new recipe: Name: Lås1 v1.0, Comment: denna funkaojingrw, Structure ID: 2
+2023:09:19 13:41:58|INFO|gui|Database connection established
+2023:09:19 13:41:58|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 13:42:26|INFO|gui|Trying to submit new recipe: Name: LÅs1 1.1, Comment: dsadasd, Structure ID: 2
+2023:09:19 13:42:26|INFO|gui|Database connection established
+2023:09:19 13:42:26|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 14:14:22|INFO|gui|Database connection established
+2023:09:19 14:14:55|INFO|gui|Successfully updated the active recipe to: 282110-960
+2023:09:19 14:41:04|INFO|gui|Database connection established
+2023:09:19 14:41:21|INFO|gui|Trying to submit new recipe: Name: dasdasd, Comment: dsadasd, Structure ID: 2
+2023:09:19 14:41:21|INFO|gui|Database connection established
+2023:09:19 14:41:21|INFO|gui|Successfully submitted the new recipe and refreshed the view.
+2023:09:19 14:41:30|INFO|gui|Trying to submit new recipe: Name: dsadasd, Comment: asdasdasd, Structure ID: 2
+2023:09:19 14:41:30|INFO|gui|Database connection established
+2023:09:19 14:41:30|INFO|gui|Successfully submitted the new recipe and refreshed the view.

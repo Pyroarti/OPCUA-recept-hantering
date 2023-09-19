@@ -88,20 +88,6 @@ class SubHandler(object):
             if hasattr(event, "AckedState/Id"):
                 acked_state_id = getattr(event, "AckedState/Id")
 
-            # Prepare SQL insert statement
-            #insert_statement = """
-            #INSERT INTO dbo.tblAlarm (Message, Time, State, Severity, EnableStateId, SuppresedOrShelved, 
-            #AcknowledgedStateText, AcknowledgedState, ConditionClassId, Quality, Retain)
-            #VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            #"""
-
-            #data = (message, date, active_state_id, severity, enabled_state_id, suppresed_or_shelved, 
-            #        acked_state_text, acked_state_id, condition_class_id, quality, retain)
-
-            #cursor, cnxn = get_database_connection()
-            #cursor.execute(insert_statement, data)
-            #cnxn.commit()
-
             logger_opcua_alarm.error(
                                     f"New event received from {self.address}:"
                                     f"Message: {message}"
