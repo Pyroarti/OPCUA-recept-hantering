@@ -16,7 +16,6 @@ import tkinter as tk
 import customtkinter
 from customtkinter import CTkImage
 from PIL import Image
-import pyodbc
 from pyodbc import Error as PyodbcError
 from asyncua import ua, Client
 
@@ -304,7 +303,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
             else:
                 logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
@@ -459,7 +458,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
                         @{unit_id_param_name}={unit_id};")
                     cnxn.commit()
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
@@ -775,7 +774,7 @@ class App(customtkinter.CTk):
 
                 rows = cursor.fetchall()
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
@@ -862,7 +861,7 @@ class App(customtkinter.CTk):
                 showinfo(title="Info", message=self.texts["error_with_database"])
                 return False
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
@@ -1111,14 +1110,17 @@ class App(customtkinter.CTk):
                 for row in rows:
                     recipe_structure_id = row[0]
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
             logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
             logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
             if cursor and cnxn:
@@ -1156,14 +1158,17 @@ class App(customtkinter.CTk):
                 cursor.execute("EXEC [RecipeDB].[dbo].[archive_recipe] @RecipeID=?", selected_id)
                 cnxn.commit()
 
-            except pyodbc.Error as e:
+            except PyodbcError as e:
                 logger.warning(f"Error in database connection: {e}")
+                showinfo(title="Info", message=self.texts["error_with_database"])
 
             except IndexError:
                 logger.warning("Database credentials seem to be incomplete.")
+                showinfo(title="Info", message=self.texts["error_with_database"])
 
             except Exception as e:
                 logger.warning(f"An unexpected error occurred: {e}")
+                showinfo(title="Info", message=self.texts["error_with_database"])
 
             finally:
                 cursor.close()
@@ -1194,18 +1199,34 @@ class App(customtkinter.CTk):
             showinfo(title="Information", message=self.texts["show_info_error_loading_recipe"])
             logger.warning(e)
 
-        cursor, cnxn = get_database_connection()
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
+        cursor = None
+        cnxn = None
+        try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
-        step_query = "SELECT * FROM ViewValues WHERE RecipeID = ?"
-        cursor.execute(step_query, (selected_id,))
-        step_data = cursor.fetchall()
+            if cursor and cnxn:
+                step_query = "SELECT * FROM ViewValues WHERE RecipeID = ?"
+                cursor.execute(step_query, (selected_id,))
+                step_data = cursor.fetchall()
 
-        query = "UPDATE tblActiveRecipeList SET ActiveRecipeName = ?"
-        cursor.execute(query, (selected_name,))
-        cnxn.commit()
+                query = "UPDATE tblActiveRecipeList SET ActiveRecipeName = ?"
+                cursor.execute(query, (selected_name,))
+                cnxn.commit()
+
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
         if step_data:
             self.units = self.async_queue.put(from_sql_to_units_stepdata(step_data,self.texts, selected_name))
@@ -1214,9 +1235,6 @@ class App(customtkinter.CTk):
         else:
             showinfo(title='Information', message=self.texts["show_info_use_selected_recipe_error"])
             return
-
-        cnxn.commit()
-        cnxn.close()
 
 
     def delete_recipe(self):
@@ -1229,25 +1247,33 @@ class App(customtkinter.CTk):
             logger.warning("Error: No recipe treeview object")
             return
 
-        cursor, cnxn = get_database_connection()
-
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
-
         try:
-            selected_item = self.treeview.selection()[0]
-            selected_id = self.treeview.item(selected_item, 'values')[0]
-            cursor.execute("DELETE FROM [RecipeDB].[dbo].[tblRecipe] WHERE id = ?", (selected_id,))
-            cnxn.commit()
-            self.treeview.delete(selected_item)
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
-        except pyodbc.Error as exeption:
-            logger.warning(f"Error while deleting recipe: {exeption}")
-            return
+            if cursor and cnxn:
+                selected_item = self.treeview.selection()[0]
+                selected_id = self.treeview.item(selected_item, 'values')[0]
+                cursor.execute("DELETE FROM [RecipeDB].[dbo].[tblRecipe] WHERE id = ?", (selected_id,))
+                cnxn.commit()
+                self.treeview.delete(selected_item)
+
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            showinfo(title='Information', message=self.texts["show_info_submit_new_recipe_error"])
+            logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
 
     def submit_new_recipe(self, name, comment, selected_structure_id, parent_id=None):
@@ -1262,53 +1288,52 @@ class App(customtkinter.CTk):
             logger.warning("Error: No recipe treeview object")
             return
 
-        cursor, cnxn = get_database_connection()
-
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
-
         try:
-            cursor.execute("""
-                SELECT [RecipeName]
-                FROM [RecipeDB].[dbo].[viewRecipesActive]
-                WHERE [RecipeName] = ?
-                """, (name,))
-            result = cursor.fetchone()
-            if result:
-                showinfo(title='Information', message=self.texts['This_recipe_name_already_exists.'])
-                return
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
-            cursor.execute("""
-                EXEC [RecipeDB].[dbo].[new_recipe]
-                @RecipeName=?,
-                @RecipeComment=?,
-                @RecipeStructID=?,
-                @ParentID=?
-            """, name, comment, selected_structure_id, parent_id)
-            cnxn.commit()
-            cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
-                            [RecipeUpdated], [RecipeLastDataSaved], [ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+            if cursor and cnxn:
 
-        except Exception as exeption:
-            logger.warning(f"Error while executing update_recipe: {exeption}")
-            return
+                cursor.execute("""
+                    SELECT [RecipeName]
+                    FROM [RecipeDB].[dbo].[viewRecipesActive]
+                    WHERE [RecipeName] = ?
+                    """, (name,))
+                result = cursor.fetchone()
 
-        parent_items = {}
+                if result:
+                    showinfo(title='Information', message=self.texts['This_recipe_name_already_exists.'])
+                    return
 
-        rows = cursor.fetchall()
+                cursor.execute("""
+                    EXEC [RecipeDB].[dbo].[new_recipe]
+                    @RecipeName=?,
+                    @RecipeComment=?,
+                    @RecipeStructID=?,
+                    @ParentID=?
+                """, name, comment, selected_structure_id, parent_id)
+                cnxn.commit()
+                cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
+                                [RecipeUpdated], [RecipeLastDataSaved], [ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
-        for child in self.treeview.get_children():
-            self.treeview.delete(child)
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
         self.recipe_page_command()
-
-
-
-
-
-        logger.info("Successfully submitted the new recipe and refreshed the view.")
-        self.show_page("recipes_page")
 
 
     def update_recipe(self, name, comment, selected_structure_id):
@@ -1327,53 +1352,43 @@ class App(customtkinter.CTk):
             showinfo(title='Information', message=self.texts["show_info_update_recipe_error"])
             return
 
-        if not name:
+        if not name and not comment and not selected_structure_id:
             showinfo(title='Information', message=self.texts["show_info_update_recipe_name_empty"])
             return
 
-        cursor, cnxn = get_database_connection()
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
+        cursor = None
+        cnxn = None
 
         try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
+
             cursor.execute("EXEC [RecipeDB].[dbo].[update_recipe] @RecipeID=?, @RecipeName=?, @RecipeComment=?, @RecipeStructID=?",
                            selected_id, name, comment, selected_structure_id)
             cnxn.commit()
+        
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
-            cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
-                            [RecipeUpdated], [RecipeLastDataSaved] FROM [RecipeDB].[dbo].[viewRecipesActive]')
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
-        except Exception as exeption:
-            logger.warning(f"Error while executing update_recipe: {exeption}")
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
 
-        rows = cursor.fetchall()
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
-        if rows:
-            logger.info(f"Successfully updated the recipe ID: {selected_id} and refreshed the view.")
-        else:
-            logger.warning(f"Recipe update was successful, but no rows were retrieved afterward for ID: {selected_id}")
-            return
-
-        for row in self.treeview.get_children():
-            self.treeview.delete(row)
-
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved = row
-            has_recipe_data = (check_recipe_data(recipe_id))
-            status_text = '' if has_recipe_data else 'Tomt'
-            if recipe_last_saved == None:
-                recipe_last_saved = ""
-            else:
-                recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-            self.treeview.insert("", "end", values=(recipe_id, RecipeName, RecipeComment,
-                                                    RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                    RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                    recipe_last_saved,
-                                                    status_text))
+        self.recipe_page_command()
 
 
     def edit_recipe(self):
+        """Edits the selected recipe servo and robot data"""
 
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
@@ -1387,39 +1402,54 @@ class App(customtkinter.CTk):
         except IndexError:
             showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_selected"])
 
-        cursor, cnxn = get_database_connection()
-
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
+        cursor = None
+        cnxn = None
 
         try:
-            query = """
-            SELECT TOP (2000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
-            FROM [RecipeDB].[dbo].[viewValues]
-            WHERE RecipeID = ?
-            ORDER BY RecipeID, UnitID,
-                CASE WHEN CHARINDEX('[', TagName) > 0 AND CHARINDEX(']', TagName) > CHARINDEX('[', TagName)
-                     THEN CAST(SUBSTRING(TagName, CHARINDEX('[', TagName) + 1, CHARINDEX(']', TagName) - CHARINDEX('[', TagName) - 1) AS INT)
-                END,
-                TagName
-            """
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
-            params = (selected_id,)
-            cursor.execute(query, params)
+            if cursor and cnxn:
 
-            rows = cursor.fetchall()
-            if rows:
-                logger.info(f"Fetched {len(rows)} rows for editing recipe ID: {selected_id}")
-                self.open_edit_steps_window(rows,selected_id)
-            else:
-                logger.warning(f"No data found for editing recipe ID: {selected_id}")
-                showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_data"])
-                return
+                query = """
+                SELECT TOP (2000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+                FROM [RecipeDB].[dbo].[viewValues]
+                WHERE RecipeID = ?
+                ORDER BY RecipeID, UnitID,
+                    CASE WHEN CHARINDEX('[', TagName) > 0 AND CHARINDEX(']', TagName) > CHARINDEX('[', TagName)
+                         THEN CAST(SUBSTRING(TagName, CHARINDEX('[', TagName) + 1, CHARINDEX(']', TagName) - CHARINDEX('[', TagName) - 1) AS INT)
+                    END,
+                    TagName
+                """
 
-        except Exception as exeption:
-            logger.warning(f"Error while executing SELECT TOP: {exeption}")
-            return
+                params = (selected_id,)
+                cursor.execute(query, params)
+
+                rows = cursor.fetchall()
+                if rows:
+                    logger.info(f"Fetched {len(rows)} rows for editing recipe ID: {selected_id}")
+                    self.open_edit_steps_window(rows,selected_id)
+                else:
+                    logger.warning(f"No data found for editing recipe ID: {selected_id}")
+                    showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_data"])
+                    return
+
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
 
     def create_meny_buttons(self, parent):
@@ -1524,12 +1554,14 @@ class App(customtkinter.CTk):
             logger.warning("Error: No recipe treeview object")
             return
 
-        cursor, cnxn = get_database_connection()
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
+        cursor = None
+        cnxn = None
 
         try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
+
             selected_id_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_id_item, 'values')[0]
 
@@ -1546,9 +1578,21 @@ class App(customtkinter.CTk):
             for insert_good_var_name in row:
                 recipeName, recipeComment, recipe_struct = insert_good_var_name
 
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
         except IndexError:
-            showinfo(title='Information', message=self.texts["show_info_update_recipe_error"])
-            return
+            logger.warning("Database credentials seem to be incomplete.")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
         if self.edit_recipe_window is None or not self.edit_recipe_window.winfo_exists():
             self.edit_recipe_window = Edit_recipe_window(self, self.texts, selected_id, recipeName, recipeComment, recipe_struct)
@@ -1557,6 +1601,7 @@ class App(customtkinter.CTk):
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
+
 
     def open_selected_recipe_menu(self, selected_id):
         selected_item = self.treeview.selection()[0]

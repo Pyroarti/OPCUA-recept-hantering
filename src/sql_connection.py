@@ -5,6 +5,7 @@ from .data_encrypt import DataEncrypt
 
 
 class SQLConnection:
+    """Gets database credentials from config file and connects to database"""
 
 
     def __init__(self):

@@ -25,7 +25,7 @@
             else:
                 logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
 
-        except pyodbc.Error as e:
+        except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
 
         except IndexError:
