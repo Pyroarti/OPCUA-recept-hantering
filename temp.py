@@ -37,3 +37,4 @@
         finally:
             if cursor and cnxn:
                 sql_connection.disconnect_from_database(cursor, cnxn)
+
