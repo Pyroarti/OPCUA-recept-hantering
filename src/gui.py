@@ -17,6 +17,7 @@ import customtkinter
 from customtkinter import CTkImage
 from PIL import Image
 import pyodbc
+from pyodbc import Error as PyodbcError
 from asyncua import ua, Client
 
 # Own package
@@ -26,67 +27,22 @@ from .create_log import setup_logger
 from .ip_checker import check_ip
 from .opcua_alarm import monitor_alarms
 from .webserver import main_webserver
-from .config_handler import ConfigHandler, ConfigNotFound, InvalidConfigFormat
+from .config_handler import ConfigHandler
+from .sql_connection import SQLConnection
 
 
 # Setup logger for gui.py
 logger = setup_logger('gui')
 
 
-def get_database_connection(timeout_duration=10):
-
-    """
-    Establish a connection to a SQL server and return a cursor object and the connection.
-
-    This function attempts to establish a connection to a SQL server using encrypted
-    credentials retrieved from a JSON file. It also initializes a cursor object for
-    executing SQL commands.
-
-    Returns:
-    tuple: A tuple containing two elements - the cursor object and the connection to
-    the SQL server.
-
-    Raises:
-    pyodbc.Error: If there's an error establishing the database connection.
-    Exception: For any other unexpected issues that may arise during the connection process.
-
-    """
-
-    data_encrypt = DataEncrypt()
-    sql_config = data_encrypt.encrypt_credentials("sql_config.json", "SQL_KEY")
-    if sql_config:
-        database_config = sql_config["database"]
-        server = database_config["server"]
-        database = database_config["database_name"]
-        username = database_config["username"]
-        password = database_config["password"]
-    else:
-        logger.warning("Error: No sql_config object")
-        return None, None
-
-    try:
-        cnxn = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER={server};\
-                    DATABASE={database};UID={username};PWD={password}',
-                    timeout=timeout_duration)
-        cursor = cnxn.cursor()
-
-        return cursor, cnxn
-
-    except pyodbc.Error as exeption:
-        error = exeption.args[1]
-        logger.warning(f'Error establishing database connection: {error}')
-    except Exception as exeption:
-        logger.warning(f'Unexpected error: {exeption}')
-
-    return None, None
-
-
 def run_monitor_alarms_loop():
+    """Runs the monitor_alarms function in a loop."""
+
     loop = asyncio.new_event_loop()
 
     asyncio.set_event_loop(loop)
     try:
-        monitor_task = loop.create_task(monitor_alarms())
+        loop.create_task(monitor_alarms())
 
         loop.run_forever()
     finally:
@@ -214,39 +170,39 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.treeview_select_structure.heading("id", text="Structure", anchor="w")
         self.treeview_select_structure.heading("Structure name", text=self.texts["treeview_select_structure_name"], anchor="w")
 
+        cursor = None
+        cnxn = None
 
-        cursor, cnxn = get_database_connection()
-        if cursor is None or cnxn is None:
-            return
-        else:
-            cursor.execute('SELECT TOP (1000) [RecipeName] FROM [RecipeDB].[dbo].[viewRecipesActive]')
-            rows = cursor.fetchall()
+        try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
+            if cursor and cnxn:
+                try:
+                    cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
+                    rows = cursor.fetchall()
 
+                    for row in rows:
+                        recipe_id, RecipeStructureName = row
+                        self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
 
-        cursor, cnxn = get_database_connection()
+                except Exception as e:
+                    logger.warning(f"Error while executing SQL queries: {e}")
 
-        if cursor and cnxn:
-            try:
-                cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
-            except Exception as exeption:
-                logger.warning(f"Error while executing SELECT TOP: {exeption}")
-                return
+        except PyodbcError as e:
+            logger.warning(f"Error in database connection: {e}")
 
-            rows = cursor.fetchall()
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
 
-            cursor.close()
-            cnxn.close()
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
 
-            for row in rows:
-                recipe_id, RecipeStructureName = row
-                self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
-            # Binds a event where user selects something on the datagrid
-            self.treeview_select_structure.bind('<<TreeviewSelect>>')
-        else:
-            logger.warning("Error: No cursor or cnxn object")
-            return
 
     def check_struct(self):
         try:
@@ -257,8 +213,8 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
             self.destroy()
         except IndexError:
             showinfo(title='Information', message=self.texts["select_unit_to_download_header"])
-
             return
+
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
     """Class for a pop up window."""
@@ -316,38 +272,46 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
                                                      font=("Helvetica", 18))
         self.submit_button.pack(pady=10)
 
-        cursor, cnxn = get_database_connection()
-        if cursor and cnxn:
-            try:
+
+        cursor = None
+        cnxn = None
+
+        try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
+
+            if cursor and cnxn:
                 cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
-            except Exception as exeption:
-                logger.warning(f"Error while executing SELECT TOP: {exeption}")
-                return
+                rows = cursor.fetchall()
 
-            rows = cursor.fetchall()
+                for row in rows:
+                    recipe_id, RecipeStructureName = row
+                    item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
 
-            cursor.close()
-            cnxn.close()
-
-            for row in rows:
-                recipe_id, RecipeStructureName = row
-                item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
                 if RecipeStructureName in recipe_struct_mapping.values():
-                    # If the name of this items structure is in the mapping, store the recipe_struct -> item id pair
-                    recipe_struct_for_this_item = next(key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName)
-                    id_mapping[recipe_struct_for_this_item] = item_id
+                    recipe_struct_for_this_item = next((key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName), None)
+                    if recipe_struct_for_this_item:
+                        id_mapping[recipe_struct_for_this_item] = item_id
 
-            try:
-                mapped_id = id_mapping[recipe_struct]
+            mapped_id = id_mapping.get(recipe_struct)
+            if mapped_id:
                 self.treeview_select_structure.selection_set(mapped_id)
-            except KeyError:
+            else:
                 logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
 
-            # Binds a event where user selects something on the datagrid
-            self.treeview_select_structure.bind('<<TreeviewSelect>>')
-        else:
-            logger.warning("Error: No cursor or cnxn object")
-            return
+        except pyodbc.Error as e:
+            logger.warning(f"Error in database connection: {e}")
+
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
 
     def check_struct(self):
@@ -472,22 +436,36 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         tag_name_param_name = 'TagName'
         tag_value_param_name = 'TagValue'
 
-        cursor, cnxn = get_database_connection()
-        if cursor is None or cnxn is None:
-            logger.warning("Error: No cursor or cnxn object")
-            return
-        try:
-            cursor.execute(f"EXEC {stored_procedure_name} \
-                    @{tag_name_param_name}='{tag_name}', \
-                    @{tag_value_param_name}={edited_tag_value}, \
-                    @{recipe_id_param_name}={self.selected_id},\
-                    @{unit_id_param_name}={unit_id};")
+        cursor = None
+        cnxn = None
 
-            cnxn.commit()
-            cursor.close()
-            cnxn.close()
-        except Exception as exeption:
-            logger.warning(exeption)
+        try:
+            sql_connection = SQLConnection()
+            sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
+
+            if cursor and cnxn:
+                    cursor.execute(f"EXEC {stored_procedure_name} \
+                        @{tag_name_param_name}='{tag_name}', \
+                        @{tag_value_param_name}={edited_tag_value}, \
+                        @{recipe_id_param_name}={self.selected_id},\
+                        @{unit_id_param_name}={unit_id};")
+                    cnxn.commit()
+
+        except pyodbc.Error as e:
+            logger.warning(f"Error in database connection: {e}")
+
+        except IndexError:
+            logger.warning("Database credentials seem to be incomplete.")
+
+        except Exception as e:
+            logger.warning(f"An unexpected error occurred: {e}")
+
+        finally:
+            if cursor and cnxn:
+                sql_connection.disconnect_from_database(cursor, cnxn)
+
+
 
 class Selected_recipe_menu(customtkinter.CTkToplevel):
     """Class for a pop up window to settings for a recipe"""
@@ -794,13 +772,13 @@ class App(customtkinter.CTk):
             recipe_config_data = recipes_page_config.get_config_data("gui_config.json")
             max_child_depth = int(recipe_config_data["max_child_struct_recipe_grid"])
         except ConfigNotFound:
-            logger.error("Config file not found.")
+            logger.warning("Config file not found.")
         except InvalidConfigFormat:
-            logger.error("Invalid config format.")
+            logger.warning("Invalid config format.")
         except KeyError:
-            logger.error("Key not found in config.")
+            logger.warning("Key not found in config.")
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            logger.warning(f"An unexpected error occurred: {e}")
 
         def insert_into_treeview(parent_item, rows, parent_items, depth=0):
             if depth >= max_child_depth:

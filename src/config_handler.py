@@ -29,23 +29,9 @@ class ConfigHandler:
             with open(config_path, "r") as config_file:
                 config_data = json.load(config_file)
         except FileNotFoundError:
-            raise ConfigNotFound(f"Config file {config_path} not found.")
+            raise (f"Config file {config_path} not found.")
         except json.decoder.JSONDecodeError:
-            raise InvalidConfigFormat(f"Config file {config_path} is not valid JSON.")
+            raise (f"Config file {config_path} is not valid JSON.")
         except Exception as e:
-            raise e 
+            raise e
         return config_data
-
-
-class ConfigNotFound(Exception):
-    """
-    Raised when a config file is not found.
-    """
-    pass
-
-
-class InvalidConfigFormat(Exception):
-    """
-    Raised when a config file is not valid JSON.
-    """
-    pass

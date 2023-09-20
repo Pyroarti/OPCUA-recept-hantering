@@ -18,10 +18,6 @@
 
 * Namnändra self.treeview till recipe treeview
 
-* Gör att man kan dubbelklicka på ett recept så  ser man där alla version nummer som tillhör den
-
-* skriv bara ut i recept sparat i db stegen som är active
-
 * Gör rutan för namn ochy kommentar i recipa mkaer längre
 
 * Lägg till färg på rows som har children

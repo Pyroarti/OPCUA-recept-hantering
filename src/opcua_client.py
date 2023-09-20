@@ -71,7 +71,7 @@ async def get_stepdata(node_steps: Node) -> json:
             if any('[0]' in str(path) for path in path_array_item):
                 logger.info(f"Skipping {path_array_item} as it contains '[0]'")
                 continue  # Skip the rest of the loop for this item
-            
+
             if props_of_array_item:
                 props: Node = None
                 for props in props_of_array_item:
@@ -117,11 +117,8 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
 
     try:
         logger.info(f"Connecting to OPC UA server at {url}")
-        #await client.connect_sessionless()
-        #await client.create_session()
         client.set_user(username=encrypted_username)
         client.set_password(pwd=encrypted_password)
-        #await client.activate_session(username=encrypted_username, password=encrypted_password)
         await client.connect()
         logger.info("Successfully connected to OPC UA server.")
 
