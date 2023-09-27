@@ -21,3 +21,5 @@
 * Gör rutan för namn ochy kommentar i recipa mkaer längre
 
 * Lägg till färg på rows som har children
+
+* Skriv bättre class/func docs

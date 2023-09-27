@@ -4,13 +4,13 @@ import asyncua.ua.uaerrors._auto as uaerrors
 import asyncua.common
 
 from .create_log import setup_logger
-from .data_encrypt import DataEncrypt
+from .data_encrypt import DataEncryptor
 
 
 logger = setup_logger('opcua_client')
 
 
-async def get_node_children(node, nodes=None):
+async def get_node_children(node: Node, nodes=None):
     """
     Get recursively all children of a node
     """
@@ -313,7 +313,7 @@ async def data_to_webserver():
     units = await get_units()
     ip_address = units[2][1]
 
-    data_encrypt = DataEncrypt()
+    data_encrypt = DataEncryptor()
     opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
     encrypted_username = opcua_config["username"]
     encrypted_password = opcua_config["password"]

@@ -10,6 +10,7 @@ import sys
 import time
 from logging.handlers import RotatingFileHandler
 
+
 class SuppressSpecificLogs(logging.Filter):
     def __init__(self, suppress_list):
         self.suppress_list = suppress_list
@@ -19,6 +20,7 @@ class SuppressSpecificLogs(logging.Filter):
             if msg in record.getMessage():
                 return 0
         return 1
+
 
 def setup_logger(logger_name, suppress_list=None):
 
@@ -73,7 +75,7 @@ def setup_logger(logger_name, suppress_list=None):
     return logger
 
 
-def delete_old_logs(log_dir, days_old):
+def delete_old_logs(log_dir:str, days_old:int):
     """
     Delete log files in the specified directory that are older than the specified number of days.
 
@@ -94,8 +96,8 @@ def delete_old_logs(log_dir, days_old):
                 os.remove(file_path)
                 print(f"Deleted old log file: {file_path}")
 
+
 if __name__ == "__main__":
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(base_path)
     delete_old_logs(os.path.join(base_path, "logs"), 30)
 

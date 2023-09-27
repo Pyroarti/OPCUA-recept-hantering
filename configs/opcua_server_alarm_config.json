@@ -1,0 +1,6 @@
+{
+    "send_sms" : false,
+    "alarm_condition_type" : "ns=0;i=2915",
+    "server_node_identifier" : 2253,
+    "server_node_namespace_index" : 0
+}

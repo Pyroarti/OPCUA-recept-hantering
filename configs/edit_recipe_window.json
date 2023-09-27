@@ -1,0 +1,4 @@
+{
+    "sql_connection_file_name" : "sql_config.json",
+    "sql_connection_env_key_name" : "SQL_KEY"
+}

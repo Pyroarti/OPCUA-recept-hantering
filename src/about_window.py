@@ -1,30 +1,37 @@
+"""
+Opens a pop up window with information about the program and to see the changelog.
+version: 1.0.0 Inital commit by Roberts balulis
+"""
+__version__ = "1.0.0"
+
 import customtkinter
-from tkinter import ttk
-from tkinter.messagebox import showinfo
-from pyodbc import Error as PyodbcError
 import os
 import webbrowser
 import markdown
 
-from .sql_connection import SQLConnection
 from .create_log import setup_logger
-from .gui import App
+from .config_handler import ConfigHandler
 
-logger = setup_logger(__name__)
+md_file_path = 'CHANGE_LOG.md'
+html_file_path = 'CHANGE_LOG.html'
+about_text_path = "Note.txt"
+
 
 class AboutWindow(customtkinter.CTkToplevel):
-    """Class for a pop up window."""
+    """Class for a pop up window. And shows the changelog"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.logger = setup_logger(__name__)
         self.resizable(False, False)
-        self.title("About")
+        self.title("Om")
         pop_up_width = 700
         pop_up_height = 350
         position_x = 900
         position_y = 400
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
 
-        with open("Note.txt", "r", encoding="utf-8") as text_file:
+        with open(about_text_path, "r", encoding="utf-8") as text_file:
             about_text = text_file.read()
 
         self.label = customtkinter.CTkLabel(self, text=about_text, justify="left", anchor="w")
@@ -37,8 +44,6 @@ class AboutWindow(customtkinter.CTkToplevel):
 
     def show_changelog(self):
         """Open a webpage and shows the changelog"""
-        md_file_path = 'CHANGE_LOG.md'
-        html_file_path = 'CHANGE_LOG.html'
 
         if os.path.isfile(md_file_path):
             try:
@@ -52,4 +57,4 @@ class AboutWindow(customtkinter.CTkToplevel):
                 webbrowser.open(html_file_path)
 
             except Exception as exeption:
-                logger.warning(f"Error opening file: {exeption}")
+                self.logger.warning(f"Error opening file: {exeption}")
