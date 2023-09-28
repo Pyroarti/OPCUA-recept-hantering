@@ -280,6 +280,9 @@ class App(customtkinter.CTk):
         self.treeview.heading("RecipeLastSaved", text=self.texts['recipe_datagrid_last_saved'], anchor="w")
         self.treeview.heading("RecipeStatus", text=self.texts['recipe_datagrid_status'], anchor="w")
 
+        self.treeview.tag_configure('hasChildren', background='lightblue')
+        self.treeview.tag_configure('isChild', background='lightgray')
+
         # Treeview bindings
         self.treeview.bind('<ButtonRelease-1>', self.item_selected)
         self.treeview.bind("<Double-1>", self.open_selected_recipe_menu)
@@ -331,7 +334,7 @@ class App(customtkinter.CTk):
         try:
             recipes_page_config = ConfigHandler()
             recipe_config_data = recipes_page_config.get_config_data("gui_config.json")
-            max_child_depth = int(recipe_config_data["max_child_struct_recipe_grid"])
+            self.max_child_depth = int(recipe_config_data["max_child_struct_recipe_grid"])
         except FileNotFoundError:
             logger.warning("Config file not found.")
         except KeyError:
@@ -342,41 +345,9 @@ class App(customtkinter.CTk):
         parent_items = {}
 
         # Start inserting into Treeview from root (None)
-        insert_into_treeview(None, rows, parent_items)
+        self.insert_into_treeview(None, rows, parent_items)
 
-        def insert_into_treeview(parent_item, rows, parent_items, depth=0):
-            if depth >= max_child_depth:
-                return
-
-            for row in rows:
-                recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-                if parent_id == parent_item:
-                    RecipeName = "     " * depth + RecipeName  # Indentation to reflect nesting
-                    has_children = self.check_has_children(recipe_id)
-                    has_recipe_data = check_recipe_data(recipe_id)
-                    status_text = '' if has_recipe_data else 'Tomt'
-
-                    if recipe_last_saved is None:
-                        recipe_last_saved = ""
-                    else:
-                        recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
-
-                    item = self.treeview.insert(parent_items.get(parent_id, ""), "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
-                                                      RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                      RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                      recipe_last_saved,
-                                                      status_text))
-
-                    parent_items[recipe_id] = item
-
-                    insert_into_treeview(recipe_id, rows, parent_items, depth + 1)
-
-
-    def check_has_children(self, recipe_id):
-        """
-        Checks if a recipe has any children.
-        """
-
+    def insert_into_treeview(self,parent_item, rows, parent_items, depth=0):
         cursor = None
         cnxn = None
 
@@ -384,18 +355,6 @@ class App(customtkinter.CTk):
             sql_connection = SQLConnection()
             sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
             cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
-
-            if cursor and cnxn:
-                cursor.execute('SELECT COUNT(*) FROM tblRecipe WHERE ParentID = ?', (recipe_id,))
-                result = cursor.fetchone()
-                if result and result[0] > 0:
-                    return True
-                else:
-                    return False
-
-            else:
-                showinfo(title="Info", message=self.texts["error_with_database"])
-                return False
 
         except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
@@ -409,9 +368,61 @@ class App(customtkinter.CTk):
             logger.warning(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
-        finally:
-            if cursor and cnxn:
-                sql_connection.disconnect_from_database(cursor, cnxn)
+        if depth >= self.max_child_depth:
+            return
+
+        for row in rows:
+            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+            if parent_id == parent_item:
+                has_children = self.check_has_children(recipe_id, cursor, cnxn)
+                has_recipe_data = check_recipe_data(recipe_id)
+                status_text = '' if has_recipe_data else 'Tomt'
+
+                if recipe_last_saved is None:
+                    recipe_last_saved = ""
+                else:
+                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+
+                item = self.treeview.insert(parent_items.get(parent_id, ""), "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
+                                                      RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                      RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                      recipe_last_saved,
+                                                      status_text))
+
+                # If the recipe has children, change its background color
+                if has_children:
+                    self.treeview.item(item, tags=('hasChildren',))
+
+                # If the recipe is a child, change its background color
+                if parent_item is not None:
+                    self.treeview.item(item, tags=('isChild',))
+
+                parent_items[recipe_id] = item
+
+                self.insert_into_treeview(recipe_id, rows, parent_items, depth + 1)
+
+        if cursor and cnxn:
+            sql_connection.disconnect_from_database(cursor, cnxn)
+
+
+    def check_has_children(self, recipe_id, cursor, cnxn):
+        """
+        Checks if a recipe has any children.
+        """
+        if not cursor or not cnxn:
+            showinfo(title="Info", message=self.texts["error_with_database"])
+            return False
+
+        try:
+            cursor.execute('SELECT COUNT(*) FROM tblRecipe WHERE ParentID = ?', (recipe_id,))
+            result = cursor.fetchone()
+            return result and result[0] > 0
+
+        except Exception as e:
+            logger.warning(f"An error occurred: {e}")
+            showinfo(title="Info", message=self.texts["error_with_database"])
+            return False
+
 
 
     def item_selected(self,event):
@@ -858,7 +869,7 @@ class App(customtkinter.CTk):
             cursor.execute("EXEC [RecipeDB].[dbo].[update_recipe] @RecipeID=?, @RecipeName=?, @RecipeComment=?, @RecipeStructID=?",
                            selected_id, name, comment, selected_structure_id)
             cnxn.commit()
-        
+
         except PyodbcError as e:
             logger.warning(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
