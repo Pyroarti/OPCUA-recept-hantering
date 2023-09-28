@@ -18,13 +18,14 @@ from .config_handler import ConfigHandler
 
 class Edit_recipe_window(customtkinter.CTkToplevel):
     """Class for a pop up window."""
-    def __init__(self, app_instance:"App",  texts, recipeName, recipeComment, recipe_struct, *args, **kwargs):
+    def __init__(self, app_instance:"App",  texts, recipeName, recipeComment, recipe_struct, selected_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self.app_instance = app_instance
         self.texts = texts
         self.recipe_name = recipeName
         self.recipe_comment = recipeComment
+        self.selected_id = selected_id
         cursor = None
         cnxn = None
 
@@ -133,7 +134,7 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
             selected_structure_id = self.treeview_select_structure.item(selected_structure_item, "values")[0]
             self.logger.info(f'Selected structure ID: {selected_structure_id}')
 
-            self.app_instance.update_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id)
+            self.app_instance.update_recipe(self.name_entry.get(), self.comment_entry.get(),selected_structure_id, self.selected_id)
 
             self.destroy()
         except IndexError:

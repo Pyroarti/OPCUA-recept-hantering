@@ -370,6 +370,7 @@ class App(customtkinter.CTk):
             for row in rows:
                 recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
                 if parent_id == parent_item:
+                    RecipeName = "     " * depth + RecipeName  # Indentation to reflect nesting
                     has_children = self.check_has_children(recipe_id, cursor, cnxn)
                     has_recipe_data = check_recipe_data(recipe_id)
                     status_text = '' if has_recipe_data else 'Tomt'
@@ -834,7 +835,7 @@ class App(customtkinter.CTk):
         self.recipe_page_command()
 
 
-    def update_recipe(self, name, comment, selected_structure_id):
+    def update_recipe(self, name, comment, selected_structure_id, selected_id):
         """Called with a button to update servo steps or name of a recipe"""
 
         if self.treeview is None:
@@ -842,8 +843,6 @@ class App(customtkinter.CTk):
             return
 
         try:
-            selected_item = self.treeview.selection()[0]
-            selected_id = self.treeview.item(selected_item, 'values')[0]
             logger.info(f"Updating recipe: ID: {selected_id}, Name: {name}, Comment: {comment}, Structure ID: {selected_structure_id}")
 
         except IndexError:
@@ -1097,20 +1096,18 @@ class App(customtkinter.CTk):
                 sql_connection.disconnect_from_database(cursor, cnxn)
 
         if self.edit_recipe_window is None or not self.edit_recipe_window.winfo_exists():
-            self.edit_recipe_window = Edit_recipe_window(self, self.texts, selected_id, recipeName, recipeComment, recipe_struct)
+            self.edit_recipe_window = Edit_recipe_window(app_instance=self, texts=self.texts, selected_id=selected_id, recipeName=recipeName, recipeComment=recipeComment, recipe_struct=recipe_struct)
             self.edit_recipe_window.focus()
-            #self.edit_recipe_window.attributes('-topmost', True)
         else:
             self.edit_recipe_window.focus()
         self.edit_recipe_window.lift()
 
 
     def open_selected_recipe_menu(self, selected_id):
-        from selected_recipe_menu_window import Selected_recipe_menu
+        from .selected_recipe_menu_window import Selected_recipe_menu
 
         selected_item = self.treeview.selection()[0]
         selected_id = self.treeview.item(selected_item, 'values')[0]
-        print(selected_id)
         if self.selected_recipe_menu is None or not self.selected_recipe_menu.winfo_exists():
             self.selected_recipe_menu = Selected_recipe_menu(self, self.texts, parent_id=selected_id)
         else:

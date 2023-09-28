@@ -24,7 +24,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.selected_id = selected_id
         self.rows = rows
         self.texts = texts
-
+        self.title("")
         pop_up_width = 800
         pop_up_height = 900
         position_x = 900
@@ -45,7 +45,7 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.search_bar.pack(anchor="nw", pady=10, padx=10)
         self.search_var.trace('w', self.update_treeview)
 
-        self.edit_recipe_grid(selected_id)
+        self.edit_recipe_grid()
 
     def edit_recipe_grid(self):
         self.edit_recipe_treeview = ttk.Treeview(self, columns=("Unit name", "Tag name", "Tag value", "Unit id"),
