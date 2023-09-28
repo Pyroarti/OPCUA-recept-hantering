@@ -15,10 +15,10 @@ from datetime import datetime
 from asyncua import ua, Client
 
 try:
-    from create_log import setup_logger
-    from opcua_client import connect_opcua
-    from data_encrypt import DataEncryptor
-    from config_handler import ConfigHandler
+    from .create_log import setup_logger
+    from .opcua_client import connect_opcua
+    from .data_encrypt import DataEncryptor
+    from .config_handler import ConfigHandler
 except ImportError:
     print(f"Some modules was not found in. Please make sure it is in the same directory as this script.")
 
@@ -35,7 +35,7 @@ logger_opcua_alarm = setup_logger("opcua_alarms")
 
 # Config files
 config_manager = ConfigHandler()
-phone_book = config_manager.phone_book
+
 opcua_alarm_config = config_manager.opcua_server_alarm_config
 
 # Config data
@@ -77,7 +77,7 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
 
             handler = SubHandler(adresses)
             sub = await client.create_subscription(subscribing_params, handler)
-            logger_programming("Made a new subscription")
+            logger_programming.info("Made a new subscription")
             alarmConditionType = client.get_node("ns=0;i=2915")
             server_node = client.get_node(ua.NodeId(Identifier=2253,
                                                     NodeIdType=ua.NodeIdType.Numeric, NamespaceIndex=0))
@@ -152,6 +152,7 @@ class SubHandler:
 
 
         if SEND_SMS:
+            self.phone_book = config_manager.phone_book
             if opcua_alarm_message["ActiveState"] == "Active":
                 print(f"sending sms")
                 await self.user_notification(opcua_alarm_message["Message"], opcua_alarm_message['Severity'])
@@ -170,7 +171,7 @@ class SubHandler:
 
         current_day = DAY_TRANSLATION[datetime.now().strftime('%A')]
 
-        for user in phone_book:
+        for user in self.phone_book:
             if user.get('Active') == 'Yes':
                 time_settings = user.get('timeSettings', [])
 

@@ -1,6 +1,22 @@
 {
-    "send_sms" : false,
-    "alarm_condition_type" : "ns=0;i=2915",
-    "server_node_identifier" : 2253,
-    "server_node_namespace_index" : 0
-}
+    "config": {
+      "send_sms": true,
+      "alarm_condition_type": "ns=0;i=2915",
+      "server_node_identifier": 2253,
+      "server_node_namespace_index": 0,
+      "messege" : "Medelande från pumpstation:"
+    },
+    "day_translation": {
+      "Monday": "Måndag",
+      "Tuesday": "Tisdag",
+      "Wednesday": "Onsdag",
+      "Thursday": "Torsdag",
+      "Friday": "Fredag",
+      "Saturday": "Lördag",
+      "Sunday": "Söndag"
+    },
+    "environment_variables":{
+        "opcua": "opcua_key"
+    },
+    "opcua_server_cred_path": "opcua_server_config.json"
+  }

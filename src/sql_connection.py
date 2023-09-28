@@ -1,7 +1,7 @@
 import pyodbc
 from pyodbc import Error as PyodbcError
 from typing import Tuple, Optional, Dict
-from .data_encrypt import DataEncrypt
+from .data_encrypt import DataEncryptor
 
 
 class SQLConnection:
@@ -18,7 +18,7 @@ class SQLConnection:
         :param win_env_key_name: windows environment key name
         :return: database credentials"""
 
-        data_encrypt = DataEncrypt()
+        data_encrypt = DataEncryptor()
         sql_config = data_encrypt.encrypt_credentials(config_file_name, win_env_key_name)
 
         if not sql_config:

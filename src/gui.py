@@ -21,19 +21,13 @@ from asyncua import ua, Client
 
 # Own package
 from .ms_sql import from_units_to_sql_stepdata, from_sql_to_units_stepdata, check_recipe_data
-from .data_encrypt import DataEncrypt
+from .data_encrypt import DataEncryptor
 from .create_log import setup_logger
 from .ip_checker import check_ip
 from .opcua_alarm import monitor_alarms
 from .webserver import main_webserver
 from .config_handler import ConfigHandler
 from .sql_connection import SQLConnection
-from .make_recipe_window import MakeRecipeWindow
-from .about_window import AboutWindow
-from .edit_recipe_window import Edit_recipe_window
-from .edit_steps_window import Edit_steps_window
-from selected_recipe_menu_window import Selected_recipe_menu
-
 
 # Setup logger for gui.py
 logger = setup_logger('gui')
@@ -300,6 +294,7 @@ class App(customtkinter.CTk):
 
         cursor = None
         cnxn = None
+        rows = None
 
         try:
             sql_connection = SQLConnection()
@@ -371,35 +366,36 @@ class App(customtkinter.CTk):
         if depth >= self.max_child_depth:
             return
 
-        for row in rows:
-            recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
-            if parent_id == parent_item:
-                has_children = self.check_has_children(recipe_id, cursor, cnxn)
-                has_recipe_data = check_recipe_data(recipe_id)
-                status_text = '' if has_recipe_data else 'Tomt'
+        if rows:
+            for row in rows:
+                recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
+                if parent_id == parent_item:
+                    has_children = self.check_has_children(recipe_id, cursor, cnxn)
+                    has_recipe_data = check_recipe_data(recipe_id)
+                    status_text = '' if has_recipe_data else 'Tomt'
 
-                if recipe_last_saved is None:
-                    recipe_last_saved = ""
-                else:
-                    recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
+                    if recipe_last_saved is None:
+                        recipe_last_saved = ""
+                    else:
+                        recipe_last_saved = recipe_last_saved.strftime("%Y-%m-%d %H:%M")
 
-                item = self.treeview.insert(parent_items.get(parent_id, ""), "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
-                                                      RecipeCreated.strftime("%Y-%m-%d %H:%M"),
-                                                      RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
-                                                      recipe_last_saved,
-                                                      status_text))
+                    item = self.treeview.insert(parent_items.get(parent_id, ""), "end", iid=recipe_id, values=(recipe_id, RecipeName, RecipeComment,
+                                                          RecipeCreated.strftime("%Y-%m-%d %H:%M"),
+                                                          RecipeUpdated.strftime("%Y-%m-%d %H:%M"),
+                                                          recipe_last_saved,
+                                                          status_text))
 
-                # If the recipe has children, change its background color
-                if has_children:
-                    self.treeview.item(item, tags=('hasChildren',))
+                    # If the recipe has children, change its background color
+                    if has_children:
+                        self.treeview.item(item, tags=('hasChildren',))
 
-                # If the recipe is a child, change its background color
-                if parent_item is not None:
-                    self.treeview.item(item, tags=('isChild',))
+                    # If the recipe is a child, change its background color
+                    if parent_item is not None:
+                        self.treeview.item(item, tags=('isChild',))
 
-                parent_items[recipe_id] = item
+                    parent_items[recipe_id] = item
 
-                self.insert_into_treeview(recipe_id, rows, parent_items, depth + 1)
+                    self.insert_into_treeview(recipe_id, rows, parent_items, depth + 1)
 
         if cursor and cnxn:
             sql_connection.disconnect_from_database(cursor, cnxn)
@@ -1019,6 +1015,8 @@ class App(customtkinter.CTk):
 
     def open_about_window(self):
         """Shows the about window"""
+        from .about_window import AboutWindow
+
         if self.about_window is None or not self.about_window.winfo_exists():
             self.about_window = AboutWindow(self)
             self.about_window.focus()
@@ -1029,6 +1027,7 @@ class App(customtkinter.CTk):
 
 
     def open_edit_steps_window(self, rows,selected_id):
+        from .edit_steps_window import Edit_steps_window
         """Shows the edit recipe window"""
 
         if self.edit_steps_window is None or not self.edit_steps_window.winfo_exists():
@@ -1038,8 +1037,8 @@ class App(customtkinter.CTk):
         self.edit_steps_window.lift()
 
     def open_make_recipe_window(self, is_child=False, parent_id=None):
-        "Shows the make a recipe window"
-        print(f"is_child: {is_child}")
+        """Shows the make a recipe window"""
+        from .make_recipe_window import MakeRecipeWindow
 
         if self.make_recipe_window is None or not self.make_recipe_window.winfo_exists():
             self.make_recipe_window = MakeRecipeWindow(self, self.texts, is_child=is_child, parent_id=parent_id)
@@ -1050,7 +1049,8 @@ class App(customtkinter.CTk):
 
 
     def open_update_recipe_window(self):
-        "Shows the make a recipe window"
+        """Shows the make a recipe window"""
+        from .edit_recipe_window import Edit_recipe_window
 
         if self.treeview is None:
             logger.warning("Error: No recipe treeview object")
@@ -1106,6 +1106,8 @@ class App(customtkinter.CTk):
 
 
     def open_selected_recipe_menu(self, selected_id):
+        from selected_recipe_menu_window import Selected_recipe_menu
+
         selected_item = self.treeview.selection()[0]
         selected_id = self.treeview.item(selected_item, 'values')[0]
         print(selected_id)

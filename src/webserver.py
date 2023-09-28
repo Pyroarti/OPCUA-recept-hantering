@@ -10,7 +10,7 @@ import time
 
 from .create_log import setup_logger
 from .opcua_client import data_to_webserver
-from .data_encrypt import DataEncrypt
+from .data_encrypt import DataEncryptor
 
 produced_global = 0
 to_do_global = 0
@@ -29,7 +29,7 @@ app = Flask(__name__, template_folder='../templates', static_folder="../static")
 CORS(app, origins=[host_adress + ":" + host_port])
 logger.info(f"Server initialized at {host_adress}:{host_port}")
 
-data_encrypt = DataEncrypt()
+data_encrypt = DataEncryptor()
 sql_config = data_encrypt.encrypt_credentials("sql_config.json", "SQL_KEY")
 database_config = sql_config["database"]
 
@@ -65,7 +65,7 @@ def get_data():
     Fetches data from the database and runs an asynchronous task to retrieve additional data.
     Returns the response as JSON.
     """
-    global produced_global, to_do_global, estimated_time_remaining_global 
+    global produced_global, to_do_global, estimated_time_remaining_global
 
     produced = None
     to_do = None
@@ -116,7 +116,7 @@ def calculate_time_to_produce():
     timestamps = []
     counts = []
 
-    while True: 
+    while True:
         produced = produced_global
         to_do = to_do_global
 
@@ -139,7 +139,7 @@ def calculate_time_to_produce():
                 if len(timestamps) > 10:
                     timestamps.pop(0)
                     counts.pop(0)
-            
+
             except ZeroDivisionError:
                 pass
             except Exception as exeption:

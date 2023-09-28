@@ -163,7 +163,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
             f"SMC1 Steg: {recipe_lengths_per_unit.get('SMC1', 'N/A')}\n"
             f"SMC2 Steg: {recipe_lengths_per_unit.get('SMC2', 'N/A')}\n"
             f"Tryck ok för att börja kontrollera alla steg i receptet."
-        ) 
+        )
 
         showinfo(title='Information',
              message=texts["show_info_from_all_units_processed_successfully"],
@@ -176,14 +176,14 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         db_opcua_not_same = await db_opcua_data_checker(selected_id, recipe_structure_id, texts)
 
         successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
-        
+
         if successfully_updated_recipe_last_saved:
 
             if db_opcua_not_same:
                 showinfo(title="Info", message= db_opcua_not_same)
             else:
                 showinfo(title="Info", message= texts["show_info_data_in_database_and_opcua_is_the_same"])
-        
+
         else:
             showinfo(title="Info", message= texts["general_error"])
 
@@ -197,7 +197,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
 
 async def from_sql_to_units_stepdata(step_data, texts, selected_name):
-    from src.data_encrypt import DataEncrypt
+    from .data_encrypt import DataEncryptor
 
     """
     Iterates through the units and writes the step data from SQL to them.
@@ -208,7 +208,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
         selected_name (str): The selected name from the GUI
     """
 
-    data_encrypt = DataEncrypt()
+    data_encrypt = DataEncryptor()
     opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
     encrypted_username = opcua_config["username"]
     encrypted_password = opcua_config["password"]
@@ -286,7 +286,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
             await client.disconnect()
 
     if all_units_processed_successfully and not fault :
-        
+
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_successfully"])
         await client.disconnect()
     else:
@@ -469,7 +469,7 @@ def check_recipe_data(selected_id):
 async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
     """
     Checks the step data in the database and compares it with the OPCUA data.
-    
+
     Parameters:
         recipe_id: The Recipe ID used for querying the SQL database.
 
@@ -508,7 +508,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                     for key2, info_dict in inner_dict.items():
                         node_obj = info_dict['Node']
                         node_id = node_obj.nodeid
-                        identifier = node_id.Identifier 
+                        identifier = node_id.Identifier
                         value = str(info_dict['Value'])
                         opcua_results[identifier] = value
 
@@ -600,7 +600,7 @@ async def update_recipe_last_saved(recipe_id):
         cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
         if cursor and cnxn:
-    
+
             query = """
             UPDATE [RecipeDB].[dbo].[tblRecipe]
             SET [RecipeLastDataSaved] = GETDATE()
@@ -611,7 +611,7 @@ async def update_recipe_last_saved(recipe_id):
             cursor.execute(query, params)
             cnxn.commit()
             return True
-        
+
         else:
             return False
 

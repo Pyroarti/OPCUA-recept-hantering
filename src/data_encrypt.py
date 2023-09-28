@@ -12,7 +12,7 @@ import os
 from cryptography.fernet import Fernet, InvalidToken
 
 try:
-    from create_log import setup_logger
+    from .create_log import setup_logger
 except ImportError:
     print("The create_logger module was not found. Please make sure it is in the same directory as this script.")
 

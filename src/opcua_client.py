@@ -260,7 +260,7 @@ async def get_servo_steps(ip_address, data_origin):
 
     logger.info(f"Getting servo steps from {ip_address}...")
 
-    data_encrypt = DataEncrypt()
+    data_encrypt = DataEncryptor()
     opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
     encrypted_username = opcua_config["username"]
     encrypted_password = opcua_config["password"]
@@ -361,7 +361,7 @@ async def get_opcua_value(adress, data_place):
     :return: Tuple containing success flag, value, and data type if found
     """
 
-    data_encrypt = DataEncrypt()
+    data_encrypt = DataEncryptor()
     opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
     encrypted_username = opcua_config["username"]
     encrypted_password = opcua_config["password"]
