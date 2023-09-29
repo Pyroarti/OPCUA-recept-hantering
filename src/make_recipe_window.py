@@ -17,10 +17,10 @@ from .config_handler import ConfigHandler
 
 
 class MakeRecipeWindow(customtkinter.CTkToplevel):
-    """Class for a pop up window."""
+    """Class for a pop up window where the user can make a new recipe."""
     def __init__(self, app_instance:"App",  texts, parent_id=None, is_child=None, *args, **kwargs):
         super().__init__( *args, **kwargs)
-    
+
         self.app_instance = app_instance
         self.texts = texts
         self.parent_id = parent_id

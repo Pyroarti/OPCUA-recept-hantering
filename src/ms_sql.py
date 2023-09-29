@@ -112,7 +112,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                                         @{tag_datatype_param_name}={tag_datatype}, \
                                         @{recipe_id_param_name}={recipe_id},\
                                         @{unit_id_param_name}={unit_id_to_get};")
-                                
+
 
 
                             except Exception as exception:
@@ -159,7 +159,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                     all_units_processed_successfully = False
                     if cursor and cnxn:
                         sql_connection.disconnect_from_database(cursor, cnxn)
-                        
+
     cursor.commit()
     if cursor and cnxn:
         sql_connection.disconnect_from_database(cursor, cnxn)
@@ -271,15 +271,12 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
 
             # Writing step data to plc
             for row in filtered_data:
-                print(row)
 
                 _, _, _, tag_name, tag_value, tag_datatype, _  = row
                 tag_name = f"ns={namespace_index};s={tag_name}"
                 node_id = ua.NodeId.from_string(string=tag_name)
                 node: Node = client.get_node(node_id)
                 result, fault = await write_tag(client, tag_name, tag_value)
-
-                logger.info(f"{result} {row}")
 
             # Writing the recipe name to PLC
             #try:
@@ -558,10 +555,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
             db_results[tag_name] = tag_value
 
         for tag_name, tag_value in db_results.items():
-            logger.info(f"Checking tag_name: {tag_name}")
             opcua_tag_value = opcua_results.get(tag_name, None)
-            logger.info(f"DB value for {tag_name}: {tag_value}")
-            logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
 
             if opcua_tag_value is None:
                 logger.warning(f"{tag_name} exists in database but not in OPCUA")

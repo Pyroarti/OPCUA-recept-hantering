@@ -10,7 +10,6 @@ import webbrowser
 import markdown
 
 from .create_log import setup_logger
-from .config_handler import ConfigHandler
 
 md_file_path = 'CHANGE_LOG.md'
 html_file_path = 'CHANGE_LOG.html'

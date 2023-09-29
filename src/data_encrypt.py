@@ -164,34 +164,3 @@ class DataEncryptor():
             return False
         except json.JSONDecodeError:
             return True
-
-
-    def decrypt_file_to_edit(self, config_filename: str, env_key_name: str):
-        """
-        Decrypts the given configuration file for manual editing and saves it in decrypted format.
-
-        Parameters
-        ----------
-        config_filename : str
-            The name of the configuration file to be decrypted.
-        env_key_name : str
-            The name of the environment variable where the encryption key is stored.
-        """
-
-        config_path = self.output_path / "configs" / config_filename
-
-        key = os.environ.get(env_key_name)
-
-        if key is None:
-            logger.error(f"{env_key_name} is not set in the environment")
-            raise ValueError(f"{env_key_name} is not set in the environment")
-
-        key = key.encode()
-
-        if self.is_encrypted(config_path):
-            decrypted_data = self.decrypt_file(config_path, key)
-            with open(config_path, 'wb') as file:
-                file.write(decrypted_data)
-        else:
-            logger.info(f"File {config_filename} is already decrypted.")
-

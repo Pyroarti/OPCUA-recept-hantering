@@ -3,6 +3,7 @@ This file contains the setup_logger function, which is used to create and config
 to make it easier to log messages to a file and seperate logs and alarms for example from a opcua server.
 version: 1.0.0 Inital commit by Roberts balulis
 """
+__version__ = "1.0.0"
 
 import logging
 import os
