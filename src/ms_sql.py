@@ -112,9 +112,14 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                                         @{tag_datatype_param_name}={tag_datatype}, \
                                         @{recipe_id_param_name}={recipe_id},\
                                         @{unit_id_param_name}={unit_id_to_get};")
+                                
+
+
                             except Exception as exception:
                                 logger.warning(exception)
                                 all_units_processed_successfully = False
+                                if cursor and cnxn:
+                                    sql_connection.disconnect_from_database(cursor, cnxn)
 
                 else:
                 # Om någon ser detta, förlåt till den som måste fixa mina hårdkodade värden.
@@ -152,11 +157,12 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                 except Exception as exception:
                     logger.warning(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
                     all_units_processed_successfully = False
-
-                finally:
                     if cursor and cnxn:
                         sql_connection.disconnect_from_database(cursor, cnxn)
-
+                        
+    cursor.commit()
+    if cursor and cnxn:
+        sql_connection.disconnect_from_database(cursor, cnxn)
     if all_units_processed_successfully:
 
         message_detail = (
@@ -209,9 +215,12 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
     """
 
     data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
-    encrypted_username = opcua_config["username"]
-    encrypted_password = opcua_config["password"]
+    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
+
 
     all_units_processed_successfully = True
     units = await get_units()
@@ -431,7 +440,7 @@ def check_recipe_data(selected_id):
         if cursor and cnxn:
 
             query = """
-            SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+            SELECT TOP (10000000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
             FROM [RecipeDB].[dbo].[viewValues]
             WHERE RecipeID = ?
             """
@@ -514,7 +523,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
 
 
                 query = """
-                SELECT TOP (1000) [UnitID], [TagName], [TagValue], [TagDataType]
+                SELECT TOP (10000000) [UnitID], [TagName], [TagValue], [TagDataType]
                 FROM [RecipeDB].[dbo].[viewValues]
                 WHERE RecipeID = ? AND UnitID = ?
                 """

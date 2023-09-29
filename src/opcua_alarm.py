@@ -102,7 +102,13 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
                 await client.disconnect()
             client = None
             await asyncio.sleep(1)
-
+        
+        except KeyboardInterrupt:
+            if client is not None:
+                client.delete_subscriptions(sub)
+                await client.disconnect()
+            client = None
+            break
 
 class SubHandler:
     """
@@ -160,8 +166,7 @@ class SubHandler:
 
         else:
             if opcua_alarm_message["ActiveState"] == "Active":
-                logger_opcua_alarm.info(f"New event received from {self.address}: {opcua_alarm_message}")
-                print(opcua_alarm_message["Message"], opcua_alarm_message['Severity'])
+                logger_opcua_alarm.info(f"{self.address}, {opcua_alarm_message['Message']}")
 
 
 
@@ -220,7 +225,4 @@ async def monitor_alarms():
                                                             encrypted_username, encrypted_password)))
 
     await asyncio.gather(*tasks)
-
-
-if __name__ == "__main__":
-    asyncio.run(monitor_alarms())
+    

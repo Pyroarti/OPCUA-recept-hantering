@@ -26,15 +26,16 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
         self.recipe_name = recipeName
         self.recipe_comment = recipeComment
         self.selected_id = selected_id
+        self.recipe_struct = recipe_struct
         cursor = None
         cnxn = None
 
         self.resizable(False, False)
+        self.title("")
         pop_up_width = 400
         pop_up_height = 450
         position_x = 600
         position_y = 400
-        self.attributes('-topmost', True)
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
 
         self.logger = setup_logger(__name__)
@@ -90,23 +91,23 @@ class Edit_recipe_window(customtkinter.CTkToplevel):
             cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
             if cursor and cnxn:
-                cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
+                cursor.execute('SELECT TOP (100000000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
                 rows = cursor.fetchall()
 
                 for row in rows:
                     recipe_id, RecipeStructureName = row
                     item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
 
-                if RecipeStructureName in recipe_struct_mapping.values():
-                    recipe_struct_for_this_item = next((key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName), None)
-                    if recipe_struct_for_this_item:
-                        id_mapping[recipe_struct_for_this_item] = item_id
+                    if RecipeStructureName in recipe_struct_mapping.values():
+                        recipe_struct_for_this_item = next((key for key, value in recipe_struct_mapping.items() if value == RecipeStructureName), None)
+                        if recipe_struct_for_this_item:
+                            id_mapping[recipe_struct_for_this_item] = item_id
 
-            mapped_id = id_mapping.get(recipe_struct)
+            mapped_id = id_mapping.get(self.recipe_struct)
             if mapped_id:
                 self.treeview_select_structure.selection_set(mapped_id)
             else:
-                self.logger.warning(f"Error: No mapping for recipe_struct value {recipe_struct}")
+                self.logger.warning(f"Error: No mapping for recipe_struct value { self.recipe_struct}")
 
         except PyodbcError as e:
             self.logger.warning(f"Error in database connection: {e}")

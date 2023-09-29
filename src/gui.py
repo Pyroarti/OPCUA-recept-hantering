@@ -303,7 +303,7 @@ class App(customtkinter.CTk):
 
             if cursor and cnxn:
 
-                cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
+                cursor.execute('SELECT TOP (100000000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
                                     [RecipeUpdated], [RecipeLastDataSaved],[ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
                 rows = cursor.fetchall()
@@ -370,7 +370,7 @@ class App(customtkinter.CTk):
             for row in rows:
                 recipe_id, RecipeName, RecipeComment, RecipeCreated, RecipeUpdated, recipe_last_saved, parent_id = row
                 if parent_id == parent_item:
-                    RecipeName = "     " * depth + RecipeName  # Indentation to reflect nesting
+                    RecipeName = "          " * depth + RecipeName  # Indentation to reflect nesting
                     has_children = self.check_has_children(recipe_id, cursor, cnxn)
                     has_recipe_data = check_recipe_data(recipe_id)
                     status_text = '' if has_recipe_data else 'Tomt'
@@ -813,7 +813,7 @@ class App(customtkinter.CTk):
                     @ParentID=?
                 """, name, comment, selected_structure_id, parent_id)
                 cnxn.commit()
-                cursor.execute('SELECT TOP (1000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
+                cursor.execute('SELECT TOP (100000000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
                                 [RecipeUpdated], [RecipeLastDataSaved], [ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
         except PyodbcError as e:
@@ -910,7 +910,7 @@ class App(customtkinter.CTk):
             if cursor and cnxn:
 
                 query = """
-                SELECT TOP (2000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+                SELECT TOP (100000000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
                 FROM [RecipeDB].[dbo].[viewValues]
                 WHERE RecipeID = ?
                 ORDER BY RecipeID, UnitID,
@@ -1016,35 +1016,38 @@ class App(customtkinter.CTk):
         """Shows the about window"""
         from .about_window import AboutWindow
 
-        if self.about_window is None or not self.about_window.winfo_exists():
+        if not hasattr(self, 'about_window') or self.about_window is None or not self.about_window.winfo_exists():
             self.about_window = AboutWindow(self)
             self.about_window.focus()
             self.about_window.attributes('-topmost', True)
-        else:
+
+        if hasattr(self, 'about_window') and self.about_window.winfo_exists():
             self.about_window.focus()
-        self.about_window.lift()
+            self.about_window.lift()
 
 
     def open_edit_steps_window(self, rows,selected_id):
         from .edit_steps_window import Edit_steps_window
         """Shows the edit recipe window"""
 
-        if self.edit_steps_window is None or not self.edit_steps_window.winfo_exists():
+        if not hasattr(self, 'edit_steps_window') or self.edit_steps_window is None or not self.edit_steps_window.winfo_exists():
             self.edit_steps_window = Edit_steps_window(self, rows, selected_id, self.texts)
-        else:
+
+        if hasattr(self, 'edit_steps_window') and self.edit_steps_window.winfo_exists():
             self.edit_steps_window.focus()
-        self.edit_steps_window.lift()
+            self.edit_steps_window.lift()
+
 
     def open_make_recipe_window(self, is_child=False, parent_id=None):
         """Shows the make a recipe window"""
         from .make_recipe_window import MakeRecipeWindow
 
-        if self.make_recipe_window is None or not self.make_recipe_window.winfo_exists():
+        if not hasattr(self, 'make_recipe_window') or self.make_recipe_window is None or not self.make_recipe_window.winfo_exists():
             self.make_recipe_window = MakeRecipeWindow(self, self.texts, is_child=is_child, parent_id=parent_id)
 
-        else:
+        if hasattr(self, 'make_recipe_window') and self.make_recipe_window.winfo_exists():
             self.make_recipe_window.focus()
-        self.make_recipe_window.lift()
+            self.make_recipe_window.lift()
 
 
     def open_update_recipe_window(self):
@@ -1066,7 +1069,7 @@ class App(customtkinter.CTk):
             selected_id_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_id_item, 'values')[0]
 
-            cursor.execute('SELECT TOP (1000) [RecipeName], [RecipeComment], [RecipeStructID] \
+            cursor.execute('SELECT TOP (100000000) [RecipeName], [RecipeComment], [RecipeStructID] \
                            FROM [RecipeDB].[dbo].[tblRecipe] \
                            WHERE [id] = ?', (selected_id,))
 
@@ -1095,12 +1098,17 @@ class App(customtkinter.CTk):
             if cursor and cnxn:
                 sql_connection.disconnect_from_database(cursor, cnxn)
 
-        if self.edit_recipe_window is None or not self.edit_recipe_window.winfo_exists():
-            self.edit_recipe_window = Edit_recipe_window(app_instance=self, texts=self.texts, selected_id=selected_id, recipeName=recipeName, recipeComment=recipeComment, recipe_struct=recipe_struct)
+        if not hasattr(self, 'edit_recipe_window') or self.edit_recipe_window is None or not self.edit_recipe_window.winfo_exists():
+            self.edit_recipe_window = Edit_recipe_window(app_instance=self,
+                                                         texts=self.texts,
+                                                         selected_id=selected_id,
+                                                         recipeName=recipeName,
+                                                         recipeComment=recipeComment,
+                                                         recipe_struct=recipe_struct)
+
+        if hasattr(self, 'edit_recipe_window') and self.edit_recipe_window.winfo_exists():
             self.edit_recipe_window.focus()
-        else:
-            self.edit_recipe_window.focus()
-        self.edit_recipe_window.lift()
+            self.edit_recipe_window.lift()
 
 
     def open_selected_recipe_menu(self, selected_id):
@@ -1108,15 +1116,22 @@ class App(customtkinter.CTk):
 
         selected_item = self.treeview.selection()[0]
         selected_id = self.treeview.item(selected_item, 'values')[0]
-        if self.selected_recipe_menu is None or not self.selected_recipe_menu.winfo_exists():
+        if not hasattr(self, 'selected_recipe_menu') or self.selected_recipe_menu is None or not self.selected_recipe_menu.winfo_exists():
             self.selected_recipe_menu = Selected_recipe_menu(self, self.texts, parent_id=selected_id)
-        else:
+
+        if hasattr(self, 'selected_recipe_menu') and self.selected_recipe_menu.winfo_exists():
             self.selected_recipe_menu.focus()
-        self.selected_recipe_menu.lift()
+            self.selected_recipe_menu.lift()
+
+
 
 
 def main():
     """Main func to start the program"""
+    
+    # Start the alarm monitor
+    #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
+    #monitor_alarms_thread.start()
 
     app = None
 
@@ -1134,6 +1149,4 @@ def main():
     async_queue.put(None)
     async_thread.join()
 
-    # Start the alarm monitor
-    #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
-    #monitor_alarms_thread.start()
+    

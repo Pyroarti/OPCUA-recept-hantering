@@ -261,9 +261,10 @@ async def get_servo_steps(ip_address, data_origin):
     logger.info(f"Getting servo steps from {ip_address}...")
 
     data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
-    encrypted_username = opcua_config["username"]
-    encrypted_password = opcua_config["password"]
+    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
     url = ip_address
 
     client:Client = await connect_opcua(url, encrypted_username, encrypted_password)
@@ -314,9 +315,10 @@ async def data_to_webserver():
     ip_address = units[2][1]
 
     data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
-    encrypted_username = opcua_config["username"]
-    encrypted_password = opcua_config["password"]
+    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
 
     client:Client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
 
@@ -362,9 +364,10 @@ async def get_opcua_value(adress, data_place):
     """
 
     data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_config.json", "OPCUA_KEY")
-    encrypted_username = opcua_config["username"]
-    encrypted_password = opcua_config["password"]
+    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
 
     client:Client = await connect_opcua(adress, encrypted_username, encrypted_password)
     if client is not None:

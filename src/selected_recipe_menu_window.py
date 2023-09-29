@@ -31,25 +31,22 @@ class Selected_recipe_menu(customtkinter.CTkToplevel):
             self,
             text=self.texts['make_a_child_recipe'],
             command=self.combined_command(
-                lambda: self.app_instance.open_make_recipe_window(is_child=True, parent_id=self.parent_id),
-                self.close_window
-            ),
-            width=350,
-            height=60,
-            font=("Helvetica", 18)
-        )
+                self.close_window, lambda: self.app_instance.open_make_recipe_window(is_child=True, parent_id=self.parent_id)),
+                width=350,
+                height=60,
+                font=("Helvetica", 18))
 
         self.make_recipe_button.pack(pady=10)
 
         self.update_recipe_info_button = customtkinter.CTkButton(self, text=self.texts['update_recipe'],
-                                                            command= self.combined_command(self.app_instance.open_update_recipe_window,self.close_window),
+                                                            command= self.combined_command(self.close_window, self.app_instance.open_update_recipe_window),
                                                             width=350,
                                                             height=60,
                                                             font=("Helvetica", 18))
         self.update_recipe_info_button.pack(pady=10)
 
         self.delete_selected_row_button = customtkinter.CTkButton(self, text=self.texts["delete_the_selected_recipe_button"],
-                                                                  command= self.combined_command(self.app_instance.delete_recipe,self.close_window),
+                                                                  command= self.combined_command(self.close_window,self.app_instance.delete_recipe),
                                                                   width=350,
                                                                   height=45,
                                                                   font=("Helvetica", 18))
@@ -58,7 +55,7 @@ class Selected_recipe_menu(customtkinter.CTkToplevel):
 
         self.load_data_in_selected_recipe_button = customtkinter.CTkButton(self,
                                                                            text=self.texts['load_servo_steps_into_selected_recipe_button'],
-                                                                           command= self.combined_command(self.app_instance.load_data_in_selected_recipe,self.close_window),
+                                                                           command= self.combined_command(self.close_window, self.app_instance.load_data_in_selected_recipe),
                                                                            width=350,
                                                                            height=45,
                                                                            font=("Helvetica", 18))
@@ -66,14 +63,14 @@ class Selected_recipe_menu(customtkinter.CTkToplevel):
         self.load_data_in_selected_recipe_button.pack(pady=(60,0))
 
         self.use_selected_recipe_button = customtkinter.CTkButton(self, text=self.texts["use_the_selected_recipe_button"],
-                                                                   command=self.combined_command(self.app_instance.use_selected_recipe, self.close_window),
+                                                                   command=self.combined_command(self.close_window, self.app_instance.use_selected_recipe),
                                                                    width=350,
                                                                    height=45,
                                                                    font=("Helvetica", 18))
         self.use_selected_recipe_button.pack(pady=(20,0))
 
         self.edit_selected_recipe_button = customtkinter.CTkButton(self, text=self.texts["edit_the_selected_recipe_button"],
-                                                                  command= self.combined_command(self.app_instance.edit_recipe,self.close_window),
+                                                                  command= self.combined_command(self.close_window, self.app_instance.edit_recipe),
                                                                   width=350,
                                                                   height=45,
                                                                   font=("Helvetica", 18))

@@ -76,7 +76,8 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.edit_recipe_treeview.bind("<Double-1>", self.on_double_click)
 
 
-    def update_treeview(self):
+    def update_treeview(self, *args):
+        
         search_term = self.search_var.get()
 
         for i in self.edit_recipe_treeview.get_children():

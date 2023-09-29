@@ -1814,3 +1814,22 @@
 2023:09:28 13:52:57|WARNING|gui|Error in database connection: Database connection failed: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
 2023:09:28 13:58:59|WARNING|gui|Error in database connection: Database connection failed: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
 2023:09:28 13:59:30|WARNING|gui|Error in database connection: Database connection failed: [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]Antingen finns inte SQL Server eller så nekas åtkomst. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)
+2023:09:29 10:10:55|INFO|gui|Trying to submit new recipe: Name: child3, Comment: child3, Structure ID: 2
+2023:09:29 10:11:11|INFO|gui|Trying to submit new recipe: Name: parra, Comment: ra, Structure ID: 5
+2023:09:29 11:13:06|INFO|gui|Updating recipe: ID: 280, Name: parraar, Comment: ra, Structure ID: 2
+2023:09:29 11:15:07|INFO|gui|Trying to submit new recipe: Name: test, Comment: test, Structure ID: 2
+2023:09:29 11:16:18|WARNING|gui|No data found for editing recipe ID: 281
+2023:09:29 11:31:47|WARNING|gui|No data found for editing recipe ID: 281
+2023:09:29 11:31:53|WARNING|gui|No data found for editing recipe ID: 281
+2023:09:29 11:35:45|INFO|gui|Trying to submit new recipe: Name: gf, Comment: gfg, Structure ID: 2
+2023:09:29 11:55:22|INFO|gui|Updating recipe: ID: 282, Name: gff, Comment: gfg, Structure ID: 2
+2023:09:29 11:58:47|WARNING|gui|No data found for editing recipe ID: 282
+2023:09:29 11:59:39|INFO|gui|Fetched 1901 rows for editing recipe ID: 273
+2023:09:29 12:32:36|INFO|gui|Trying to submit new recipe: Name: mommmm, Comment: fdsfsdfdsfdsfsdgg, Structure ID: 4
+2023:09:29 12:38:58|WARNING|gui|No data found for editing recipe ID: 283
+2023:09:29 12:54:02|INFO|gui|Trying to submit new recipe: Name: retrerere, Comment: rereerre, Structure ID: 5
+2023:09:29 12:54:09|WARNING|gui|No data found for editing recipe ID: 284
+2023:09:29 12:55:11|INFO|gui|Updating recipe: ID: 284, Name: retrerereyyyy, Comment: rereerre, Structure ID: 5
+2023:09:29 13:09:29|INFO|gui|Fetched 1901 rows for editing recipe ID: 282
+2023:09:29 13:25:37|INFO|gui|Fetched 1901 rows for editing recipe ID: 281
+2023:09:29 13:31:36|INFO|gui|Fetched 1901 rows for editing recipe ID: 281

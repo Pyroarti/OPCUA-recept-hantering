@@ -32,7 +32,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         pop_up_height = 700
         position_x = 600
         position_y = 400
-        self.attributes('-topmost', True)
+        self.title("")
         self.resizable(False, False)
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
 
@@ -85,7 +85,7 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
 
             if cursor and cnxn:
                 try:
-                    cursor.execute('SELECT TOP (1000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
+                    cursor.execute('SELECT TOP (10000000) [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]')
                     rows = cursor.fetchall()
 
                     for row in rows:
