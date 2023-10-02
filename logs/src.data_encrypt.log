@@ -1,4 +1,0 @@
-2023:09:29 10:18:01|ERROR|src.data_encrypt|File c:\Users\LMT\Desktop\OPCUA-recept-hantering\configs\opcua_server_config.json not found
-2023:09:29 10:18:35|ERROR|src.data_encrypt|File c:\Users\LMT\Desktop\OPCUA-recept-hantering\configs\opcua_server_config.json not found
-2023:09:29 10:27:57|INFO|src.data_encrypt|File opcua_server_config.json is already decrypted.
-2023:09:29 11:40:32|ERROR|src.data_encrypt|File c:\Users\LMT\Desktop\OPCUA-recept-hantering\configs\opcua_config.json not found

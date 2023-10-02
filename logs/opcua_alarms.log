@@ -1,11 +1,45 @@
-2023:09:29 10:45:02|INFO|opcua_alarms|New event received from opc.tcp://192.168.187.13:4840: {'New event received from': 'opc.tcp://192.168.187.13:4840', 'Message': 'Error : Error message : A Alarm SMC2 : @3%u@ : ExternalCom.TestAlarm : asdasdasd', 'Time': datetime.datetime(2023, 9, 29, 8, 45, 2, 122362), 'Severity': 1, 'SuppressedOrShelved': False, 'AckedState': 'Unacknowledged', 'ConditionClassId': NodeId(Identifier=11164, NamespaceIndex=0, NodeIdType=<NodeIdType.FourByte: 1>), 'NodeId': NodeId(Identifier=b'\x9d\x97z\xe3\xbcM\xa7N\x84&\xd9\xdau\xecrj', NamespaceIndex=3, NodeIdType=<NodeIdType.ByteString: 5>), 'Quality': StatusCode(value=0), 'Retain': True, 'ActiveState': 'Active', 'EnabledState': 'Enabled', 'Identifier': "b'\\x9d\\x97z\\xe3\\xbcM\\xa7N\\x84&\\xd9\\xdau\\xecrj'"}
-2023:09:29 10:59:30|INFO|opcua_alarms|opc.tcp://192.168.187.13:4840, Error : Error message : A Alarm SMC2 : @3%u@ : ExternalCom.TestAlarm : asdasdasd
-2023:09:29 12:07:22|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:07:22|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:07:22|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:20:37|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:20:37|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:20:37|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:52:04|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:52:17|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
-2023:09:29 12:52:17|INFO|opcua_alarms|StatusChangeNotification(Status=StatusCode(value=2148270080), DiagnosticInfo_=DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None))
+2023:09:30 09:47:36|INFO|opcua_alarms|opc.tcp://192.168.187.10:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ Master_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ Master_PLC 
+  
+2023:09:30 09:47:38|INFO|opcua_alarms|opc.tcp://192.168.187.13:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC2_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC2_PLC 
+  
+2023:09:30 09:47:38|INFO|opcua_alarms|opc.tcp://192.168.187.11:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC1_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC1_PLC 
+  
+2023:10:01 09:47:37|INFO|opcua_alarms|opc.tcp://192.168.187.10:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ Master_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ Master_PLC 
+  
+2023:10:01 09:47:37|INFO|opcua_alarms|opc.tcp://192.168.187.13:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC2_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC2_PLC 
+  
+2023:10:01 09:47:40|INFO|opcua_alarms|opc.tcp://192.168.187.11:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC1_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC1_PLC 
+  
+2023:10:02 09:47:40|INFO|opcua_alarms|opc.tcp://192.168.187.11:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC1_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC1_PLC 
+  
+2023:10:02 09:47:48|INFO|opcua_alarms|opc.tcp://192.168.187.10:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ Master_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ Master_PLC 
+  
+2023:10:02 09:47:48|INFO|opcua_alarms|opc.tcp://192.168.187.13:4840, Servicebehov från CPU: tidssynkroniseringsfrånfall: ingen tidssynkronisering med klock-master 
+ SMC2_PLC / aktuellt CPU-driftstillstånd: RUN 
+
+ SMC2_PLC 
+  

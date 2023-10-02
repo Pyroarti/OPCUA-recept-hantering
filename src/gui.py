@@ -1130,8 +1130,8 @@ def main():
     """Main func to start the program"""
     
     # Start the alarm monitor
-    #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
-    #monitor_alarms_thread.start()
+    monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
+    monitor_alarms_thread.start()
 
     app = None
 
