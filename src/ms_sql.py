@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import asyncio
 from pyodbc import Error as PyodbcError
+from typing import List, Tuple, Union
 
 from asyncua import ua, Node, Client
 
@@ -12,7 +13,7 @@ from .opcua_client import get_servo_steps, connect_opcua, write_tag
 from .sql_connection import SQLConnection
 
 
-logger = setup_logger(__name__)
+logger = setup_logger("MS_SQL")
 
 
 async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
@@ -51,13 +52,13 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
     except PyodbcError as e:
-        logger.warning(f"Error in database connection: {e}")
+        logger.error(f"Error in database connection: {e}")
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
 
     if cursor and cnxn:
 
@@ -112,11 +113,9 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                                         @{tag_datatype_param_name}={tag_datatype}, \
                                         @{recipe_id_param_name}={recipe_id},\
                                         @{unit_id_param_name}={unit_id_to_get};")
-                                
-
 
                             except Exception as exception:
-                                logger.warning(exception)
+                                logger.error(exception)
                                 all_units_processed_successfully = False
                                 if cursor and cnxn:
                                     sql_connection.disconnect_from_database(cursor, cnxn)
@@ -155,7 +154,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
                             @{recipe_id_param_name}={selected_id},\
                             @{unit_id_param_name}={unit_id_to_get};")
                 except Exception as exception:
-                    logger.warning(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
+                    logger.error(f"Failed to execute stored procedure for unit_id: {unit_id_to_get}. Error: {str(exception)}")
                     all_units_processed_successfully = False
                     if cursor and cnxn:
                         sql_connection.disconnect_from_database(cursor, cnxn)
@@ -196,7 +195,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         return recipe_checked
 
     else:
-        logger.warning("Problem with loading data to sql")
+        logger.error("Problem with loading data to sql")
         showinfo(title='Information',
                  message=texts["show_info_from_all_units_processed_not_successfully"])
         return None
@@ -244,7 +243,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
             if client:
                 logger.info(f"Connected to OPCUA server at {address}")
             else:
-                logger.warning(f"Failed to connect to OPCUA server at {address}")
+                logger.error(f"Failed to connect to OPCUA server at {address}")
                 continue
 
             output_path = Path(__file__).parent.parent
@@ -299,7 +298,7 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_successfully"])
         await client.disconnect()
     else:
-        logger.warning("Problem with loading data to units")
+        logger.error("Problem with loading data to units")
         showinfo(title='Information', message=texts["show_info_to_all_units_processed_not_successfully"])
         await client.disconnect()
 
@@ -328,13 +327,13 @@ async def get_units():
         units = cursor.fetchall()
 
     except PyodbcError as e:
-        logger.warning(f"Error in database connection: {e}")
+        logger.error(f"Error in database connection: {e}")
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
 
     finally:
         if cursor and cnxn:
@@ -344,7 +343,7 @@ async def get_units():
         return units
 
     else:
-        logger.warning("No units were fetched from the database")
+        logger.error("No units were fetched from the database")
         return None
 
 
@@ -365,18 +364,18 @@ async def get_recipe_structures_map():
         sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
         cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
-        cursor.execute('SELECT Unit_Id,UnitName, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
+        cursor.execute('SELECT Unit_Id, UnitName, RecipeStructure_Id, UnitTagName, URL  FROM viewRecipeStructuresMap')
 
         struct_data = cursor.fetchall()
 
     except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
 
     finally:
         if cursor and cnxn:
@@ -386,7 +385,7 @@ async def get_recipe_structures_map():
         logger.info(f"Fetched {struct_data} recipe structure mappings from the database")
         return struct_data
     else:
-        logger.warning("No recipe structure mappings were fetched from the database")
+        logger.error("No recipe structure mappings were fetched from the database")
         return None
 
 
@@ -418,10 +417,10 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
 
             return fault
         except Exception as exception:
-            logger.warning(exception)
+            logger.error(exception)
 
     else:
-        logger.warning("Error while trying to connect to opcua servers to clean data")
+        logger.error("Error while trying to connect to opcua servers to clean data")
 
 
 def check_recipe_data(selected_id):
@@ -440,7 +439,7 @@ def check_recipe_data(selected_id):
         if cursor and cnxn:
 
             query = """
-            SELECT TOP (10000000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+            SELECT [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
             FROM [RecipeDB].[dbo].[viewValues]
             WHERE RecipeID = ?
             """
@@ -454,20 +453,20 @@ def check_recipe_data(selected_id):
 
             for row in rows:
                 if None in row:
-                    logger.warning(f"One or more fields are None in row: {row}")
+                    logger.error(f"One or more fields are None in row: {row}")
                     return False
             return True
 
     except PyodbcError as e:
-        logger.warning(f"Error in database connection: {e}")
+        logger.error(f"Error in database connection: {e}")
         return False
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
         return False
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
         return False
 
     finally:
@@ -523,7 +522,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
 
 
                 query = """
-                SELECT TOP (10000000) [UnitID], [TagName], [TagValue], [TagDataType]
+                SELECT [UnitID], [TagName], [TagValue], [TagDataType]
                 FROM [RecipeDB].[dbo].[viewValues]
                 WHERE RecipeID = ? AND UnitID = ?
                 """
@@ -551,7 +550,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
         for row in rows:
 
             if None in row:
-                logger.warning(f"One or more fields are None in row: {row}")
+                logger.error(f"One or more fields are None in row: {row}")
                 return False
 
             unit_id, tag_name, tag_value, tag_datatype = row
@@ -564,11 +563,11 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
             logger.info(f"OPCUA value for {tag_name}: {opcua_tag_value}")
 
             if opcua_tag_value is None:
-                logger.warning(f"{tag_name} exists in database but not in OPCUA")
+                logger.error(f"{tag_name} exists in database but not in OPCUA")
                 data_difference.append(f"{tag_name} exists in database but not in OPCUA")
 
             elif tag_value != opcua_tag_value:
-                logger.warning(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
+                logger.error(f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
                 db_opcua_missmatch = (f"Tag value in database: {tag_value} is not the same as in OPCUA: {opcua_tag_value}")
                 data_difference.append(db_opcua_missmatch)
 
@@ -579,15 +578,15 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
         return data_difference
 
     except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=texts["error_with_database"])
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
         showinfo(title="Info", message=texts["error_with_database"])
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
         showinfo(title="Info", message=e)
 
     finally:
@@ -625,13 +624,13 @@ async def update_recipe_last_saved(recipe_id):
             return False
 
     except PyodbcError as e:
-        logger.warning(f"Error in database connection: {e}")
+        logger.error(f"Error in database connection: {e}")
 
     except IndexError:
-        logger.warning("Database credentials seem to be incomplete.")
+        logger.error("Database credentials seem to be incomplete.")
 
     except Exception as e:
-        logger.warning(f"An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
 
     finally:
         if cursor and cnxn:

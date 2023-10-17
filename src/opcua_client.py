@@ -7,7 +7,7 @@ from .create_log import setup_logger
 from .data_encrypt import DataEncryptor
 
 
-logger = setup_logger('opcua_client')
+logger = setup_logger('Opcua_client')
 
 
 async def get_node_children(node: Node, nodes=None):
@@ -98,7 +98,7 @@ async def get_stepdata(node_steps: Node) -> json:
         logger.info("Successfully retrieved step data.")
         return result
 
-    logger.warning("No step data found.")
+    logger.error("No step data found.")
     return None
 
 
@@ -123,31 +123,31 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
         logger.info("Successfully connected to OPC UA server.")
 
     except ua.uaerrors.BadUserAccessDenied as exeption:
-        logger.warning(f"BadUserAccessDenied: {exeption}")
+        logger.error(f"BadUserAccessDenied: {exeption}")
         return None
 
     except ua.uaerrors.BadSessionNotActivated as exeption:
-        logger.warning(f"Session activation error: {exeption}")
+        logger.error(f"Session activation error: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenRejected as exeption:
-        logger.warning(f"Identity token rejected. Check username and password.: {exeption}")
+        logger.error(f"Identity token rejected. Check username and password.: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenInvalid as exeption:
-        logger.warning(f"Bad Identity token invalid. Check username and password.: {exeption}")
+        logger.error(f"Bad Identity token invalid. Check username and password.: {exeption}")
         return None
 
     except ConnectionError as exeption:
-        logger.warning(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
+        logger.error(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
         return None
 
     except ua.UaError as exeption:
-        logger.warning(f"General OPCUA error {exeption}")
+        logger.error(f"General OPCUA error {exeption}")
         return None
 
     except Exception as exeption:
-        logger.warning(f"Error in connection: {exeption} Type: {type(exeption)}")
+        logger.error(f"Error in connection: {exeption} Type: {type(exeption)}")
         return None
 
     return client
@@ -189,7 +189,7 @@ async def write_tag(client: Client, tag_name, tag_value):
         logger.info(f"Writing value {tag_value} to tag {tag_name} from {node_id},{node}")
 
     except Exception as exeption:
-        logger.warning(exeption)
+        logger.error(exeption)
         await client.disconnect()
         return None
 
@@ -232,7 +232,7 @@ async def write_tag(client: Client, tag_name, tag_value):
         except Exception as exeption:
             await client.disconnect()
             fault = True
-            logger.warning(f"Error converting data type to ua.Variant: {exeption}")
+            logger.error(f"Error converting data type to ua.Variant: {exeption}")
 
         if data_value is not None:
 
@@ -243,7 +243,7 @@ async def write_tag(client: Client, tag_name, tag_value):
             except Exception as exeption:
                 fault = True
                 await client.disconnect()
-                logger.warning(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
+                logger.error(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
 
     return result, fault
 
@@ -284,73 +284,22 @@ async def get_servo_steps(ip_address, data_origin):
                 logger.info("Client disconnected")
                 return children_values
 
-            logger.warning("Failed to retrieve servo steps.")
+            logger.error("Failed to retrieve servo steps.")
             await client.disconnect()
             logger.info("Client disconnected")
             return None
 
         except AttributeError as exeption:
-            logger.warning(f"AttributeError:{exeption}")
+            logger.error(f"AttributeError:{exeption}")
 
         except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
+            logger.error(f"BadNoMatch. Ingen matchande variable:{exeption}")
 
         except TimeoutError as exeption:
-            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
+            logger.error(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
 
         except Exception as exeption:
-            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
-
-
-async def data_to_webserver():
-
-    """
-    Retrieve specific data and send it to a webserver.
-
-    :return: Produced value and to-do value if found
-    """
-
-    from .ms_sql import get_units
-    units = await get_units()
-    ip_address = units[2][1]
-
-    data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
-    for server in opcua_config["servers"]:
-        encrypted_username = server["username"]
-        encrypted_password = server["password"]
-
-    client:Client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
-
-    if client is not None:
-
-        try:
-            produced_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityPartsMade"')
-            to_do_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityOfPartsToMake"')
-
-            produced_node = client.get_node(produced_node_id)
-            to_do_node =  client.get_node(to_do_node_id)
-
-            produced_value = await produced_node.get_value()
-            to_do_value = await to_do_node.get_value()
-
-            await client.disconnect()
-            logger.info("Client disconnected")
-
-            return produced_value, to_do_value
-
-        except AttributeError as exeption:
-            logger.warning(f"AttributeError:{exeption}")
-
-        except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
-
-        except TimeoutError as exeption:
-            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
-
-        except Exception as exeption:
-            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
-            return
+            logger.error(f"Error getting values: {str(exeption)},{type(exeption)}")
 
 
 async def get_opcua_value(adress, data_place):
@@ -406,5 +355,5 @@ async def get_opcua_value(adress, data_place):
             return True, value, data_type
 
         except Exception as exeption:
-            logger.warning(exeption)
+            logger.error(exeption)
             await client.disconnect()

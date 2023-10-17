@@ -16,7 +16,7 @@ try:
 except ImportError:
     print("The create_logger module was not found. Please make sure it is in the same directory as this script.")
 
-logger = setup_logger(__name__)
+logger = setup_logger("Data_encrypt")
 
 
 class DataEncryptor():

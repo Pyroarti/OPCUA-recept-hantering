@@ -16,7 +16,7 @@ from .gui import App
 from .config_handler import ConfigHandler
 
 
-class Edit_steps_window(customtkinter.CTkToplevel):
+class EditStepsWindow(customtkinter.CTkToplevel):
     """Class for a pop up window to edit servo steps."""
     def __init__(self, master, rows, selected_id, texts, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
@@ -25,14 +25,12 @@ class Edit_steps_window(customtkinter.CTkToplevel):
         self.rows = rows
         self.texts = texts
         self.title("")
-        pop_up_width = 800
-        pop_up_height = 900
-        position_x = 900
-        position_y = 400
-        self.resizable(False, False)
-        self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
 
-        self.logger = setup_logger(__name__)
+        self.resizable(False, False)
+
+        self.geometry("800x900+900+400")
+
+        self.logger = setup_logger("Edit_steps_window")
 
         # Gets all the configs for this module
         config_manager = ConfigHandler()
@@ -144,15 +142,15 @@ class Edit_steps_window(customtkinter.CTkToplevel):
                     cnxn.commit()
 
         except PyodbcError as e:
-            self.logger.warning(f"Error in database connection: {e}")
+            self.logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            self.logger.warning("Database credentials seem to be incomplete.")
+            self.logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            self.logger.warning(f"An unexpected error occurred: {e}")
+            self.logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:

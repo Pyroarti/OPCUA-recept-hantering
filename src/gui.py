@@ -30,7 +30,7 @@ from .config_handler import ConfigHandler
 from .sql_connection import SQLConnection
 
 # Setup logger for gui.py
-logger = setup_logger('gui')
+logger = setup_logger('Gui')
 
 
 def run_monitor_alarms_loop():
@@ -142,7 +142,7 @@ class App(customtkinter.CTk):
         self.recipe_page_command()
 
 
-    def create_header(self, parent, page_name, opcua_alarms):
+    def create_header(self, parent, page_name):
         """
         Creates and returns a header frame for a given page.
 
@@ -182,7 +182,6 @@ class App(customtkinter.CTk):
 
     def change_language(self):
         if self.language_button is None:
-            print("Warning: self.language_button is not initialized yet.")
             return
 
         self.language = 'swedish' if self.language == 'english' else 'english'
@@ -190,7 +189,6 @@ class App(customtkinter.CTk):
         self.language_button.configure(text=f"Change language ({self.language})")
         self.main_page()
         self.show_page("main_page")
-
 
 
     def main_page(self):
@@ -235,7 +233,7 @@ class App(customtkinter.CTk):
             for name, ip_address, status in ip_status_list:
                 self.ip_adresses_treeview.insert('', 'end', values=(name, ip_address, status))
         else:
-            logger.warning("Error: No ip_adresses_treeview object")
+            logger.error("Error: No ip_adresses_treeview object")
 
 
     def recipes_page(self):
@@ -303,21 +301,21 @@ class App(customtkinter.CTk):
 
             if cursor and cnxn:
 
-                cursor.execute('SELECT TOP (100000000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
+                cursor.execute('SELECT [id], [RecipeName], [RecipeComment], [RecipeCreated], \
                                     [RecipeUpdated], [RecipeLastDataSaved],[ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
                 rows = cursor.fetchall()
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -331,11 +329,11 @@ class App(customtkinter.CTk):
             recipe_config_data = recipes_page_config.get_config_data("gui_config.json")
             self.max_child_depth = int(recipe_config_data["max_child_struct_recipe_grid"])
         except FileNotFoundError:
-            logger.warning("Config file not found.")
+            logger.error("Config file not found.")
         except KeyError:
-            logger.warning("Key not found in config.")
+            logger.error("Key not found in config.")
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
 
         parent_items = {}
 
@@ -352,15 +350,15 @@ class App(customtkinter.CTk):
             cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         if depth >= self.max_child_depth:
@@ -416,7 +414,7 @@ class App(customtkinter.CTk):
             return result and result[0] > 0
 
         except Exception as e:
-            logger.warning(f"An error occurred: {e}")
+            logger.error(f"An error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
             return False
 
@@ -480,7 +478,7 @@ class App(customtkinter.CTk):
         from .opcua_client import connect_opcua
 
         if self.opcua_treeview is None:
-            logger.warning("Error: No opcua_treeview object")
+            logger.error("Error: No opcua_treeview object")
             return
 
         selected_item = self.opcua_treeview.selection()[0]
@@ -546,7 +544,7 @@ class App(customtkinter.CTk):
         from the logs folder"""
 
         if self.logs_treeview is None:
-            logger.warning("Error: No logs_treeview object")
+            logger.error("Error: No logs_treeview object")
             return
 
         log_folder="logs"
@@ -579,7 +577,7 @@ class App(customtkinter.CTk):
         puts them into the selected recipe in the SQL"""
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         if not askyesno(message=self.texts["yes_no_mesg_box_save_data_to_recipe"]):
@@ -610,15 +608,15 @@ class App(customtkinter.CTk):
                     recipe_structure_id = row[0]
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -629,7 +627,7 @@ class App(customtkinter.CTk):
             loading_ok = self.async_queue.put((from_units_to_sql_stepdata(selected_id, self.texts, recipe_structure_id)))
         else:
             showinfo(title="Information", message=self.texts["no_recipe_to_load_data_into"])
-            logger.warning(f"Error while loading data for selected recipe ID: {selected_id}")
+            logger.error(f"Error while loading data for selected recipe ID: {selected_id}")
             return
 
 
@@ -637,7 +635,7 @@ class App(customtkinter.CTk):
         """Archive the selected recipe"""
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         try:
@@ -658,15 +656,15 @@ class App(customtkinter.CTk):
                 cnxn.commit()
 
             except PyodbcError as e:
-                logger.warning(f"Error in database connection: {e}")
+                logger.error(f"Error in database connection: {e}")
                 showinfo(title="Info", message=self.texts["error_with_database"])
 
             except IndexError:
-                logger.warning("Database credentials seem to be incomplete.")
+                logger.error("Database credentials seem to be incomplete.")
                 showinfo(title="Info", message=self.texts["error_with_database"])
 
             except Exception as e:
-                logger.warning(f"An unexpected error occurred: {e}")
+                logger.error(f"An unexpected error occurred: {e}")
                 showinfo(title="Info", message=self.texts["error_with_database"])
 
             finally:
@@ -680,7 +678,7 @@ class App(customtkinter.CTk):
         """Puts the selected recipe in the units stepdata"""
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         if not askyesno(message=self.texts["yes_no_mesg_box_load_data_to_robot_cell"]):
@@ -696,7 +694,7 @@ class App(customtkinter.CTk):
 
         except IndexError as e:
             showinfo(title="Information", message=self.texts["show_info_error_loading_recipe"])
-            logger.warning(e)
+            logger.error(e)
 
         cursor = None
         cnxn = None
@@ -715,13 +713,13 @@ class App(customtkinter.CTk):
                 cnxn.commit()
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
 
         finally:
             if cursor and cnxn:
@@ -743,7 +741,7 @@ class App(customtkinter.CTk):
             return
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         try:
@@ -759,15 +757,15 @@ class App(customtkinter.CTk):
                 self.treeview.delete(selected_item)
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -784,7 +782,7 @@ class App(customtkinter.CTk):
             showinfo(title='Information', message=self.texts["show_info_submit_new_recipe_error"])
             return
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         try:
@@ -813,19 +811,19 @@ class App(customtkinter.CTk):
                     @ParentID=?
                 """, name, comment, selected_structure_id, parent_id)
                 cnxn.commit()
-                cursor.execute('SELECT TOP (100000000) [id], [RecipeName], [RecipeComment], [RecipeCreated], \
+                cursor.execute('SELECT [id], [RecipeName], [RecipeComment], [RecipeCreated], \
                                 [RecipeUpdated], [RecipeLastDataSaved], [ParentID] FROM [RecipeDB].[dbo].[viewRecipesActive]')
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -839,7 +837,7 @@ class App(customtkinter.CTk):
         """Called with a button to update servo steps or name of a recipe"""
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         try:
@@ -866,15 +864,15 @@ class App(customtkinter.CTk):
             cnxn.commit()
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -888,7 +886,7 @@ class App(customtkinter.CTk):
         """Edits the selected recipe servo and robot data"""
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         selected_id = None
@@ -910,7 +908,7 @@ class App(customtkinter.CTk):
             if cursor and cnxn:
 
                 query = """
-                SELECT TOP (100000000) [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
+                SELECT [UnitID], [TagName], [TagValue], [TagDataType], [UnitName]
                 FROM [RecipeDB].[dbo].[viewValues]
                 WHERE RecipeID = ?
                 ORDER BY RecipeID, UnitID,
@@ -928,20 +926,20 @@ class App(customtkinter.CTk):
                     logger.info(f"Fetched {len(rows)} rows for editing recipe ID: {selected_id}")
                     self.open_edit_steps_window(rows,selected_id)
                 else:
-                    logger.warning(f"No data found for editing recipe ID: {selected_id}")
+                    logger.error(f"No data found for editing recipe ID: {selected_id}")
                     showinfo(title='Information', message=self.texts["show_info_edit_recipe_no_data"])
                     return
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -1027,11 +1025,11 @@ class App(customtkinter.CTk):
 
 
     def open_edit_steps_window(self, rows,selected_id):
-        from .edit_steps_window import Edit_steps_window
+        from .edit_steps_window import EditStepsWindow
         """Shows the edit recipe window"""
 
         if not hasattr(self, 'edit_steps_window') or self.edit_steps_window is None or not self.edit_steps_window.winfo_exists():
-            self.edit_steps_window = Edit_steps_window(self, rows, selected_id, self.texts)
+            self.edit_steps_window = EditStepsWindow(self, rows, selected_id, self.texts)
 
         if hasattr(self, 'edit_steps_window') and self.edit_steps_window.winfo_exists():
             self.edit_steps_window.focus()
@@ -1052,10 +1050,10 @@ class App(customtkinter.CTk):
 
     def open_update_recipe_window(self):
         """Shows the make a recipe window"""
-        from .edit_recipe_window import Edit_recipe_window
+        from .edit_recipe_window import EditRecipeWindow
 
         if self.treeview is None:
-            logger.warning("Error: No recipe treeview object")
+            logger.error("Error: No recipe treeview object")
             return
 
         cursor = None
@@ -1069,7 +1067,7 @@ class App(customtkinter.CTk):
             selected_id_item = self.treeview.selection()[0]
             selected_id = self.treeview.item(selected_id_item, 'values')[0]
 
-            cursor.execute('SELECT TOP (100000000) [RecipeName], [RecipeComment], [RecipeStructID] \
+            cursor.execute('SELECT [RecipeName], [RecipeComment], [RecipeStructID] \
                            FROM [RecipeDB].[dbo].[tblRecipe] \
                            WHERE [id] = ?', (selected_id,))
 
@@ -1083,15 +1081,15 @@ class App(customtkinter.CTk):
                 recipeName, recipeComment, recipe_struct = insert_good_var_name
 
         except PyodbcError as e:
-            logger.warning(f"Error in database connection: {e}")
+            logger.error(f"Error in database connection: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except IndexError:
-            logger.warning("Database credentials seem to be incomplete.")
+            logger.error("Database credentials seem to be incomplete.")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         except Exception as e:
-            logger.warning(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             showinfo(title="Info", message=self.texts["error_with_database"])
 
         finally:
@@ -1099,11 +1097,11 @@ class App(customtkinter.CTk):
                 sql_connection.disconnect_from_database(cursor, cnxn)
 
         if not hasattr(self, 'edit_recipe_window') or self.edit_recipe_window is None or not self.edit_recipe_window.winfo_exists():
-            self.edit_recipe_window = Edit_recipe_window(app_instance=self,
+            self.edit_recipe_window = EditRecipeWindow(app_instance=self,
                                                          texts=self.texts,
                                                          selected_id=selected_id,
-                                                         recipeName=recipeName,
-                                                         recipeComment=recipeComment,
+                                                         recipe_name=recipeName,
+                                                         recipe_comment=recipeComment,
                                                          recipe_struct=recipe_struct)
 
         if hasattr(self, 'edit_recipe_window') and self.edit_recipe_window.winfo_exists():
@@ -1112,12 +1110,12 @@ class App(customtkinter.CTk):
 
 
     def open_selected_recipe_menu(self, selected_id):
-        from .selected_recipe_menu_window import Selected_recipe_menu
+        from .selected_recipe_menu_window import SelectedRecipeMenu
 
         selected_item = self.treeview.selection()[0]
         selected_id = self.treeview.item(selected_item, 'values')[0]
         if not hasattr(self, 'selected_recipe_menu') or self.selected_recipe_menu is None or not self.selected_recipe_menu.winfo_exists():
-            self.selected_recipe_menu = Selected_recipe_menu(self, self.texts, parent_id=selected_id)
+            self.selected_recipe_menu = SelectedRecipeMenu(self, self.texts, parent_id=selected_id)
 
         if hasattr(self, 'selected_recipe_menu') and self.selected_recipe_menu.winfo_exists():
             self.selected_recipe_menu.focus()

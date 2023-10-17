@@ -4,10 +4,10 @@ from tkinter.messagebox import showinfo
 from .create_log import setup_logger
 from .gui import App
 
-logger = setup_logger(__name__)
+logger = setup_logger("Selected_recipe_menu_window")
 
 
-class Selected_recipe_menu(customtkinter.CTkToplevel):
+class SelectedRecipeMenu(customtkinter.CTkToplevel):
     """Class for a pop up window to settings for a recipe"""
     def __init__(self, app_instance:"App", texts,  parent_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
