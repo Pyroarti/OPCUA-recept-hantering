@@ -217,7 +217,7 @@ class App(customtkinter.CTk):
 
         self.ip_adresses_treeview.place(x=220, y=100)
 
-        self.create_header(main_page, self.texts['header_main_menu'], self.opcua_alarms)
+        self.create_header(main_page, self.texts['header_main_menu'])
         self.create_meny_buttons(main_page)
 
 
@@ -246,7 +246,7 @@ class App(customtkinter.CTk):
         self.pages["recipes_page"] = recipes_page
         recipes_page.grid(row=0, column=0, sticky="nsew")
 
-        self.create_header(recipes_page, self.texts['header_recipe'], self.opcua_alarms)
+        self.create_header(recipes_page, self.texts['header_recipe'])
         self.create_meny_buttons(recipes_page)
 
         self.treeview = ttk.Treeview(recipes_page,selectmode="browse", style="Treeview")
@@ -435,7 +435,7 @@ class App(customtkinter.CTk):
         self.pages["alarms_page"] = alarms_page
         alarms_page.grid(row=0, column=0, sticky="nsew")
         self.create_meny_buttons(alarms_page)
-        self.create_header(alarms_page, self.texts['header_alarms'], self.opcua_alarms)
+        self.create_header(alarms_page, self.texts['header_alarms'])
         self.achnowledge_alarm_button = customtkinter.CTkButton(alarms_page,
                                                           text=self.texts["acknowledge_the_selected_alarm_button"],
                                                           command=lambda: self.achnowledge_alarm(), # type: ignore
@@ -500,7 +500,7 @@ class App(customtkinter.CTk):
         self.pages["logs_page"] = logs_page
         logs_page.grid(row=0, column=0, sticky="nsew")
         self.create_meny_buttons(logs_page)
-        self.create_header(logs_page, self.texts['header_logs'], self.opcua_alarms)
+        self.create_header(logs_page, self.texts['header_logs'])
         self.create_logs_treeview(logs_page)
         self.refresh_log_screen = customtkinter.CTkButton(logs_page,
                                                           text=self.texts["refresh_the_logs_button"],

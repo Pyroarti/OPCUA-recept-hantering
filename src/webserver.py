@@ -114,7 +114,7 @@ def get_data():
 async def connect_opcua_server():
     global client
 
-    if not client:
+    if client is None:
         from .ms_sql import get_units
         units = await get_units()
         ip_address = units[2][1]
@@ -125,7 +125,7 @@ async def connect_opcua_server():
             encrypted_username = server["username"]
             encrypted_password = server["password"]
 
-        client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
+            client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
 
     return client
 
