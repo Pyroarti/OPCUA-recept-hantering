@@ -133,6 +133,7 @@ async def connect_opcua_server():
 async def data_to_webserver():
     """
     Retrieve specific data and send it to a webserver.
+
     :return: Produced value and to-do value if found
     """
     client = await connect_opcua_server()
