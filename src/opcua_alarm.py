@@ -84,8 +84,26 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
 
             await sub.subscribe_alarms_and_conditions(server_node,alarmConditionType)
             while True:
-                await asyncio.sleep(0.1)
-                await client.check_connection()
+                try:
+                    await asyncio.sleep(0.1)
+                    await client.check_connection()
+                
+                except (ConnectionError, ua.UaError) as e:
+                    logger_programming.warning(f"{e} Reconnecting in 10 seconds")
+                    if client is not None:
+                        client.delete_subscriptions(sub)
+                        await client.disconnect()
+                        client = None
+                    await asyncio.sleep(1)
+
+                except Exception as e:
+                    logger_programming.error(f"Error connecting or subscribing to server {adresses}: {e}")
+                    if client is not None:
+                        client.delete_subscriptions(sub)
+                        await client.disconnect()
+                    client = None
+                    await asyncio.sleep(1)
+
 
         except (ConnectionError, ua.UaError) as e:
             logger_programming.warning(f"{e} Reconnecting in 10 seconds")
