@@ -49,6 +49,16 @@ OPCUA_SERVER_WINDOWS_ENV_KEY_NAME:str = opcua_alarm_config["environment_variable
 ####################################
 
 
+async def handle_connection_errors(client, sub, adresses):
+    """Handle connection errors."""
+    logger_programming.warning(f"Reconnecting to {adresses} in 10 seconds")
+    if client is not None:
+        client.delete_subscriptions(sub)
+        await client.disconnect()
+        client = None
+    await asyncio.sleep(10)
+    return client
+
 async def subscribe_to_server(adresses: str, username: str, password: str):
     """
     Parameters
@@ -66,7 +76,8 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
     subscribing_params.PublishingEnabled = True
     subscribing_params.Priority = 0
 
-    client:Client = None
+    client: Client = None
+    sub = None
 
     while True:
         try:
@@ -75,58 +86,29 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
 
             await client.check_connection()
 
-            handler = SubHandler(adresses)
-            sub = await client.create_subscription(subscribing_params, handler)
-            logger_programming.info("Made a new subscription")
-            alarmConditionType = client.get_node("ns=0;i=2915")
-            server_node = client.get_node(ua.NodeId(Identifier=2253,
-                                                    NodeIdType=ua.NodeIdType.Numeric, NamespaceIndex=0))
+            if sub is None:
+                handler = SubHandler(adresses)
+                sub = await client.create_subscription(subscribing_params, handler)
+                logger_programming.info("Made a new subscription")
+                alarmConditionType = client.get_node("ns=0;i=2915")
+                server_node = client.get_node(ua.NodeId(Identifier=2253, NodeIdType=ua.NodeIdType.Numeric, NamespaceIndex=0))
+                await sub.subscribe_alarms_and_conditions(server_node, alarmConditionType)
 
-            await sub.subscribe_alarms_and_conditions(server_node,alarmConditionType)
-            while True:
-                try:
-                    await asyncio.sleep(0.1)
-                    await client.check_connection()
-                
-                except (ConnectionError, ua.UaError) as e:
-                    logger_programming.warning(f"{e} Reconnecting in 10 seconds")
-                    if client is not None:
-                        client.delete_subscriptions(sub)
-                        await client.disconnect()
-                        client = None
-                    await asyncio.sleep(1)
-
-                except Exception as e:
-                    logger_programming.error(f"Error connecting or subscribing to server {adresses}: {e}")
-                    if client is not None:
-                        client.delete_subscriptions(sub)
-                        await client.disconnect()
-                    client = None
-                    await asyncio.sleep(1)
-
+            await asyncio.sleep(0.1)
 
         except (ConnectionError, ua.UaError) as e:
-            logger_programming.warning(f"{e} Reconnecting in 10 seconds")
-            if client is not None:
-                client.delete_subscriptions(sub)
-                await client.disconnect()
-                client = None
-            await asyncio.sleep(1)
-
+            client = await handle_connection_errors(client, sub, adresses)
+            sub = None
         except Exception as e:
             logger_programming.error(f"Error connecting or subscribing to server {adresses}: {e}")
-            if client is not None:
-                client.delete_subscriptions(sub)
-                await client.disconnect()
-            client = None
-            await asyncio.sleep(1)
-        
+            client = await handle_connection_errors(client, sub, adresses)
+            sub = None
         except KeyboardInterrupt:
             if client is not None:
                 client.delete_subscriptions(sub)
                 await client.disconnect()
-            client = None
             break
+
 
 class SubHandler:
     """

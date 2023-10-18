@@ -562,7 +562,7 @@ class App(customtkinter.CTk):
             with open(os.path.join(log_folder, log_file), "r") as file:
                 for line in file:
                     line = line.strip()
-                    if todays_date_str and "WARNING" in line:
+                    if todays_date_str and "ERROR" in line:
                         error = line.split("|", 3)
                         log_entries.append(error)
 
