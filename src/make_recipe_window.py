@@ -37,6 +37,8 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.title("")
         self.resizable(False, False)
         self.geometry("400x700+600+400")
+        self.transient(self.app_instance)
+
 
 
     def configure_ui(self):

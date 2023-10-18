@@ -24,7 +24,7 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
 
     def __init__(self, app_instance: App, texts, recipe_name, recipe_comment, recipe_struct, selected_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.configure_ui()
+        
 
         self.app_instance = app_instance
         self.texts = texts
@@ -32,6 +32,8 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
         self.recipe_comment = recipe_comment
         self.selected_id = selected_id
         self.recipe_struct = recipe_struct
+        
+        self.configure_ui()
 
         self.logger = setup_logger("Edit_recipe_window")
         self.populate_data()
@@ -87,25 +89,25 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
                 edit_recipe_window_config_data["sql_connection_env_key_name"]
             )
 
-            with sql_connection.connect_to_database(sql_credentials) as cursor:
-                cursor.execute("SELECT [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]")
-                rows = cursor.fetchall()
+            cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
+            cursor.execute("SELECT [id], [RecipeStructureName] FROM [RecipeDB].[dbo].[viewRecipeStructures]")
+            rows = cursor.fetchall()
+            sql_connection.disconnect_from_database(cursor, cnxn)
+            inverted_recipe_mapping = {value: key for key, value in RECIPE_STRUCT_MAPPING.items()}
 
-                inverted_recipe_mapping = {value: key for key, value in RECIPE_STRUCT_MAPPING.items()}
+            id_mapping = {}
+            for row in rows:
+                recipe_id, RecipeStructureName = row
+                item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
 
-                id_mapping = {}
-                for row in rows:
-                    recipe_id, RecipeStructureName = row
-                    item_id = self.treeview_select_structure.insert("", "end", values=(recipe_id, RecipeStructureName))
+                if RecipeStructureName in inverted_recipe_mapping:
+                    id_mapping[inverted_recipe_mapping[RecipeStructureName]] = item_id
 
-                    if RecipeStructureName in inverted_recipe_mapping:
-                        id_mapping[inverted_recipe_mapping[RecipeStructureName]] = item_id
-
-                mapped_id = id_mapping.get(self.recipe_struct)
-                if mapped_id:
-                    self.treeview_select_structure.selection_set(mapped_id)
-                else:
-                    self.logger.error(f"Error: No mapping for recipe_struct value {self.recipe_struct}")
+            mapped_id = id_mapping.get(self.recipe_struct)
+            if mapped_id:
+                self.treeview_select_structure.selection_set(mapped_id)
+            else:
+                self.logger.error(f"Error: No mapping for recipe_struct value {self.recipe_struct}")
 
         except PyodbcError as e:
             self.logger.error(f"Error in database connection: {e}")

@@ -137,7 +137,7 @@ class App(customtkinter.CTk):
         style = ttk.Style()
         style.configure("Treeview", font=("Helvetica", 12))
 
-        self.focus_force()
+        #self.focus_force()
 
         self.recipe_page_command()
 
@@ -241,6 +241,7 @@ class App(customtkinter.CTk):
         Creates and displays the recipes page.
         This page allows the user to create, update, and use recipes.
         """
+        self.detached_items = []
 
         recipes_page = customtkinter.CTkFrame(self.container, fg_color="white")
         self.pages["recipes_page"] = recipes_page
@@ -278,6 +279,10 @@ class App(customtkinter.CTk):
         # Treeview bindings
         self.treeview.bind('<ButtonRelease-1>', self.item_selected)
         self.treeview.bind("<Double-1>", self.open_selected_recipe_menu)
+        
+        vsb = ttk.Scrollbar(recipes_page, orient="vertical", command=self.treeview.yview)
+        vsb.place(x=30+2000+2, y=80, height=1200+20)
+        self.treeview.configure(yscrollcommand=vsb.set)
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
         right_frame.pack(side='right', fill='y', expand=True)
@@ -288,7 +293,15 @@ class App(customtkinter.CTk):
                                                     width=350,
                                                     height=60,
                                                     font=("Helvetica", 18))
-        self.make_recipe_button.pack(pady=10)
+        self.make_recipe_button.pack(pady=20)
+        
+        self.search_label = customtkinter.CTkLabel(right_frame, text=self.texts['search_recipe'], font=("Helvetica", 20))
+        self.search_label.pack(pady=5)
+        
+        self.search_var = customtkinter.StringVar()
+        self.search_bar = customtkinter.CTkEntry(right_frame, textvariable=self.search_var, width=250, height=40)
+        self.search_bar.pack(pady=1)
+        self.search_var.trace('w', self.update_treeview)
 
         cursor = None
         cnxn = None
@@ -339,6 +352,39 @@ class App(customtkinter.CTk):
 
         # Start inserting into Treeview from root (None)
         self.insert_into_treeview(None, rows, parent_items)
+        
+
+    def update_treeview(self, *args):
+        search_term = self.search_var.get().lower()
+
+        # Combine all items: attached and detached
+        all_items = self.treeview.get_children("") + tuple(self.detached_items)
+
+        if not search_term:
+            # If the search bar is cleared, reattach all items
+            for item in self.detached_items:
+                self.treeview.move(item, '', 'end')
+            self.detached_items.clear()
+            return
+
+        # Iterate through all items
+        for item in all_items:
+            RecipeName = self.treeview.item(item, "values")[1]
+
+            # Check if the search term is in the RecipeName
+            if search_term in RecipeName.lower():
+                # If the item is detached, reattach it
+                if item in self.detached_items:
+                    self.treeview.move(item, '', 'end')
+                    self.detached_items.remove(item)
+            else:
+                # If the item is attached, detach it
+                if item not in self.detached_items:
+                    self.treeview.detach(item)
+                    self.detached_items.append(item)
+
+
+
 
     def insert_into_treeview(self,parent_item, rows, parent_items, depth=0):
         cursor = None
@@ -1128,8 +1174,8 @@ def main():
     """Main func to start the program"""
     
     # Start the alarm monitor
-    monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
-    monitor_alarms_thread.start()
+    #monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
+    #monitor_alarms_thread.start()
 
     app = None
 

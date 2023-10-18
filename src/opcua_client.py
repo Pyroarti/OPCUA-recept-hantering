@@ -356,3 +356,6 @@ async def get_opcua_value(adress, data_place):
         except Exception as exeption:
             logger.error(exeption)
             await client.disconnect()
+            return False, None, None
+
+    return False, None, None

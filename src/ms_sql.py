@@ -70,11 +70,11 @@ def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
     recipe_length = len(steps)
     unitname = get_unit_name(unit_id_to_get)
     recipe_lengths_per_unit[unitname] = recipe_length
-    for step in steps:
-        for prop in steps[step]:
-            tag_name = steps[step][prop]["Node"].nodeid.Identifier
-            tag_value = steps[step][prop]["Value"]
-            tag_datatype = steps[step][prop]["Datatype"].name
+    for step_dict in steps:
+        for prop, prop_data in step_dict.items():
+            tag_name = prop_data["Node"].nodeid.Identifier
+            tag_value = prop_data["Value"]
+            tag_datatype = prop_data["Datatype"].name
             recipe_id = selected_id
 
             try:
@@ -161,6 +161,11 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
 
         else:
             success, value, datatype = await get_opcua_value(address, data_origin)
+            if success == False:
+                logger.error(f"Failed to get OPCUA value for unit_id: {unit_id}")
+                display_info(title="Info", message=texts["show_info_Could_not_load_data_from"] + get_unit_name(unit_id))
+                return None
+
             all_units_processed_successfully &= success
 
             success = insert_opcua_value_into_sql(cursor, data_origin, value, datatype, selected_id, unit_id)
