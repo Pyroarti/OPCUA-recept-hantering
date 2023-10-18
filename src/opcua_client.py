@@ -44,7 +44,6 @@ async def get_children_values(node: Node, result: dict = None) -> dict:
 
 
 async def get_stepdata(node_steps: Node) -> json:
-
     """
     Get data from specific steps within the given node.
 
@@ -52,47 +51,37 @@ async def get_stepdata(node_steps: Node) -> json:
     :return: JSON object containing the result, or None if no result found
     """
 
-    result: json = {}
-    ind = 0
-
+    result = []
     logger.info("Getting step data...")
 
     node_step = await node_steps.get_children()
     if node_step:
-        array_item: Node = None
         for array_item in node_step:
-            ind += 1
             props_of_array_item = await array_item.get_children()
             path_array_item = await array_item.get_path()
-
-            #if path_array_item:
-            #    path_array_item_str = str(path_array_item[0])
 
             if any('[0]' in str(path) for path in path_array_item):
                 logger.info(f"Skipping {path_array_item} as it contains '[0]'")
                 continue  # Skip the rest of the loop for this item
 
+            item_data = {}
+
             if props_of_array_item:
-                props: Node = None
                 for props in props_of_array_item:
                     if await props.read_node_class() == ua.NodeClass.Variable:
                         tag_value = await props.read_value()
-                        print(f"tag_value: {tag_value} and props {props}")
                         tag_datatype = await props.read_data_type_as_variant_type()
-
                         display_name = await props.read_display_name()
 
-                        if ind not in result:
-                            result[ind] = {}
+                        if display_name.Text not in item_data:
+                            item_data[display_name.Text] = {
+                                "Node": props,
+                                "Value": tag_value,
+                                "Datatype": tag_datatype
+                            }
 
-                        if display_name.Text not in result[ind]:
-                            result[ind][display_name.Text] = {}
-                            result[ind][display_name.Text]["Node"] = {}
-                            result[ind][display_name.Text]["Value"] = {}
-                            result[ind][display_name.Text]["Datatype"] = {}
-                        result[ind][display_name.Text]["Node"] = props
-                        result[ind][display_name.Text]["Value"] = tag_value
-                        result[ind][display_name.Text]["Datatype"] = tag_datatype
+            if item_data:  # Check if item_data has any entries
+                result.append(item_data)
 
     if result:
         logger.info("Successfully retrieved step data.")
@@ -100,6 +89,7 @@ async def get_stepdata(node_steps: Node) -> json:
 
     logger.error("No step data found.")
     return None
+
 
 
 async def connect_opcua(url, encrypted_username, encrypted_password):
@@ -191,41 +181,46 @@ async def write_tag(client: Client, tag_name, tag_value):
     except Exception as exeption:
         logger.error(exeption)
         await client.disconnect()
-        return None
+        fault = True
+        return result, fault
 
     # Write the value to the node
     if node_id is not None:
         data_value = None
         try:
 
+            # Define conversion functions
+            def to_bool(value):
+                return value.lower() == "true"
+
+            def to_float(value):
+                return float(value)
+
+            def to_int(value):
+                return int(value)
+
+            # Define data type to conversion function mapping
+            conversion_map = {
+                ua.VariantType.Boolean: to_bool,
+                ua.VariantType.Float: to_float,
+                ua.VariantType.Int16: to_int,
+                ua.VariantType.Int32: to_int,
+                ua.VariantType.Int64: to_int,
+                ua.VariantType.UInt16: to_int,
+                ua.VariantType.UInt32: to_int,
+                ua.VariantType.UInt64: to_int,
+            }
+
+            # Convert tag value to data value
             data_type = await node.read_data_type_as_variant_type()
-
-            if data_type == ua.VariantType.Boolean:
-                if type(tag_value) is str:
-                    tag_value = tag_value.lower() == "true"
-                if type(tag_value) is bool:
+            if data_type in conversion_map:
+                conversion_func = conversion_map[data_type]
+                if isinstance(tag_value, str) or isinstance(tag_value, int):
+                    tag_value = conversion_func(tag_value)
+                if isinstance(tag_value, bool) or isinstance(tag_value, float) or isinstance(tag_value, int):
                     data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type == ua.VariantType.Float:
-                if type(tag_value) is str or type(tag_value) is int:
-                    tag_value = float(tag_value)
-                if type(tag_value) is float:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type in (ua.VariantType.Int16, ua.VariantType.Int32, ua.VariantType.Int64):
-                if type(tag_value) is str or type(tag_value) is float:
-                    tag_value = int(tag_value)
-                if type(tag_value) is int:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type in (ua.VariantType.UInt16, ua.VariantType.UInt32, ua.VariantType.UInt64):
-                if type(tag_value) is str or type(tag_value) is float:
-                    tag_value = int(tag_value)
-                if type(tag_value) is int:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type == ua.VariantType.String:
-                if type(tag_value) is str:
+            elif data_type == ua.VariantType.String:
+                if isinstance(tag_value, str):
                     data_value = ua.DataValue(ua.Variant(tag_value, data_type))
 
             result = "Tag found but no correct tag value"
@@ -233,6 +228,7 @@ async def write_tag(client: Client, tag_name, tag_value):
             await client.disconnect()
             fault = True
             logger.error(f"Error converting data type to ua.Variant: {exeption}")
+            return result, fault
 
         if data_value is not None:
 
@@ -244,6 +240,7 @@ async def write_tag(client: Client, tag_name, tag_value):
                 fault = True
                 await client.disconnect()
                 logger.error(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
+                return result, fault
 
     return result, fault
 
@@ -282,6 +279,8 @@ async def get_servo_steps(ip_address, data_origin):
                 logger.info("Successfully retrieved servo steps.")
                 await client.disconnect()
                 logger.info("Client disconnected")
+                # TA BORT
+                logger.info(children_values)
                 return children_values
 
             logger.error("Failed to retrieve servo steps.")
