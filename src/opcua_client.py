@@ -279,8 +279,7 @@ async def get_servo_steps(ip_address, data_origin):
                 logger.info("Successfully retrieved servo steps.")
                 await client.disconnect()
                 logger.info("Client disconnected")
-                # TA BORT
-                logger.info(children_values)
+               
                 return children_values
 
             logger.error("Failed to retrieve servo steps.")

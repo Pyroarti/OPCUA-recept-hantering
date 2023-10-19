@@ -136,6 +136,7 @@ async def data_to_webserver():
 
     :return: Produced value and to-do value if found
     """
+
     client = await connect_opcua_server()
 
     if client:

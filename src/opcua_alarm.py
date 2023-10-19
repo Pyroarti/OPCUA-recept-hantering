@@ -105,7 +105,7 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
             sub = None
         except KeyboardInterrupt:
             if client is not None:
-                client.delete_subscriptions(sub)
+                await client.delete_subscriptions(sub)
                 await client.disconnect()
             break
 
@@ -142,7 +142,7 @@ class SubHandler:
         attributes_to_check = [
             "Message", "Time", "Severity", "SuppressedOrShelved",
             "AckedState", "ConditionClassId", "NodeId", "Quality", "Retain",
-            "ActiveState", "EnabledState"
+            "ActiveState", "EnabledState", "EventId",
         ]
 
         for attribute in attributes_to_check:
@@ -166,8 +166,9 @@ class SubHandler:
 
         else:
             if opcua_alarm_message["ActiveState"] == "Active":
-                logger_opcua_alarm.info(f"{self.address}, {opcua_alarm_message['Message']}")
-
+                clean_address = self.address.replace('\n', ' ')
+                clean_message = opcua_alarm_message['Message'].replace('\n', ' ')
+                logger_opcua_alarm.info(f"{clean_address}, {clean_message}, {opcua_alarm_message['EventId']},{opcua_alarm_message['Identifier']}")
 
 
     async def user_notification(self, opcua_alarm_message:str, severity:int):

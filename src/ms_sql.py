@@ -71,6 +71,7 @@ def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
     unitname = get_unit_name(unit_id_to_get)
     recipe_lengths_per_unit[unitname] = recipe_length
     for step_dict in steps:
+        logger.info(f"Processing step: {step_dict}")
         for prop, prop_data in step_dict.items():
             tag_name = prop_data["Node"].nodeid.Identifier
             tag_value = prop_data["Value"]
@@ -190,11 +191,12 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         recipe_checked = check_recipe_data(selected_id)
 
         db_opcua_not_same, error = await db_opcua_data_checker(selected_id, recipe_structure_id, texts)
-        successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
 
         if error:
             display_info(title="Info", message=texts["general_error"])
             return None
+        
+        successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
 
         if successfully_updated_recipe_last_saved:
             if db_opcua_not_same:
@@ -493,9 +495,9 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                     logger.error(f"Failed to fetch servo steps from {url} with data origin {data_origin}")
                     display_info(title="Info", message=texts["Show_info_general_plc_error"])
                     return [], True
+                for item in servo_steps:
+                    for key, info_dict in item.items():
 
-                for key1, inner_dict in servo_steps.items():
-                    for key2, info_dict in inner_dict.items():
                         node_obj = info_dict['Node']
                         node_id = node_obj.nodeid
                         identifier = node_id.Identifier
@@ -555,7 +557,6 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                 pass
                 #logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
 
-        sql_connection.disconnect_from_database(cursor, cnxn)
         return data_difference, False
 
     except PyodbcError as e:
