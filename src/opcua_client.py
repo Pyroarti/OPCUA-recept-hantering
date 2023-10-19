@@ -7,7 +7,7 @@ from .create_log import setup_logger
 from .data_encrypt import DataEncryptor
 
 
-logger = setup_logger('opcua_client')
+logger = setup_logger('Opcua_client')
 
 
 async def get_node_children(node: Node, nodes=None):
@@ -44,7 +44,6 @@ async def get_children_values(node: Node, result: dict = None) -> dict:
 
 
 async def get_stepdata(node_steps: Node) -> json:
-
     """
     Get data from specific steps within the given node.
 
@@ -52,53 +51,45 @@ async def get_stepdata(node_steps: Node) -> json:
     :return: JSON object containing the result, or None if no result found
     """
 
-    result: json = {}
-    ind = 0
-
+    result = []
     logger.info("Getting step data...")
 
     node_step = await node_steps.get_children()
     if node_step:
-        array_item: Node = None
         for array_item in node_step:
-            ind += 1
             props_of_array_item = await array_item.get_children()
             path_array_item = await array_item.get_path()
-
-            #if path_array_item:
-            #    path_array_item_str = str(path_array_item[0])
 
             if any('[0]' in str(path) for path in path_array_item):
                 logger.info(f"Skipping {path_array_item} as it contains '[0]'")
                 continue  # Skip the rest of the loop for this item
 
+            item_data = {}
+
             if props_of_array_item:
-                props: Node = None
                 for props in props_of_array_item:
                     if await props.read_node_class() == ua.NodeClass.Variable:
                         tag_value = await props.read_value()
                         tag_datatype = await props.read_data_type_as_variant_type()
-
                         display_name = await props.read_display_name()
 
-                        if ind not in result:
-                            result[ind] = {}
+                        if display_name.Text not in item_data:
+                            item_data[display_name.Text] = {
+                                "Node": props,
+                                "Value": tag_value,
+                                "Datatype": tag_datatype
+                            }
 
-                        if display_name.Text not in result[ind]:
-                            result[ind][display_name.Text] = {}
-                            result[ind][display_name.Text]["Node"] = {}
-                            result[ind][display_name.Text]["Value"] = {}
-                            result[ind][display_name.Text]["Datatype"] = {}
-                        result[ind][display_name.Text]["Node"] = props
-                        result[ind][display_name.Text]["Value"] = tag_value
-                        result[ind][display_name.Text]["Datatype"] = tag_datatype
+            if item_data:  # Check if item_data has any entries
+                result.append(item_data)
 
     if result:
         logger.info("Successfully retrieved step data.")
         return result
 
-    logger.warning("No step data found.")
+    logger.error("No step data found.")
     return None
+
 
 
 async def connect_opcua(url, encrypted_username, encrypted_password):
@@ -122,31 +113,31 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
         logger.info("Successfully connected to OPC UA server.")
 
     except ua.uaerrors.BadUserAccessDenied as exeption:
-        logger.warning(f"BadUserAccessDenied: {exeption}")
+        logger.error(f"BadUserAccessDenied: {exeption}")
         return None
 
     except ua.uaerrors.BadSessionNotActivated as exeption:
-        logger.warning(f"Session activation error: {exeption}")
+        logger.error(f"Session activation error: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenRejected as exeption:
-        logger.warning(f"Identity token rejected. Check username and password.: {exeption}")
+        logger.error(f"Identity token rejected. Check username and password.: {exeption}")
         return None
 
     except ua.uaerrors.BadIdentityTokenInvalid as exeption:
-        logger.warning(f"Bad Identity token invalid. Check username and password.: {exeption}")
+        logger.error(f"Bad Identity token invalid. Check username and password.: {exeption}")
         return None
 
     except ConnectionError as exeption:
-        logger.warning(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
+        logger.error(f"Connection error: Please check the server url. Or other connection properties: {exeption}")
         return None
 
     except ua.UaError as exeption:
-        logger.warning(f"General OPCUA error {exeption}")
+        logger.error(f"General OPCUA error {exeption}")
         return None
 
     except Exception as exeption:
-        logger.warning(f"Error in connection: {exeption} Type: {type(exeption)}")
+        logger.error(f"Error in connection: {exeption} Type: {type(exeption)}")
         return None
 
     return client
@@ -188,50 +179,56 @@ async def write_tag(client: Client, tag_name, tag_value):
         logger.info(f"Writing value {tag_value} to tag {tag_name} from {node_id},{node}")
 
     except Exception as exeption:
-        logger.warning(exeption)
+        logger.error(exeption)
         await client.disconnect()
-        return None
+        fault = True
+        return result, fault
 
     # Write the value to the node
     if node_id is not None:
         data_value = None
         try:
 
+            # Define conversion functions
+            def to_bool(value):
+                return value.lower() == "true"
+
+            def to_float(value):
+                return float(value)
+
+            def to_int(value):
+                return int(value)
+
+            # Define data type to conversion function mapping
+            conversion_map = {
+                ua.VariantType.Boolean: to_bool,
+                ua.VariantType.Float: to_float,
+                ua.VariantType.Int16: to_int,
+                ua.VariantType.Int32: to_int,
+                ua.VariantType.Int64: to_int,
+                ua.VariantType.UInt16: to_int,
+                ua.VariantType.UInt32: to_int,
+                ua.VariantType.UInt64: to_int,
+            }
+
+            # Convert tag value to data value
             data_type = await node.read_data_type_as_variant_type()
-
-            if data_type == ua.VariantType.Boolean:
-                if type(tag_value) is str:
-                    tag_value = tag_value.lower() == "true"
-                if type(tag_value) is bool:
+            if data_type in conversion_map:
+                conversion_func = conversion_map[data_type]
+                if isinstance(tag_value, str) or isinstance(tag_value, int):
+                    tag_value = conversion_func(tag_value)
+                if isinstance(tag_value, bool) or isinstance(tag_value, float) or isinstance(tag_value, int):
                     data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type == ua.VariantType.Float:
-                if type(tag_value) is str or type(tag_value) is int:
-                    tag_value = float(tag_value)
-                if type(tag_value) is float:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type in (ua.VariantType.Int16, ua.VariantType.Int32, ua.VariantType.Int64):
-                if type(tag_value) is str or type(tag_value) is float:
-                    tag_value = int(tag_value)
-                if type(tag_value) is int:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type in (ua.VariantType.UInt16, ua.VariantType.UInt32, ua.VariantType.UInt64):
-                if type(tag_value) is str or type(tag_value) is float:
-                    tag_value = int(tag_value)
-                if type(tag_value) is int:
-                    data_value = ua.DataValue(ua.Variant(tag_value, data_type))
-
-            if data_type == ua.VariantType.String:
-                if type(tag_value) is str:
+            elif data_type == ua.VariantType.String:
+                if isinstance(tag_value, str):
                     data_value = ua.DataValue(ua.Variant(tag_value, data_type))
 
             result = "Tag found but no correct tag value"
         except Exception as exeption:
             await client.disconnect()
             fault = True
-            logger.warning(f"Error converting data type to ua.Variant: {exeption}")
+            logger.error(f"Error converting data type to ua.Variant: {exeption}")
+            return result, fault
 
         if data_value is not None:
 
@@ -242,7 +239,8 @@ async def write_tag(client: Client, tag_name, tag_value):
             except Exception as exeption:
                 fault = True
                 await client.disconnect()
-                logger.warning(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
+                logger.error(f"Error writing value to tag: {tag_name},{tag_value}, from {node_id}. {exeption}")
+                return result, fault
 
     return result, fault
 
@@ -281,75 +279,25 @@ async def get_servo_steps(ip_address, data_origin):
                 logger.info("Successfully retrieved servo steps.")
                 await client.disconnect()
                 logger.info("Client disconnected")
+               
                 return children_values
 
-            logger.warning("Failed to retrieve servo steps.")
+            logger.error("Failed to retrieve servo steps.")
             await client.disconnect()
             logger.info("Client disconnected")
             return None
 
         except AttributeError as exeption:
-            logger.warning(f"AttributeError:{exeption}")
+            logger.error(f"AttributeError:{exeption}")
 
         except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
+            logger.error(f"BadNoMatch. Ingen matchande variable:{exeption}")
 
         except TimeoutError as exeption:
-            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
+            logger.error(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
 
         except Exception as exeption:
-            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
-
-
-async def data_to_webserver():
-
-    """
-    Retrieve specific data and send it to a webserver.
-
-    :return: Produced value and to-do value if found
-    """
-
-    from .ms_sql import get_units
-    units = await get_units()
-    ip_address = units[2][1]
-
-    data_encrypt = DataEncryptor()
-    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
-    for server in opcua_config["servers"]:
-        encrypted_username = server["username"]
-        encrypted_password = server["password"]
-
-    client:Client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
-
-    if client is not None:
-
-        try:
-            produced_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityPartsMade"')
-            to_do_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityOfPartsToMake"')
-
-            produced_node = client.get_node(produced_node_id)
-            to_do_node =  client.get_node(to_do_node_id)
-
-            produced_value = await produced_node.get_value()
-            to_do_value = await to_do_node.get_value()
-
-            await client.disconnect()
-            logger.info("Client disconnected")
-
-            return produced_value, to_do_value
-
-        except AttributeError as exeption:
-            logger.warning(f"AttributeError:{exeption}")
-
-        except ua.uaerrors._auto.BadNoMatch as exeption:
-            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
-
-        except TimeoutError as exeption:
-            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
-
-        except Exception as exeption:
-            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
-            return
+            logger.error(f"Error getting values: {str(exeption)},{type(exeption)}")
 
 
 async def get_opcua_value(adress, data_place):
@@ -405,5 +353,8 @@ async def get_opcua_value(adress, data_place):
             return True, value, data_type
 
         except Exception as exeption:
-            logger.warning(exeption)
+            logger.error(exeption)
             await client.disconnect()
+            return False, None, None
+
+    return False, None, None

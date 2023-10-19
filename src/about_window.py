@@ -10,6 +10,7 @@ import webbrowser
 import markdown
 
 from .create_log import setup_logger
+from .config_handler import ConfigHandler
 
 md_file_path = 'CHANGE_LOG.md'
 html_file_path = 'CHANGE_LOG.html'
@@ -21,7 +22,7 @@ class AboutWindow(customtkinter.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.logger = setup_logger(__name__)
+        self.logger = setup_logger("About_window")
         self.resizable(False, False)
         self.title("Om")
         pop_up_width = 700
@@ -56,4 +57,4 @@ class AboutWindow(customtkinter.CTkToplevel):
                 webbrowser.open(html_file_path)
 
             except Exception as exeption:
-                self.logger.warning(f"Error opening file: {exeption}")
+                self.logger.error(f"Error opening file: {exeption}")

@@ -1,15 +1,16 @@
 import pyodbc
 from pyodbc import Error as PyodbcError
 from typing import Tuple, Optional, Dict
-from .data_encrypt import DataEncryptor
 
+from .data_encrypt import DataEncryptor
+from .create_log import setup_logger
 
 class SQLConnection:
     """Gets database credentials from config file and connects to database"""
 
 
     def __init__(self):
-        pass
+        self.logger = setup_logger("SQLConnection")
 
 
     def get_database_credentials(self, config_file_name: str, win_env_key_name: str) -> Dict[str, str]:
@@ -22,6 +23,7 @@ class SQLConnection:
         sql_config = data_encrypt.encrypt_credentials(config_file_name, win_env_key_name)
 
         if not sql_config:
+            self.logger.error("Something went wrong with crypting/decrypting the config file.")
             raise FileNotFoundError("Something went wrong with crypting/decrypting the config file.")
 
         database_config = sql_config.get("database", {})
@@ -55,13 +57,16 @@ class SQLConnection:
             return cursor, cnxn
 
         except pyodbc.Error as exception:
+            self.logger.error(f"Database connection failed: {exception.args[1]}")
             error = exception.args[1]
             raise PyodbcError(f"Database connection failed: {error}")
 
         except IndexError as exception:
+            self.logger.error("Database credentials seem to be incomplete.")
             raise IndexError("Database credentials seem to be incomplete.")
 
         except Exception as exception:
+            self.logger.error(f"An unexpected error occurred while connecting to the database: {exception}")
             raise Exception("An unexpected error occurred while connecting to the database.")
 
 
