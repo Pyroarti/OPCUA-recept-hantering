@@ -87,10 +87,12 @@
     "show_info_opcua_connection_error" : "Could not connect to the OPCUA server, check the logs for more information",
     "show_info_db_missing_values" : "The database is missing values, check the logs for more information",
     "show_info_data_in_database_and_opcua_is_the_same" : "The data in the database and OPCUA is the same",
+    "Show_info_general_sql_error" : "There was a error with the database, check the logs for more information",
+    "Show_info_general_plc_error" : "There was a error with the PLC, check the logs for more information",
 
     "yes_no_mesg_box_save_data_to_recipe" : "Do you want to save data to the recipe?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Do you want to load the data to the robotcell?",
     "yes_no_mesg_box_delete_recipe" : "Do you want to delete the recipe?",
 
-    "general_error" : "General error"
+    "general_error" : "General error, check the logs for more information"
 }

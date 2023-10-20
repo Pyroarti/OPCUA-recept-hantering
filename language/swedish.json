@@ -88,6 +88,8 @@
     "show_info_opcua_connection_error" : "Kunde inte ansluta till OPC UA servern, kolla loggen för mer information",
     "show_info_db_missing_values" : "Databasen saknar värden, kolla loggen för mer information",
     "show_info_data_in_database_and_opcua_is_the_same" : "Datat i databasen och robtocellen är likadan",
+    "Show_info_general_sql_error" : "Det var ett fel med databasen, kolla loggen för mer information",
+    "Show_info_general_plc_error" : "Det var ett fel med PLC, kolla loggen för mer information",
 
     "yes_no_mesg_box_save_data_to_recipe" : "Vill du spara data till receptet?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Vill du ladda ner datat till robotcellen?",

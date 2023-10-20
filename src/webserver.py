@@ -136,7 +136,10 @@ async def data_to_webserver():
 
     :return: Produced value and to-do value if found
     """
+<<<<<<< HEAD
 
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
     client = await connect_opcua_server()
 
     if client:

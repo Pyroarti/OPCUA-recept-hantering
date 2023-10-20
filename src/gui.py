@@ -244,11 +244,14 @@ class App(customtkinter.CTk):
         This page allows the user to create, update, and use recipes.
         """
         self.detached_items = []
+<<<<<<< HEAD
         self.sorting_order = {}
         
         self.original_headings = {}
         
 
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
 
         recipes_page = customtkinter.CTkFrame(self.container, fg_color="white")
         self.pages["recipes_page"] = recipes_page
@@ -297,11 +300,14 @@ class App(customtkinter.CTk):
         vsb = ttk.Scrollbar(recipes_page, orient="vertical", command=self.treeview.yview)
         vsb.place(x=30+2000+2, y=80, height=1200+20)
         self.treeview.configure(yscrollcommand=vsb.set)
+<<<<<<< HEAD
         
         #Style for the treeview
         style = ttk.Style()
         style.configure('Treeview', rowheight=30)
         style.configure("Treeview.Heading", font=('Helvetica', 14)) 
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
         right_frame.pack(side='right', fill='y', expand=True)
@@ -311,7 +317,11 @@ class App(customtkinter.CTk):
                                                     command=self.open_make_recipe_window,
                                                     width=350,
                                                     height=60,
+<<<<<<< HEAD
                                                     font=("Helvetica", 22))
+=======
+                                                    font=("Helvetica", 18))
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
         self.make_recipe_button.pack(pady=20)
         
         self.search_label = customtkinter.CTkLabel(right_frame, text=self.texts['search_recipe'], font=("Helvetica", 20))
@@ -401,6 +411,7 @@ class App(customtkinter.CTk):
                 if item not in self.detached_items:
                     self.treeview.detach(item)
                     self.detached_items.append(item)
+<<<<<<< HEAD
                     
                     
     def sort_column(self, col):
@@ -430,6 +441,8 @@ class App(customtkinter.CTk):
         self.treeview.heading(col, text=f"{self.original_headings[col]} {arrow}")
 
 
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
 
 
 

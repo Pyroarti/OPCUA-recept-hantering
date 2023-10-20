@@ -40,6 +40,10 @@ class MakeRecipeWindow(customtkinter.CTkToplevel):
         self.transient(self.app_instance)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
     def configure_ui(self):
         """Configure the UI elements of the window."""
 

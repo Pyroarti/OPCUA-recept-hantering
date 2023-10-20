@@ -71,7 +71,10 @@ def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
     unitname = get_unit_name(unit_id_to_get)
     recipe_lengths_per_unit[unitname] = recipe_length
     for step_dict in steps:
+<<<<<<< HEAD
         logger.info(f"Processing step: {step_dict}")
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
         for prop, prop_data in step_dict.items():
             tag_name = prop_data["Node"].nodeid.Identifier
             tag_value = prop_data["Value"]
@@ -494,8 +497,11 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                     logger.error(f"Failed to fetch servo steps from {url} with data origin {data_origin}")
                     display_info(title="Info", message=texts["Show_info_general_plc_error"])
                     return [], True
+<<<<<<< HEAD
                 for item in servo_steps:
                     for key, info_dict in item.items():
+=======
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
 
                         node_obj = info_dict['Node']
                         node_id = node_obj.nodeid
@@ -556,6 +562,10 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                 pass
                 #logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
 
+<<<<<<< HEAD
+=======
+        sql_connection.disconnect_from_database(cursor, cnxn)
+>>>>>>> d4e3868409d914f532e85adbda6892ebffaf5d14
         return data_difference, False
 
     except PyodbcError as e:
