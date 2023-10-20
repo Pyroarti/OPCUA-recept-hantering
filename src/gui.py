@@ -71,7 +71,7 @@ def run_asyncio_loop(queue:Queue, app_instance:"App"):
         loop.run_until_complete(asyncio.gather(*asyncio.all_tasks(loop)))
         loop.run_until_complete(loop.shutdown_asyncgens())
         loop.close()
-        
+
 
 
 
@@ -245,7 +245,7 @@ class App(customtkinter.CTk):
         """
         self.detached_items = []
         self.sorting_order = {}
-        
+
         self.original_headings = {}
 
         recipes_page = customtkinter.CTkFrame(self.container, fg_color="white")
@@ -277,11 +277,11 @@ class App(customtkinter.CTk):
         self.treeview.heading("RecipeUpdated", text=self.texts['recipe_datagrid_modified'], anchor="w")
         self.treeview.heading("RecipeLastSaved", text=self.texts['recipe_datagrid_last_saved'], anchor="w")
         self.treeview.heading("RecipeStatus", text=self.texts['recipe_datagrid_status'], anchor="w")
-        
+
         for col in self.treeview["columns"]:
             self.original_headings[col] = self.treeview.heading(col, "text")
-            
-        
+
+
         for col in self.treeview["columns"]:
             self.treeview.heading(col, text=self.treeview.heading(col, "text").split()[0], command=lambda _col=col: self.sort_column(_col))
 
@@ -291,15 +291,15 @@ class App(customtkinter.CTk):
         # Treeview bindings
         self.treeview.bind('<ButtonRelease-1>', self.item_selected)
         self.treeview.bind("<Double-1>", self.open_selected_recipe_menu)
-        
+
         vsb = ttk.Scrollbar(recipes_page, orient="vertical", command=self.treeview.yview)
         vsb.place(x=30+2000+2, y=80, height=1200+20)
         self.treeview.configure(yscrollcommand=vsb.set)
-        
+
         #Style for the treeview
         style = ttk.Style()
         style.configure('Treeview', rowheight=30)
-        style.configure("Treeview.Heading", font=('Helvetica', 14)) 
+        style.configure("Treeview.Heading", font=('Helvetica', 14))
 
         right_frame = customtkinter.CTkFrame(recipes_page, fg_color="white")
         right_frame.pack(side='right', fill='y', expand=True)
@@ -311,10 +311,10 @@ class App(customtkinter.CTk):
                                                     height=60,
                                                     font=("Helvetica", 22))
         self.make_recipe_button.pack(pady=20)
-        
+
         self.search_label = customtkinter.CTkLabel(right_frame, text=self.texts['search_recipe'], font=("Helvetica", 20))
         self.search_label.pack(pady=5)
-        
+
         self.search_var = customtkinter.StringVar()
         self.search_bar = customtkinter.CTkEntry(right_frame, textvariable=self.search_var, width=250, height=40)
         self.search_bar.pack(pady=1)
@@ -369,7 +369,7 @@ class App(customtkinter.CTk):
 
         # Start inserting into Treeview from root (None)
         self.insert_into_treeview(None, rows, parent_items)
-        
+
 
     def update_treeview(self, *args):
         search_term = self.search_var.get().lower()
@@ -399,8 +399,8 @@ class App(customtkinter.CTk):
                 if item not in self.detached_items:
                     self.treeview.detach(item)
                     self.detached_items.append(item)
-                    
-                    
+
+
     def sort_column(self, col):
         """
         Sort tree contents when a column heading is clicked.
@@ -606,7 +606,6 @@ class App(customtkinter.CTk):
             self.opcua_treeview.insert("", "end", values=entry)
 
 
-
     def sync_acknowledge_alarm(self):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -617,10 +616,10 @@ class App(customtkinter.CTk):
 
 
     async def achnowledge_alarm(self):
-    
+
         self.alarm_page_command()
         return
-    
+
 
         # En vacker dag fixa detta
         from .opcua_client import connect_opcua
@@ -643,7 +642,7 @@ class App(customtkinter.CTk):
             ua.Variant(ua.LocalizedText("Acknowledged by operator"), ua.VariantType.LocalizedText)
         )
         print(f"Acknowledgment result: {ack_result}")
-    
+
 
         print(f"Acknowledge result: {ack_result}")
         client.disconnect()
@@ -909,9 +908,10 @@ class App(customtkinter.CTk):
             if cursor and cnxn:
                 selected_item = self.treeview.selection()[0]
                 selected_id = self.treeview.item(selected_item, 'values')[0]
-                cursor.execute("DELETE FROM [RecipeDB].[dbo].[tblRecipe] WHERE id = ?", (selected_id,))
+                cursor.execute("EXEC [RecipeDB].[dbo].[delete_recipe] @RecipeID=?", selected_id)
                 cnxn.commit()
                 self.treeview.delete(selected_item)
+                sql_connection.disconnect_from_database(cursor, cnxn)
 
         except PyodbcError as e:
             logger.error(f"Error in database connection: {e}")
@@ -1283,7 +1283,7 @@ class App(customtkinter.CTk):
 
 def main():
     """Main func to start the program"""
-    
+
     # Start the alarm monitor
     monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
     monitor_alarms_thread.start()
@@ -1304,4 +1304,4 @@ def main():
     async_queue.put(None)
     async_thread.join()
 
-    
+

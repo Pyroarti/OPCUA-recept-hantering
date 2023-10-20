@@ -24,12 +24,9 @@ class AboutWindow(customtkinter.CTkToplevel):
 
         self.logger = setup_logger("About_window")
         self.resizable(False, False)
-        self.title("Om")
-        pop_up_width = 700
-        pop_up_height = 350
-        position_x = 900
-        position_y = 400
-        self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
+        self.title("")
+
+        self.geometry("700x350+900+400")
 
         with open(about_text_path, "r", encoding="utf-8") as text_file:
             about_text = text_file.read()

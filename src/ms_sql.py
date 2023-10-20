@@ -3,8 +3,9 @@ from tkinter.messagebox import showinfo
 from pathlib import Path
 import re
 import asyncio
+import pyodbc
 from pyodbc import Error as PyodbcError
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 from asyncua import ua, Node, Client
 
@@ -32,7 +33,7 @@ def establish_sql_connection():
         sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
         cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
         return sql_connection, cursor, cnxn
-    
+
     except PyodbcError as e:
         logger.error(f"Error in database connection: {e}")
         return None, None, None
@@ -55,7 +56,7 @@ def get_unit_name(unit_id):
     return unit_mapping.get(unit_id, f"Unknown unit {unit_id}")
 
 
-def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
+def insert_step_data_into_sql(cursor:Optional[pyodbc.Cursor], steps, selected_id:str, unit_id_to_get:int):
 
     stored_procedure_name = 'add_value'
     tag_name_param_name = 'TagName'
@@ -92,7 +93,7 @@ def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
 
 
 
-def insert_opcua_value_into_sql(cursor, data_place, opcua_value, datatype, selected_id, unit_id_to_get):
+def insert_opcua_value_into_sql(cursor: Optional[pyodbc.Cursor], data_place:str, opcua_value, datatype, selected_id, unit_id_to_get):
 
     stored_procedure_name = 'add_value'
     tag_name_param_name = 'TagName'
@@ -126,7 +127,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         recipe_structure_id (str): The selected recipe structure id
     """
     from .opcua_client import get_opcua_value
- 
+
     struct_data_rows = await get_recipe_structures_map()
     if struct_data_rows:
         ip_address_list, unit_ids_list, data_origin_list = await fetch_unit_info(struct_data_rows, recipe_structure_id)
@@ -195,7 +196,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         if error:
             display_info(title="Info", message=texts["general_error"])
             return None
-        
+
         successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
 
         if successfully_updated_recipe_last_saved:

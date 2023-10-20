@@ -24,7 +24,7 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
 
     def __init__(self, app_instance: App, texts, recipe_name, recipe_comment, recipe_struct, selected_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
 
         self.app_instance = app_instance
         self.texts = texts
@@ -32,10 +32,10 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
         self.recipe_comment = recipe_comment
         self.selected_id = selected_id
         self.recipe_struct = recipe_struct
-        
-        self.configure_ui()
 
         self.logger = setup_logger("Edit_recipe_window")
+
+        self.configure_ui()
         self.populate_data()
 
     def configure_ui(self):
@@ -46,14 +46,14 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
 
         self.name_label = customtkinter.CTkLabel(self, text=self.texts['recipe_name'], font=("Helvetica", 16))
         self.name_label.pack()
-        
+
         self.name_entry = customtkinter.CTkEntry(self, width=200)
         self.name_entry.pack()
         self.name_entry.insert(0, self.recipe_name)
 
         self.comment_label = customtkinter.CTkLabel(self, text=self.texts['recipe_comment'], font=("Helvetica", 16))
         self.comment_label.pack()
-        
+
         self.comment_entry = customtkinter.CTkEntry(self, width=200)
         self.comment_entry.pack()
         self.comment_entry.insert(0, self.recipe_comment)
@@ -62,6 +62,7 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
 
         self.submit_button = customtkinter.CTkButton(self, text=self.texts['update_recipe_submit'], command=self.check_struct, width=200, height=40, font=("Helvetica", 18))
         self.submit_button.pack(pady=10)
+
 
     def configure_treeview(self):
         """Configure the TreeView for the recipe structures."""
@@ -85,7 +86,7 @@ class EditRecipeWindow(customtkinter.CTkToplevel):
             edit_recipe_window_config_data = config_manager.edit_recipe_window
 
             sql_credentials = sql_connection.get_database_credentials(
-                edit_recipe_window_config_data["sql_connection_file_name"], 
+                edit_recipe_window_config_data["sql_connection_file_name"],
                 edit_recipe_window_config_data["sql_connection_env_key_name"]
             )
 
