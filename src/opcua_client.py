@@ -191,7 +191,13 @@ async def write_tag(client: Client, tag_name, tag_value):
 
             # Define conversion functions
             def to_bool(value):
-                return value.lower() == "true"
+                if isinstance(value, bool):
+                    return value
+                elif isinstance(value, str):
+                    return value.lower() == "true"
+                else:
+                    raise ValueError("Invalid type for conversion to bool")
+
 
             def to_float(value):
                 return float(value)
@@ -358,3 +364,54 @@ async def get_opcua_value(adress, data_place):
             return False, None, None
 
     return False, None, None
+
+
+async def data_to_webserver():
+
+    """
+    Retrieve specific data and send it to a webserver.
+
+    :return: Produced value and to-do value if found
+    """
+
+    from .ms_sql import get_units
+    units = await get_units()
+    ip_address = units[2][1]
+
+    data_encrypt = DataEncryptor()
+    opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
+
+    client:Client = await connect_opcua(ip_address, encrypted_username, encrypted_password)
+
+    if client is not None:
+
+        try:
+            produced_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityPartsMade"')
+            to_do_node_id = ua.NodeId.from_string('ns=3;s="E_Flex"."Info"."QuantityOfPartsToMake"')
+
+            produced_node = client.get_node(produced_node_id)
+            to_do_node =  client.get_node(to_do_node_id)
+
+            produced_value = await produced_node.get_value()
+            to_do_value = await to_do_node.get_value()
+
+            await client.disconnect()
+            logger.info("Client disconnected")
+
+            return produced_value, to_do_value
+
+        except AttributeError as exeption:
+            logger.warning(f"AttributeError:{exeption}")
+
+        except ua.uaerrors._auto.BadNoMatch as exeption:
+            logger.warning(f"BadNoMatch. Ingen matchande variable:{exeption}")
+
+        except TimeoutError as exeption:
+            logger.warning(f"Connection timeout: {str(exeption.args)}" if exeption else "Connection timeout: (empty message)")
+
+        except Exception as exeption:
+            logger.warning(f"Error getting values: {str(exeption)},{type(exeption)}")
+            return

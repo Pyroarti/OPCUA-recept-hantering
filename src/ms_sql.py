@@ -3,9 +3,8 @@ from tkinter.messagebox import showinfo
 from pathlib import Path
 import re
 import asyncio
-import pyodbc
 from pyodbc import Error as PyodbcError
-from typing import List, Tuple, Union, Optional
+from typing import List, Tuple, Union
 
 from asyncua import ua, Node, Client
 
@@ -33,7 +32,7 @@ def establish_sql_connection():
         sql_credentials = sql_connection.get_database_credentials("sql_config.json", "SQL_KEY")
         cursor, cnxn = sql_connection.connect_to_database(sql_credentials)
         return sql_connection, cursor, cnxn
-
+    
     except PyodbcError as e:
         logger.error(f"Error in database connection: {e}")
         return None, None, None
@@ -56,7 +55,7 @@ def get_unit_name(unit_id):
     return unit_mapping.get(unit_id, f"Unknown unit {unit_id}")
 
 
-def insert_step_data_into_sql(cursor:Optional[pyodbc.Cursor], steps, selected_id:str, unit_id_to_get:int):
+def insert_step_data_into_sql(cursor, steps, selected_id, unit_id_to_get):
 
     stored_procedure_name = 'add_value'
     tag_name_param_name = 'TagName'
@@ -93,7 +92,7 @@ def insert_step_data_into_sql(cursor:Optional[pyodbc.Cursor], steps, selected_id
 
 
 
-def insert_opcua_value_into_sql(cursor: Optional[pyodbc.Cursor], data_place:str, opcua_value, datatype, selected_id, unit_id_to_get):
+def insert_opcua_value_into_sql(cursor, data_place, opcua_value, datatype, selected_id, unit_id_to_get):
 
     stored_procedure_name = 'add_value'
     tag_name_param_name = 'TagName'
@@ -127,7 +126,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         recipe_structure_id (str): The selected recipe structure id
     """
     from .opcua_client import get_opcua_value
-
+ 
     struct_data_rows = await get_recipe_structures_map()
     if struct_data_rows:
         ip_address_list, unit_ids_list, data_origin_list = await fetch_unit_info(struct_data_rows, recipe_structure_id)
@@ -196,7 +195,7 @@ async def from_units_to_sql_stepdata(selected_id, texts, recipe_structure_id):
         if error:
             display_info(title="Info", message=texts["general_error"])
             return None
-
+        
         successfully_updated_recipe_last_saved = await update_recipe_last_saved(selected_id)
 
         if successfully_updated_recipe_last_saved:
@@ -244,7 +243,11 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
     from .data_encrypt import DataEncryptor
 
     data_encrypt = DataEncryptor()
+    
     opcua_config = data_encrypt.encrypt_credentials("opcua_server_config.json", "OPCUA_KEY")
+    for server in opcua_config["servers"]:
+        encrypted_username = server["username"]
+        encrypted_password = server["password"]
 
     all_units_processed_successfully = True
     units = await get_units()
@@ -253,12 +256,12 @@ async def from_sql_to_units_stepdata(step_data, texts, selected_name):
         unit_id, address = unit
 
         if unit_id != 3:
-            fault = await wipe_running_steps(address, opcua_config["username"], opcua_config["password"])
+            fault = await wipe_running_steps(address, encrypted_username, encrypted_password)
             if fault:
                 logger.info("There was a problem while wiping the data")
                 continue
 
-        client = await connect_to_opcua_server(address, opcua_config["username"], opcua_config["password"])
+        client = await connect_to_opcua_server(address, encrypted_username, encrypted_password)
         if not client:
             showinfo(title="Info", message=texts["show_info_Could_not_load_data_to"] + get_unit_name(unit_id))
             all_units_processed_successfully = False
@@ -483,6 +486,7 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
 
         opcua_results = {}
 
+
         pattern = re.compile(r'ns=\d+;s="(.+)"')
 
         # Fetching unit information based on the structure id
@@ -555,8 +559,8 @@ async def db_opcua_data_checker(recipe_id, recipe_structure_id, texts):
                 data_difference.append(db_opcua_missmatch)
 
             else:
+                logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
                 pass
-                #logger.info(f"Tag value in database: {tag_value} is the same as in OPCUA: {opcua_tag_value}")
 
         return data_difference, False
 

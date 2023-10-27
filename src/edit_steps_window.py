@@ -17,19 +17,18 @@ from .config_handler import ConfigHandler
 
 
 class EditStepsWindow(customtkinter.CTkToplevel):
-    """Class for a pop up window to edit servo steps for a specific recipe.
-    args:
-    rows: list of tuples containing the data to be displayed in the treeview
-    selected_id: the id of the recipe to be edited
-    texts: dictionary containing the texts to be displayed in the window for language support
-    """
-
+    """Class for a pop up window to edit servo steps."""
     def __init__(self, master, rows, selected_id, texts, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.selected_id = selected_id
         self.rows = rows
         self.texts = texts
+        self.title("")
+
+        self.resizable(False, False)
+
+        self.geometry("800x900+900+400")
 
         self.logger = setup_logger("Edit_steps_window")
 
@@ -39,24 +38,14 @@ class EditStepsWindow(customtkinter.CTkToplevel):
         self.SQL_CRED_NAME:str = edit_recipe_steps_window_config_data["sql_connection_file_name"]
         self.SQL_CRED_ENV_KEY_NAME:str = edit_recipe_steps_window_config_data["sql_connection_env_key_name"]
 
-        self.configure_ui()
-
-
-    def configure_ui(self):
-        self.resizable(False, False)
-        self.title("")
-        self.geometry("800x900+900+400")
-
-        # Search bar to filter the treeview
         self.search_var = customtkinter.StringVar()
         self.search_bar = customtkinter.CTkEntry(self, textvariable=self.search_var)
         self.search_bar.pack(anchor="nw", pady=10, padx=10)
         self.search_var.trace('w', self.update_treeview)
 
-        self.data_steps_grid()
+        self.edit_recipe_grid()
 
-
-    def data_steps_grid(self):
+    def edit_recipe_grid(self):
         self.edit_recipe_treeview = ttk.Treeview(self, columns=("Unit name", "Tag name", "Tag value", "Unit id"),
                               show="headings", height=10, style="Treeview", selectmode='browse')
 
@@ -85,8 +74,8 @@ class EditStepsWindow(customtkinter.CTkToplevel):
         self.edit_recipe_treeview.bind("<Double-1>", self.on_double_click)
 
 
-    def update_treeview(self):
-        """Update the treeview when the user types in the search bar"""
+    def update_treeview(self, *args):
+        
         search_term = self.search_var.get()
 
         for i in self.edit_recipe_treeview.get_children():
@@ -124,7 +113,7 @@ class EditStepsWindow(customtkinter.CTkToplevel):
         save_button.pack()
 
 
-    def save_changes(self, selected_item, tag_name, unit_id):
+    def save_changes(self, selected_item, tag_name,unit_id):
         cursor = None
         cnxn = None
 
