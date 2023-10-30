@@ -400,7 +400,10 @@ async def wipe_running_steps(address,encrypted_username,encrypted_password):
             return fault
         except Exception as exception:
             logger.error(exception)
-
+            
+        finally:
+            if client:
+                await client.disconnect()
     else:
         logger.error("Error while trying to connect to opcua servers to clean data")
 

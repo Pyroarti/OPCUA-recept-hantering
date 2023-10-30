@@ -459,7 +459,7 @@ class App(customtkinter.CTk):
                     RecipeName = "          " * depth + RecipeName  # Indentation to reflect nesting
                     has_children = self.check_has_children(recipe_id, cursor, cnxn)
                     has_recipe_data = check_recipe_data(recipe_id)
-                    status_text = '' if has_recipe_data else 'Tomt'
+                    status_text = '✓' if has_recipe_data else 'Tomt'
 
                     if recipe_last_saved is None:
                         recipe_last_saved = ""
