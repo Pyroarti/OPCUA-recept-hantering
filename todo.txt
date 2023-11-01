@@ -1,4 +1,3 @@
-* Kolla in varför programmet inte avslutas korrekt som man subscribar på alarm på opcua servern (verkar frf subba när gui är stängt)
 
 * Kolla in om man ska ha opcua alarmen i databasen (log fil är svårt att blädra genom) (hjälp från tobias med sql)
 
@@ -10,16 +9,10 @@
 
 * Dela func blocken i mindre delar och lägg dom i rätt .py
 
-* Gör så att inte opcua måste disconnecta hela tiden utan kan hålla sin connection
-
 * Skriv bättre docs for nya func
 
 * En väldigt väldigt vacker dag gör om hela programmet till async (inte tkinter dvs)
 
-* Namnändra self.treeview till recipe treeview
-
 * Gör rutan för namn ochy kommentar i recipa mkaer längre
-
-* Lägg till färg på rows som har children
 
 * Skriv bättre class/func docs

@@ -1287,19 +1287,21 @@ class App(customtkinter.CTk):
 def main():
     """Main func to start the program"""
 
+    app = None
+
     # Start the alarm monitor
     monitor_alarms_thread = Thread(target=run_monitor_alarms_loop, daemon=True)
     monitor_alarms_thread.start()
 
-    app = None
-
+    # Webserver to see what is producing and quanity
     main_webserver()
 
     async_queue = Queue()
 
     app = App(async_queue)
 
-    async_thread = Thread(target=run_asyncio_loop, args=(async_queue,app,), daemon=True)
+    # Start the asyncio loop in a separate thread to avoid blocking the main thread
+    async_thread = Thread(target=run_asyncio_loop, args=(async_queue, app,), daemon=True)
     async_thread.start()
 
     app.mainloop()
