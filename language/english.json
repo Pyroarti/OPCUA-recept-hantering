@@ -92,7 +92,7 @@
 
     "yes_no_mesg_box_save_data_to_recipe" : "Do you want to save data to the recipe?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Do you want to load the data to the robotcell?",
-    "yes_no_mesg_box_delete_recipe" : "Do you want to delete the recipe?",
+    "yes_no_mesg_box_delete_recipe" : "Do you want to delete ",
 
     "general_error" : "General error, check the logs for more information"
 }

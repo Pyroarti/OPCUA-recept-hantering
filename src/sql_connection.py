@@ -71,6 +71,8 @@ class SQLConnection:
 
 
     def disconnect_from_database(self, cursor: pyodbc.Cursor, cnxn: pyodbc.Connection) -> None:
-        """Disconnect from database"""
-        cursor.close()
-        cnxn.close()
+        """Disconnects from the database"""
+
+        if cursor and cnxn:
+            cursor.close()
+            cnxn.close()

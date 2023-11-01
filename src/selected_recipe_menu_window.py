@@ -9,11 +9,12 @@ logger = setup_logger("Selected_recipe_menu_window")
 
 class SelectedRecipeMenu(customtkinter.CTkToplevel):
     """Class for a pop up window to settings for a recipe"""
-    def __init__(self, app_instance:"App", texts,  parent_id, *args, **kwargs):
+    def __init__(self, app_instance:"App", texts,  parent_id, recipe_name, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.resizable(False, False)
         self.parent_id = parent_id
         self.texts = texts
+        self.recipe_name = recipe_name
         self.title("")
         pop_up_width = 800
         pop_up_height = 900
@@ -22,10 +23,14 @@ class SelectedRecipeMenu(customtkinter.CTkToplevel):
         self.geometry(f"{pop_up_width}x{pop_up_height}+{position_x}+{position_y}")
         self.app_instance = app_instance
 
-        self.place_buttons()
+        self.make_ui()
 
 
-    def place_buttons(self):
+    def make_ui(self):
+        """Makes the UI for the pop up window"""
+
+        self.header = customtkinter.CTkLabel(self, text=self.recipe_name, font=("Helvetica", 25))
+        self.header.pack(pady=(20, 0))
 
         self.make_recipe_button = customtkinter.CTkButton(
             self,
@@ -46,10 +51,11 @@ class SelectedRecipeMenu(customtkinter.CTkToplevel):
         self.update_recipe_info_button.pack(pady=10)
 
         self.delete_selected_row_button = customtkinter.CTkButton(self, text=self.texts["delete_the_selected_recipe_button"],
-                                                                  command= self.combined_command(self.close_window,self.app_instance.delete_recipe),
-                                                                  width=350,
-                                                                  height=45,
-                                                                  font=("Helvetica", 18))
+                                                                  command= self.combined_command(
+                                                                      self.close_window, lambda: self.app_instance.delete_recipe(self.recipe_name)),
+                                                                      width=350,
+                                                                      height=45,
+                                                                      font=("Helvetica", 18))
         self.delete_selected_row_button.pack(pady=(15,0))
 
 

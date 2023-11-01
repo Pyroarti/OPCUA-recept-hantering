@@ -93,7 +93,7 @@
 
     "yes_no_mesg_box_save_data_to_recipe" : "Vill du spara data till receptet?",
     "yes_no_mesg_box_load_data_to_robot_cell" : "Vill du ladda ner datat till robotcellen?",
-    "yes_no_mesg_box_delete_recipe" : "Vill du radera receptet?",
+    "yes_no_mesg_box_delete_recipe" : "Vill du radera ",
 
     "general_error" : "Ett fel har uppstått, kolla loggen för mer information"
 }

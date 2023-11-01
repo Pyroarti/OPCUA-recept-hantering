@@ -102,7 +102,7 @@ async def connect_opcua(url, encrypted_username, encrypted_password):
     :param encrypted_password: Encrypted password
     :return: Client object if connected, None otherwise
     """
-
+ 
     client = Client(url=url, timeout=10, watchdog_intervall=10.0)
 
     try:
@@ -285,7 +285,7 @@ async def get_servo_steps(ip_address, data_origin):
                 logger.info("Successfully retrieved servo steps.")
                 await client.disconnect()
                 logger.info("Client disconnected")
-
+               
                 return children_values
 
             logger.error("Failed to retrieve servo steps.")
