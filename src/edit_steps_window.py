@@ -75,7 +75,7 @@ class EditStepsWindow(customtkinter.CTkToplevel):
 
 
     def update_treeview(self, *args):
-        
+
         search_term = self.search_var.get()
 
         for i in self.edit_recipe_treeview.get_children():
@@ -156,5 +156,3 @@ class EditStepsWindow(customtkinter.CTkToplevel):
         finally:
             if cursor and cnxn:
                 sql_connection.disconnect_from_database(cursor, cnxn)
-
-        self.destroy()

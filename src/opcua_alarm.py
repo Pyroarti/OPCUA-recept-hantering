@@ -49,16 +49,6 @@ OPCUA_SERVER_WINDOWS_ENV_KEY_NAME:str = opcua_alarm_config["environment_variable
 ####################################
 
 
-async def handle_connection_errors(client, sub, adresses):
-    """Handle connection errors."""
-    logger_programming.warning(f"Reconnecting to {adresses} in 10 seconds")
-    if client is not None:
-        client.delete_subscriptions(sub)
-        await client.disconnect()
-        client = None
-    await asyncio.sleep(10)
-    return client
-
 async def subscribe_to_server(adresses: str, username: str, password: str):
     """
     Parameters
@@ -67,47 +57,78 @@ async def subscribe_to_server(adresses: str, username: str, password: str):
     username - The username to use when connecting to the OPC UA server
     password - The password to use when connecting to the OPC UA server
     """
-
     subscribing_params = ua.CreateSubscriptionParameters()
-    subscribing_params.RequestedPublishingInterval = 2000
-    subscribing_params.RequestedLifetimeCount = 6000
-    subscribing_params.RequestedMaxKeepAliveCount = 20
-    subscribing_params.MaxNotificationsPerPublish = 100
+    subscribing_params.RequestedPublishingInterval = 1000
+    subscribing_params.RequestedLifetimeCount = 400
+    subscribing_params.RequestedMaxKeepAliveCount = 100
+    subscribing_params.MaxNotificationsPerPublish = 0
     subscribing_params.PublishingEnabled = True
     subscribing_params.Priority = 0
 
-    client: Client = None
+    client:Client = None
     sub = None
 
     while True:
+
         try:
             if client is None:
                 client = await connect_opcua(adresses, username, password)
 
-            await client.check_connection()
+            async with client as client:
+                await client.check_connection()
 
-            if sub is None:
-                handler = SubHandler(adresses)
-                sub = await client.create_subscription(subscribing_params, handler)
-                logger_programming.info("Made a new subscription")
+                conditionType = client.get_node("ns=0;i=2782")
                 alarmConditionType = client.get_node("ns=0;i=2915")
-                server_node = client.get_node(ua.NodeId(Identifier=2253, NodeIdType=ua.NodeIdType.Numeric, NamespaceIndex=0))
-                await sub.subscribe_alarms_and_conditions(server_node, alarmConditionType)
+                server_node = client.get_node(ua.NodeId(Identifier=2253,
+                                                    NodeIdType=ua.NodeIdType.Numeric, NamespaceIndex=0))
 
-            await asyncio.sleep(0.1)
+                msclt = SubHandler(adresses)
+                sub = await client.create_subscription(subscribing_params, msclt)
+                handle = await sub.subscribe_alarms_and_conditions(server_node, alarmConditionType)
+                await conditionType.call_method("0:ConditionRefresh", ua.Variant(sub.subscription_id, ua.VariantType.UInt32))
+
+                logger_programming.info("Made a new subscription")
+
+                while True:
+                    try:
+                        await asyncio.sleep(1)
+                        await client.check_connection()
+
+                        if not client.uaclient._publish_task or client.uaclient._publish_task.done():
+                            logger_programming('Detected dead publish task, rebuilding...')
+                            sub = await client.create_subscription(subscribing_params, msclt)
+                            handle = await sub.subscribe_alarms_and_conditions(server_node, alarmConditionType)
+                            logger_programming("Subscription rebuilt successfully.")
+
+                    except (ConnectionError, ua.UaError) as e:
+                        logger_programming.warning(f"{e} Reconnecting in 30 seconds")
+                        if client is not None:
+                            await client.delete_subscriptions(sub)
+                            await client.disconnect()
+                            client = None
+                        await asyncio.sleep(30)
 
         except (ConnectionError, ua.UaError) as e:
-            client = await handle_connection_errors(client, sub, adresses)
-            sub = None
+            logger_programming.warning(f"{e} Reconnecting in 30 seconds")
+            if client is not None and sub is not None:
+                try:
+                    await client.delete_subscriptions(sub)
+                    await client.disconnect()
+                except:
+                    pass
+                client = None
+            await asyncio.sleep(30)
+
         except Exception as e:
             logger_programming.error(f"Error connecting or subscribing to server {adresses}: {e}")
-            client = await handle_connection_errors(client, sub, adresses)
-            sub = None
-        except KeyboardInterrupt:
-            if client is not None:
-                await client.delete_subscriptions(sub)
-                await client.disconnect()
-            break
+            if client is not None and sub is not None:
+                try:
+                    await client.delete_subscriptions(sub)
+                    await client.disconnect()
+                except:
+                    pass
+            client = None
+            await asyncio.sleep(30)
 
 
 class SubHandler:
@@ -123,7 +144,6 @@ class SubHandler:
         Called when a status change notification is received from the server.
         """
         # Handle the status change event. This could be logging the change, raising an alert, etc.
-        print(f"Status change received from subscription with status: {status}")
         logger_opcua_alarm.info(status)
 
 
@@ -134,6 +154,7 @@ class SubHandler:
         and saves it to a log file.
         returns: the event message
         """
+        logger_opcua_alarm.info(event)
 
         opcua_alarm_message = {
             "New event received from": self.address
@@ -142,7 +163,7 @@ class SubHandler:
         attributes_to_check = [
             "Message", "Time", "Severity", "SuppressedOrShelved",
             "AckedState", "ConditionClassId", "NodeId", "Quality", "Retain",
-            "ActiveState", "EnabledState", "EventId",
+            "ActiveState", "EnabledState"
         ]
 
         for attribute in attributes_to_check:
@@ -155,20 +176,14 @@ class SubHandler:
         if hasattr(event, "NodeId") and hasattr(event.NodeId, "Identifier"):
             opcua_alarm_message["Identifier"] = str(event.NodeId.Identifier)
 
-
-
         if SEND_SMS:
-            self.phone_book = config_manager.phone_book
             if opcua_alarm_message["ActiveState"] == "Active":
-                print(f"sending sms")
                 await self.user_notification(opcua_alarm_message["Message"], opcua_alarm_message['Severity'])
                 logger_opcua_alarm.info(f"New event received from {self.address}: {opcua_alarm_message}")
 
         else:
             if opcua_alarm_message["ActiveState"] == "Active":
-                clean_address = self.address.replace('\n', ' ')
-                clean_message = opcua_alarm_message['Message'].replace('\n', ' ')
-                logger_opcua_alarm.info(f"{clean_address}, {clean_message}, {opcua_alarm_message['EventId']},{opcua_alarm_message['Identifier']}")
+                logger_opcua_alarm.info(f"New event received from {self.address}: {opcua_alarm_message}")
 
 
     async def user_notification(self, opcua_alarm_message:str, severity:int):
@@ -226,4 +241,4 @@ async def monitor_alarms():
                                                             encrypted_username, encrypted_password)))
 
     await asyncio.gather(*tasks)
-    
+
