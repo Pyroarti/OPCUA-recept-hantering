@@ -3,16 +3,18 @@
 
 * Sätt upp en windows task sceduler för logger som tar bort gammla logs (windows 11 logs är inte ens i närheten av storleken av win 10)
 
-* Kolla in monitor api (möte med dom vecka 35)
+* Kolla in monitor api (möte med dom vecka 35) (framsjutet till framtida planer)
 
-* Få en exe att funka
+* Få en exe att funka(Börja på det snart, programmet är i en bra stadie inte mycket mer som kommer att förändras.)
 
 * Dela func blocken i mindre delar och lägg dom i rätt .py
 
 * Skriv bättre docs for nya func
 
-* En väldigt väldigt vacker dag gör om hela programmet till async (inte tkinter dvs)
+* En väldigt väldigt vacker dag gör om hela programmet till async (inte tkinter dvs) (ska börja med qt6)
 
-* Gör rutan för namn ochy kommentar i recipa mkaer längre
+* Gör rutan för namn ochy kommentar i recipe maker längre
 
 * Skriv bättre class/func docs
+
+* Man kan inte söka på children recipe, why?
